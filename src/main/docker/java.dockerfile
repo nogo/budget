@@ -15,5 +15,4 @@ WORKDIR application
 COPY --from=build /application/build/target/dependencies/ ./
 COPY --from=build /application/build/target/spring-boot-loader/ ./
 COPY --from=build /application/build/target/application/ ./
-EXPOSE 8080
 ENTRYPOINT ["java","org.springframework.boot.loader.launch.JarLauncher"]
