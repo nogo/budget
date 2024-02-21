@@ -2,6 +2,8 @@ package club.kuehns.budget.budget;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -13,6 +15,7 @@ import java.time.LocalDateTime;
 public class Budget {
 
   @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @Column("id")
   private Long id;
 
