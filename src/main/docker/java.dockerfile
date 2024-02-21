@@ -5,7 +5,7 @@ COPY gradle/ ./gradle
 COPY src/ ./src
 COPY gradlew build.gradle settings.gradle ./
 
-RUN --mount=type=cache,target=/root/.gradle ./gradlew build
+RUN ./gradlew build
 RUN mkdir -p build/target && java -Djarmode=layertools -jar build/libs/application.jar extract --destination build/target
 
 FROM eclipse-temurin:21-jre-jammy
