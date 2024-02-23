@@ -1,5 +1,6 @@
 package club.kuehns.budget.budget;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.GeneratedValue;
@@ -25,6 +26,7 @@ public class Budget {
   @Column("type")
   private BudgetType type = BudgetType.spend;
 
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   @Column("date")
   private LocalDateTime date;
 
