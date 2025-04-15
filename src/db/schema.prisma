@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client" // "prisma-client"
+  output = "./generated"
+  previewFeatures = ["relationJoins", "views"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id       Int      @id @default(autoincrement())
+  name     String   @unique
+  hasNotes Boolean  @default(false) @map("has_notes")
+
+  transactions Transaction[]
+  @@map("categories")
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  amount      Decimal
+  type        TransactionType @default(expense)
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  Int @map("category_id")
+  date        Int
+  note        String @default("")
+
+  @@index([type])
+  @@map("transactions")
+}
+
+enum TransactionType {
+  expense
+  income
+}
