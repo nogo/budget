@@ -19,6 +19,14 @@ A personal finance tracker built with React. It helps you track expenses and inc
 - 📶 Offline-first functionality with PWA support (Coming Soon)
 - 🔄 Export/Import data capabilities (Coming Soon)
 
+## Screenshots 📸
+
+Here are some screenshots of the app in action:
+
+| Home                            | Categories                                     |
+| ------------------------------- | ---------------------------------------------- |
+| ![Home](./screenshots/home.png) | ![Category list](./screenshots/categories.png) |
+
 ## Technology Stack 🛠️
 
 - ⚛️ React
@@ -59,18 +67,6 @@ pnpm install
 ```bash
 pnpm run dev
 ```
-
-## Screenshots 📸
-
-Here are some screenshots of the app in action:
-
-### Dashboard
-
-![Home](./screenshots/home.png)
-
-### Categories
-
-![Category list](./screenshots/categories.png)
 
 ## Glossary 📚
 
