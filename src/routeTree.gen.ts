@@ -15,9 +15,12 @@ import { Route as AppRouteImport } from './routes/_app/route'
 import { Route as AppIndexImport } from './routes/_app/index'
 import { Route as authSigninImport } from './routes/(auth)/signin'
 import { Route as authLogoutImport } from './routes/(auth)/logout'
+import { Route as AppReviewIndexImport } from './routes/_app/review/index'
 import { Route as AppCategoriesIndexImport } from './routes/_app/categories/index'
 import { Route as AppYearMonthIndexImport } from './routes/_app/$yearMonth/index'
 import { Route as AppYearMonthIdImport } from './routes/_app/$yearMonth/$id'
+import { Route as AppReviewYearIndexImport } from './routes/_app/review/$year/index'
+import { Route as AppReviewYearMonthImport } from './routes/_app/review/$year/$month'
 import { Route as AppCategoriesCategoryIdRemoveImport } from './routes/_app/categories/$categoryId/remove'
 import { Route as AppCategoriesCategoryIdMergeImport } from './routes/_app/categories/$categoryId/merge'
 import { Route as AppCategoriesCategoryIdEditImport } from './routes/_app/categories/$categoryId/edit'
@@ -47,6 +50,12 @@ const authLogoutRoute = authLogoutImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AppReviewIndexRoute = AppReviewIndexImport.update({
+  id: '/review/',
+  path: '/review/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+
 const AppCategoriesIndexRoute = AppCategoriesIndexImport.update({
   id: '/categories/',
   path: '/categories/',
@@ -62,6 +71,18 @@ const AppYearMonthIndexRoute = AppYearMonthIndexImport.update({
 const AppYearMonthIdRoute = AppYearMonthIdImport.update({
   id: '/$yearMonth/$id',
   path: '/$yearMonth/$id',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+
+const AppReviewYearIndexRoute = AppReviewYearIndexImport.update({
+  id: '/review/$year/',
+  path: '/review/$year/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+
+const AppReviewYearMonthRoute = AppReviewYearMonthImport.update({
+  id: '/review/$year/$month',
+  path: '/review/$year/$month',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
@@ -139,6 +160,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCategoriesIndexImport
       parentRoute: typeof AppRouteImport
     }
+    '/_app/review/': {
+      id: '/_app/review/'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof AppReviewIndexImport
+      parentRoute: typeof AppRouteImport
+    }
     '/_app/categories/$categoryId/edit': {
       id: '/_app/categories/$categoryId/edit'
       path: '/categories/$categoryId/edit'
@@ -160,6 +188,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCategoriesCategoryIdRemoveImport
       parentRoute: typeof AppRouteImport
     }
+    '/_app/review/$year/$month': {
+      id: '/_app/review/$year/$month'
+      path: '/review/$year/$month'
+      fullPath: '/review/$year/$month'
+      preLoaderRoute: typeof AppReviewYearMonthImport
+      parentRoute: typeof AppRouteImport
+    }
+    '/_app/review/$year/': {
+      id: '/_app/review/$year/'
+      path: '/review/$year'
+      fullPath: '/review/$year'
+      preLoaderRoute: typeof AppReviewYearIndexImport
+      parentRoute: typeof AppRouteImport
+    }
   }
 }
 
@@ -170,9 +212,12 @@ interface AppRouteRouteChildren {
   AppYearMonthIdRoute: typeof AppYearMonthIdRoute
   AppYearMonthIndexRoute: typeof AppYearMonthIndexRoute
   AppCategoriesIndexRoute: typeof AppCategoriesIndexRoute
+  AppReviewIndexRoute: typeof AppReviewIndexRoute
   AppCategoriesCategoryIdEditRoute: typeof AppCategoriesCategoryIdEditRoute
   AppCategoriesCategoryIdMergeRoute: typeof AppCategoriesCategoryIdMergeRoute
   AppCategoriesCategoryIdRemoveRoute: typeof AppCategoriesCategoryIdRemoveRoute
+  AppReviewYearMonthRoute: typeof AppReviewYearMonthRoute
+  AppReviewYearIndexRoute: typeof AppReviewYearIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
@@ -180,9 +225,12 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppYearMonthIdRoute: AppYearMonthIdRoute,
   AppYearMonthIndexRoute: AppYearMonthIndexRoute,
   AppCategoriesIndexRoute: AppCategoriesIndexRoute,
+  AppReviewIndexRoute: AppReviewIndexRoute,
   AppCategoriesCategoryIdEditRoute: AppCategoriesCategoryIdEditRoute,
   AppCategoriesCategoryIdMergeRoute: AppCategoriesCategoryIdMergeRoute,
   AppCategoriesCategoryIdRemoveRoute: AppCategoriesCategoryIdRemoveRoute,
+  AppReviewYearMonthRoute: AppReviewYearMonthRoute,
+  AppReviewYearIndexRoute: AppReviewYearIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
@@ -197,9 +245,12 @@ export interface FileRoutesByFullPath {
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
   '/categories': typeof AppCategoriesIndexRoute
+  '/review': typeof AppReviewIndexRoute
   '/categories/$categoryId/edit': typeof AppCategoriesCategoryIdEditRoute
   '/categories/$categoryId/merge': typeof AppCategoriesCategoryIdMergeRoute
   '/categories/$categoryId/remove': typeof AppCategoriesCategoryIdRemoveRoute
+  '/review/$year/$month': typeof AppReviewYearMonthRoute
+  '/review/$year': typeof AppReviewYearIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -209,9 +260,12 @@ export interface FileRoutesByTo {
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
   '/categories': typeof AppCategoriesIndexRoute
+  '/review': typeof AppReviewIndexRoute
   '/categories/$categoryId/edit': typeof AppCategoriesCategoryIdEditRoute
   '/categories/$categoryId/merge': typeof AppCategoriesCategoryIdMergeRoute
   '/categories/$categoryId/remove': typeof AppCategoriesCategoryIdRemoveRoute
+  '/review/$year/$month': typeof AppReviewYearMonthRoute
+  '/review/$year': typeof AppReviewYearIndexRoute
 }
 
 export interface FileRoutesById {
@@ -223,9 +277,12 @@ export interface FileRoutesById {
   '/_app/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/_app/$yearMonth/': typeof AppYearMonthIndexRoute
   '/_app/categories/': typeof AppCategoriesIndexRoute
+  '/_app/review/': typeof AppReviewIndexRoute
   '/_app/categories/$categoryId/edit': typeof AppCategoriesCategoryIdEditRoute
   '/_app/categories/$categoryId/merge': typeof AppCategoriesCategoryIdMergeRoute
   '/_app/categories/$categoryId/remove': typeof AppCategoriesCategoryIdRemoveRoute
+  '/_app/review/$year/$month': typeof AppReviewYearMonthRoute
+  '/_app/review/$year/': typeof AppReviewYearIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -238,9 +295,12 @@ export interface FileRouteTypes {
     | '/$yearMonth/$id'
     | '/$yearMonth'
     | '/categories'
+    | '/review'
     | '/categories/$categoryId/edit'
     | '/categories/$categoryId/merge'
     | '/categories/$categoryId/remove'
+    | '/review/$year/$month'
+    | '/review/$year'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/logout'
@@ -249,9 +309,12 @@ export interface FileRouteTypes {
     | '/$yearMonth/$id'
     | '/$yearMonth'
     | '/categories'
+    | '/review'
     | '/categories/$categoryId/edit'
     | '/categories/$categoryId/merge'
     | '/categories/$categoryId/remove'
+    | '/review/$year/$month'
+    | '/review/$year'
   id:
     | '__root__'
     | '/_app'
@@ -261,9 +324,12 @@ export interface FileRouteTypes {
     | '/_app/$yearMonth/$id'
     | '/_app/$yearMonth/'
     | '/_app/categories/'
+    | '/_app/review/'
     | '/_app/categories/$categoryId/edit'
     | '/_app/categories/$categoryId/merge'
     | '/_app/categories/$categoryId/remove'
+    | '/_app/review/$year/$month'
+    | '/_app/review/$year/'
   fileRoutesById: FileRoutesById
 }
 
@@ -301,9 +367,12 @@ export const routeTree = rootRoute
         "/_app/$yearMonth/$id",
         "/_app/$yearMonth/",
         "/_app/categories/",
+        "/_app/review/",
         "/_app/categories/$categoryId/edit",
         "/_app/categories/$categoryId/merge",
-        "/_app/categories/$categoryId/remove"
+        "/_app/categories/$categoryId/remove",
+        "/_app/review/$year/$month",
+        "/_app/review/$year/"
       ]
     },
     "/(auth)/logout": {
@@ -328,6 +397,10 @@ export const routeTree = rootRoute
       "filePath": "_app/categories/index.tsx",
       "parent": "/_app"
     },
+    "/_app/review/": {
+      "filePath": "_app/review/index.tsx",
+      "parent": "/_app"
+    },
     "/_app/categories/$categoryId/edit": {
       "filePath": "_app/categories/$categoryId/edit.tsx",
       "parent": "/_app"
@@ -338,6 +411,14 @@ export const routeTree = rootRoute
     },
     "/_app/categories/$categoryId/remove": {
       "filePath": "_app/categories/$categoryId/remove.tsx",
+      "parent": "/_app"
+    },
+    "/_app/review/$year/$month": {
+      "filePath": "_app/review/$year/$month.tsx",
+      "parent": "/_app"
+    },
+    "/_app/review/$year/": {
+      "filePath": "_app/review/$year/index.tsx",
       "parent": "/_app"
     }
   }
