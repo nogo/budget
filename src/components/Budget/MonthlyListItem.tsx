@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Transaction } from "~/service/transactions";
+import { formatCurrency } from "~/utils/format";
 import { cn } from "~/utils/utils";
 import { currentYearMonth, formatYearMonth } from "~/utils/yearmonth";
 
@@ -28,7 +29,7 @@ const MonthlyListItem: React.FC<MonthlyItemProps> = ({
       className={cn(
         amountClass,
         selectedClass,
-        "flex flex-row justify-between border-t border-gray-300 px-4 py-2",
+        "flex flex-row justify-between border-b border-gray-300 pl-9 pr-3 py-2 hover:bg-gray-100",
       )}
     >
       <span>
@@ -37,7 +38,9 @@ const MonthlyListItem: React.FC<MonthlyItemProps> = ({
           {transaction.note && ` - ${transaction.note}`}
         </span>
       </span>
-      <span className="text-right font-mono">{transaction.amount} €</span>
+      <span className="text-right font-mono">
+        {formatCurrency(transaction.amount)}
+      </span>
     </Link>
   );
 };

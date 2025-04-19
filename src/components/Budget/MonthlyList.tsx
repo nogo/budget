@@ -10,6 +10,8 @@ import {
 } from "~/utils/yearmonth";
 import { Transaction } from "~/service/transactions";
 import dayjs from "dayjs";
+import { formatCurrency } from "~/utils/format";
+import { cn } from "~/utils/utils";
 
 interface MonthlyListProps {
   transactions: Array<Transaction>;
@@ -21,6 +23,28 @@ interface GroupedTransactions {
   [date: string]: Array<Transaction>;
 }
 
+const calculateTotal = (data: Array<Transaction>) => {
+  if (!data) return 0;
+
+  return data.reduce((sum, item) => {
+    return sum + (item.type === "expense" ? -item.amount : item.amount);
+  }, 0);
+};
+
+const calculateDayTotal = (transactions: Array<Transaction>) => {
+  if (!transactions || transactions.length <= 1) return <></>;
+
+  const total = calculateTotal(transactions);
+
+  const amountClass = total < 0 ? "text-red-300" : "text-green-300";
+
+  return (
+    <span className={cn(amountClass, "font-mono text-sm")}>
+      {formatCurrency(total)}
+    </span>
+  );
+};
+
 const MonthlyList: React.FC<MonthlyListProps> = ({
   transactions,
   currentMonthYear,
@@ -28,14 +52,6 @@ const MonthlyList: React.FC<MonthlyListProps> = ({
 }) => {
   const previous = formatYearMonth(previousYearMonth(currentMonthYear));
   const next = formatYearMonth(nextYearMonth(currentMonthYear));
-
-  const calculateTotal = (data: Array<Transaction>) => {
-    if (!data) return 0;
-
-    return data.reduce((sum, item) => {
-      return sum + (item.type === "expense" ? -item.amount : item.amount);
-    }, 0);
-  };
 
   const total = calculateTotal(transactions);
 
@@ -54,20 +70,18 @@ const MonthlyList: React.FC<MonthlyListProps> = ({
   return (
     <div className="mb-4 md:flex-[1_2_20%]">
       <div className="grid grid-cols-1 border border-gray-300 shadow-md">
-        <h1 className="grid grid-cols-3 items-end border-b-1 border-gray-300 p-2 text-center font-bold">
+        <h1 className="grid grid-cols-3 items-end border-b-1 border-gray-300 px-3 py-2 text-center font-bold">
           <span></span>
           {formatYearMonth(currentMonthYear)}
-          <span className="text-right font-mono text-xs text-gray-400">
-            {total !== 0 ? `${total} €` : ""}
+          <span className="text-right font-mono text-sm text-gray-400">
+            {total !== 0 ? formatCurrency(total) : ""}
           </span>
         </h1>
         {Object.keys(groupedTransactions).map((date) => (
           <React.Fragment key={date}>
-            <h2 className="flex items-end justify-between p-2 font-semibold">
+            <h2 className="flex items-end justify-between border-b border-gray-300 px-3 py-2 font-semibold">
               {date}
-              <span className="font-mono text-xs text-gray-400">
-                {calculateTotal(groupedTransactions[date])} €
-              </span>
+              {calculateDayTotal(groupedTransactions[date])}
             </h2>
             {groupedTransactions[date].map((item) => (
               <MonthlyListItem

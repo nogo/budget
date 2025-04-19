@@ -19,7 +19,8 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_LOCALE: z.string().optional().default("de-DE"),
+    NEXT_PUBLIC_CURRENCY: z.string().optional().default("EUR"),
   },
 
   /**
