@@ -4,7 +4,7 @@ import { formatYearMonth, YearMonth, yearMonthNow } from "../utils/yearmonth";
 import { z } from "zod";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { prisma } from "~/db";
+import { db } from "~/utils/db";
 
 dayjs.extend(utc);
 
@@ -48,7 +48,7 @@ export const listTransactions = createServerFn()
     const startDate = data.startOf("month").unix();
     const endDate = data.endOf("month").unix();
 
-    return await prisma.transaction
+    return await db.transaction
       .findMany({
         where: {
           date: {
@@ -88,7 +88,7 @@ export const listTransactionsQueryOptions = (yearMonth?: YearMonth) => {
 export const findTransactions = createServerFn()
   .validator(z.coerce.number())
   .handler(async ({ data }) => {
-    return await prisma.transaction
+    return await db.transaction
       .findFirst({
         where: {
           id: data,
@@ -116,7 +116,7 @@ export const crupTransaction = createServerFn({ method: "POST" })
   .validator(transactionCreateSchema)
   .handler(async ({ data: transactionData }) => {
     if (transactionData.id && transactionData.id > 0) {
-      return await prisma.transaction
+      return await db.transaction
         .update({
           where: { id: transactionData.id },
           data: {
@@ -130,7 +130,7 @@ export const crupTransaction = createServerFn({ method: "POST" })
         })
         .then((item) => transformToTransaction(item));
     } else {
-      return await prisma.transaction
+      return await db.transaction
         .create({
           data: {
             amount: transactionData.amount,
@@ -152,7 +152,7 @@ export const crupTransaction = createServerFn({ method: "POST" })
 export const removeTransaction = createServerFn({ method: "POST" })
   .validator(z.coerce.number())
   .handler(async ({ data }) => {
-    return await prisma.transaction
+    return await db.transaction
       .delete({
         where: {
           id: data,

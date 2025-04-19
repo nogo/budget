@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
-import { prisma } from "~/db";
+import { db } from "~/utils/db";
 
 export const listCategories = createServerFn().handler(async () => {
-  return await prisma.category.findMany({
+  return await db.category.findMany({
     orderBy: {
       name: "asc",
     },
@@ -20,7 +20,7 @@ export const categoriesQueryOptions = () =>
 export const fetchCategory = createServerFn({ method: "GET" })
   .validator(z.coerce.number())
   .handler(async ({ data }) => {
-    return await prisma.category.findFirst({ where: { id: data } });
+    return await db.category.findFirst({ where: { id: data } });
   });
 
 export const categoryQueryOptions = (id: number) =>
@@ -39,7 +39,7 @@ export const crupCategory = createServerFn({ method: "POST" })
   .validator(categorySchema)
   .handler(async ({ data: categoryData }) => {
     if (categoryData.id && categoryData.id > 0) {
-      return await prisma.category.update({
+      return await db.category.update({
         where: { id: categoryData.id },
         data: {
           id: categoryData.id,
@@ -48,7 +48,7 @@ export const crupCategory = createServerFn({ method: "POST" })
         },
       });
     } else {
-      return await prisma.category.create({
+      return await db.category.create({
         data: {
           name: categoryData.name,
           hasNotes: categoryData.hasNotes,
@@ -62,7 +62,7 @@ export const crupCategory = createServerFn({ method: "POST" })
 export const removeCategory = createServerFn({ method: "POST" })
   .validator(z.coerce.number())
   .handler(async ({ data }) => {
-    return await prisma.category.delete({
+    return await db.category.delete({
       where: {
         id: data,
       },
