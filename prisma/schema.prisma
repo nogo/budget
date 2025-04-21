@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client" // "prisma-client"
-  output = "./generated"
+  output = "../src/generated/db"
   previewFeatures = ["relationJoins", "views"]
 }
 
@@ -35,4 +35,24 @@ model Transaction {
 enum TransactionType {
   expense
   income
+}
+
+view ReviewYears {
+  year     Int @id
+  income   Decimal
+  expense  Decimal
+  total    Decimal
+
+  @@map("review_years")
+}
+
+view ReviewMonths {
+  year     Int
+  month    Int
+  income   Decimal
+  expense  Decimal
+  total    Decimal
+
+  @@map("review_months")
+  @@id([year, month])
 }

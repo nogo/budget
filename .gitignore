@@ -23,11 +23,11 @@ pnpm-lock.yaml
 /blob-report/
 /playwright/.cache/
 
-*.sqlite
+*.sqlite*
 
 # production
 /build
-src/db/generated
+src/generated/db
 
 # debug
 npm-debug.log*

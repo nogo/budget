@@ -1,0 +1,13 @@
+services:
+  budget-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL="file:/app/data/budget.sqlite"
+    volumes:
+      - budget-data:/app/data
+
+volumes:
+  budget-data:
