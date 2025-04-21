@@ -3,9 +3,6 @@ import tsConfigPaths from "vite-tsconfig-paths";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
-  server: {
-    preset: "node-server",
-  },
   tsr: {
     appDirectory: "src",
   },

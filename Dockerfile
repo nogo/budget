@@ -13,7 +13,7 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm run db:generate && pnpm build
+RUN pnpm run db:generate && pnpm build --preset node-server
 
 FROM builder AS deploy
 WORKDIR /app
@@ -28,6 +28,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 RUN mkdir -p /app/data && \
     chown -R nodejs:nodejs /app/data
 COPY --from=builder /app/.output ./.output
+COPY .env.example .env
 
 EXPOSE 3000
 USER nodejs
