@@ -18,21 +18,21 @@ WORKDIR /app
 COPY --chown=node:node --from=deps /app/node_modules ./node_modules
 COPY --chown=node:node . .
 
-ENV NODE_ENV=production
+#ENV NODE_ENV=production
 RUN pnpm prisma generate
 #RUN pnpm build --preset node-server
 
 CMD ["pnpm", "run", "dev"]
 
-FROM node:23-alpine@sha256:86703151a18fcd06258e013073508c4afea8e19cd7ed451554221dd00aea83fc AS runner
-USER node
-WORKDIR /app
+#FROM node:23-alpine@sha256:86703151a18fcd06258e013073508c4afea8e19cd7ed451554221dd00aea83fc AS runner
+#USER node
+#WORKDIR /app
 
-ENV NODE_ENV=production
+#ENV NODE_ENV=production
 
-COPY --chown=node:node --from=builder /app/.output ./
-COPY --chown=node:node --from=builder /app/src/generated/db/libquery*.so.node ./server/
+#COPY --chown=node:node --from=builder /app/.output ./
+#COPY --chown=node:node --from=builder /app/src/generated/db/libquery*.so.node ./server/
 
-EXPOSE 3000
+#EXPOSE 3000
 
-CMD ["node", "server/index.mjs"]
+#CMD ["node", "server/index.mjs"]
