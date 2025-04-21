@@ -20,7 +20,7 @@ COPY --chown=node:node . .
 
 #ENV NODE_ENV=production
 RUN pnpm prisma generate
-#RUN pnpm build --preset node-server
+RUN pnpm build --preset node-server
 
 CMD ["pnpm", "run", "start"]
 
