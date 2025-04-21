@@ -32,6 +32,7 @@ ENV NODE_ENV=production
 
 COPY --chown=node:node --from=builder /app/.output ./
 COPY --chown=node:node --from=builder /app/src/generated/db/libquery*.so.node ./server/
+COPY --chown=node:node .env.example .env
 
 VOLUME [ "/data" ]
 EXPOSE 3000
