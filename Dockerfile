@@ -27,8 +27,9 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nodejs
 RUN mkdir -p /app/data && \
     chown -R nodejs:nodejs /app/data
-COPY --from=builder /app/.output ./.output
-COPY .env.example .env
+COPY --chown=1001:1001 --from=builder /app/.output ./.output
+COPY --chown=1001:1001 --from=builder /app/src/generated/db/libquery*.so.node /app/.output/server/
+COPY --chown=1001:1001 .env.example .env
 
 EXPOSE 3000
 USER nodejs
