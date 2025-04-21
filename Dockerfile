@@ -22,7 +22,7 @@ COPY --chown=node:node . .
 RUN pnpm prisma generate
 #RUN pnpm build --preset node-server
 
-CMD ["pnpm", "run", "dev"]
+CMD ["pnpm", "run", "start"]
 
 #FROM node:23-alpine@sha256:86703151a18fcd06258e013073508c4afea8e19cd7ed451554221dd00aea83fc AS runner
 #USER node
