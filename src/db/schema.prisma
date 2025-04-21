@@ -28,6 +28,7 @@ model Transaction {
   note        String @default("")
 
   @@index([type])
+  @@index([date])
   @@map("transactions")
 }
 
