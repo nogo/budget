@@ -33,4 +33,4 @@ COPY .env.example .env
 EXPOSE 3000
 USER nodejs
 
-CMD ["node", "-env-file=.env", ".output/server/index.mjs"]
+CMD ["node", "--env-file=.env", ".output/server/index.mjs"]
