@@ -12,19 +12,17 @@ USER root
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
+RUN mkdir -p /data && chown -R node:node /data
 USER node
 WORKDIR /app
 COPY --chown=node:node --from=deps /app/node_modules ./node_modules
 COPY --chown=node:node . .
 
-USER root
-RUN mkdir -p /data && chown -R node:node /data
-
 ENV NODE_ENV=production
 RUN pnpm prisma generate
-RUN pnpm build --preset node-server
+#RUN pnpm build --preset node-server
 
-CMD ["pnpm", "run", "start"]
+CMD ["pnpm", "run", "dev"]
 
 FROM node:23-alpine@sha256:86703151a18fcd06258e013073508c4afea8e19cd7ed451554221dd00aea83fc AS runner
 USER node
