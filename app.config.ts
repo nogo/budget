@@ -8,10 +8,10 @@ export default defineConfig({
   },
   vite: {
     plugins: [
+      TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
       tsConfigPaths({
         projects: ["./tsconfig.json"],
       }),
-      TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
     ],
   },
 });
