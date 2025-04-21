@@ -5,29 +5,35 @@ ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
 FROM base AS deps
+USER node
 WORKDIR /app
-COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
+COPY --chown=node:node package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
+USER root
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
+USER node
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+COPY --chown=node:node --from=deps /app/node_modules ./node_modules
+COPY --chown=node:node . .
+
+USER root
+RUN mkdir -p /data && chown -R node:node /data
+
+ENV NODE_ENV=production
 RUN pnpm prisma generate
 RUN pnpm build --preset node-server
 
 FROM node:23-alpine@sha256:86703151a18fcd06258e013073508c4afea8e19cd7ed451554221dd00aea83fc AS runner
+USER node
 WORKDIR /app
 
 ENV NODE_ENV=production
-RUN addgroup --system --gid 1001 node && \
-    adduser --system --uid 1001 node
 
-COPY --chown=1001:1001 --from=builder /app/.output /app/build
-COPY --chown=1001:1001 --from=builder /app/src/generated/db/libquery*.so.node /app/build/server/
+COPY --chown=1001:1001 --from=builder /app/.output ./
+COPY --chown=1001:1001 --from=builder /app/src/generated/db/libquery*.so.node ./server/
 
-VOLUME [ "/app/data" ]
+VOLUME [ "/data" ]
 EXPOSE 3000
-USER node
 
-CMD ["node", "--env-file-if-exists=data/.env", "build/server/index.mjs"]
+CMD ["node", "--env-file-if-exists=/data/.env", "build/server/index.mjs"]
