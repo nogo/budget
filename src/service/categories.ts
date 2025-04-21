@@ -6,7 +6,7 @@ import { db } from "~/utils/db";
 export const listCategories = createServerFn().handler(async () => {
   return await db.category.findMany({
     orderBy: {
-      name: "asc",
+      id: "asc",
     },
   });
 });

@@ -1,9 +1,9 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { Category } from "~/db/generated";
 import { crupCategory } from "~/service/categories";
 import { Spinner } from "../Loader";
+import { Category } from "~/generated/db";
 
 interface CategoryFormProps {
   category: Category;

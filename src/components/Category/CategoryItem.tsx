@@ -4,7 +4,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/24/solid";
-import { Category } from "~/db/generated";
+import { Category } from "~/generated/db";
 
 interface CategoryItemProps {
   category?: Category;
