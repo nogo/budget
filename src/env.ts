@@ -20,7 +20,12 @@ export const env = createEnv({
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
    * middlewares) or client-side so we need to destruct manually.
    */
-  runtimeEnv: process.env,
+  runtimeEnvStrict: {
+    NODE_ENV: process.env.NODE_ENV,
+    DATABASE_URL: process.env.DATABASE_URL,
+    PUBLIC_LOCALE: process.env.PUBLIC_LOCALE,
+    PUBLIC_CURRENCY: process.env.PUBLIC_CURRENCY,
+  },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
    * useful for Docker builds.
