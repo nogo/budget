@@ -1,4 +1,5 @@
-FROM node:23-alpine AS base
+FROM node:23-alpine@sha256:86703151a18fcd06258e013073508c4afea8e19cd7ed451554221dd00aea83fc AS base
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -14,7 +15,11 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN pnpm run db:generate && pnpm build
 
-FROM node:23-alpine AS runner
+FROM builder AS deploy
+WORKDIR /app
+COPY --from=deps /app /app
+
+FROM node:23-alpine@sha256:86703151a18fcd06258e013073508c4afea8e19cd7ed451554221dd00aea83fc AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production

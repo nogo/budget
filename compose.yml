@@ -9,5 +9,17 @@ services:
     volumes:
       - budget-data:/app/data
 
+  budget-migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: deploy
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL="file:/app/data/budget.sqlite"
+    volumes:
+      - budget-data:/app/data
+    command: ["pnpm", "run", "db:deploy"]
+
 volumes:
   budget-data:

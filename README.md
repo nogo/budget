@@ -68,6 +68,28 @@ pnpm install
 pnpm run dev
 ```
 
+## Docker Usage 🐳
+
+### Build the images
+
+```bash
+docker compose build
+```
+
+### Run database migrations (one-time, before first launch)
+
+```bash
+docker compose run --rm budget-migrate
+```
+
+### Start the application
+
+```bash
+docker compose up budget-app
+```
+
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
 ## Glossary 📚
 
 | **Term**        | **Definition**                                                            |
