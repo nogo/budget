@@ -37,4 +37,4 @@ COPY --chown=node:node .env.example .env
 VOLUME [ "/data" ]
 EXPOSE 3000
 
-CMD ["node", "--env-file-if-exists=/data/.env", "server/index.mjs"]
+CMD ["node", "--env-file-if-exists=.env", "server/index.mjs"]
