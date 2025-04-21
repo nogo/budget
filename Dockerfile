@@ -30,10 +30,10 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-COPY --chown=1001:1001 --from=builder /app/.output ./
-COPY --chown=1001:1001 --from=builder /app/src/generated/db/libquery*.so.node ./server/
+COPY --chown=node:node --from=builder /app/.output ./
+COPY --chown=node:node --from=builder /app/src/generated/db/libquery*.so.node ./server/
 
 VOLUME [ "/data" ]
 EXPOSE 3000
 
-CMD ["node", "--env-file-if-exists=/data/.env", "build/server/index.mjs"]
+CMD ["node", "--env-file-if-exists=/data/.env", "server/index.mjs"]

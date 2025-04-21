@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=file:/app/data/budget.sqlite
+      - DATABASE_URL=file:/data/budget.sqlite
     volumes:
-      - budget-data:/app/data
+      - budget-data:/data
 
   budget-migrate:
     build:
@@ -16,9 +16,9 @@ services:
       target: builder
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=file:/app/data/budget.sqlite
+      - DATABASE_URL=file:/data/budget.sqlite
     volumes:
-      - budget-data:/app/data
+      - budget-data:/data
     command: ["pnpm", "run", "db:deploy"]
 
 volumes:
