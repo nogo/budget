@@ -28,9 +28,9 @@ RUN addgroup --system --gid 1001 nodejs && \
 RUN mkdir -p /app/data && \
     chown -R nodejs:nodejs /app/data
 COPY --from=builder /app/.output ./.output
-COPY .env.example .env
+COPY .env.example ./.output/.env
 
 EXPOSE 3000
 USER nodejs
 
-CMD ["node", ".output/server/index.mjs"]
+CMD ["node", "-env-file=.env", ".output/server/index.mjs"]
