@@ -3,9 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=file:/data/budget.sqlite
+    env_file:
+      - .env
     volumes:
       - budget-data:/data
 
@@ -14,9 +13,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: builder
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=file:/data/budget.sqlite
+    env_file:
+      - .env
     volumes:
       - budget-data:/data
     command: ["pnpm", "run", "db:deploy"]
