@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import * as React from "react";
 import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
+import { LocaleProvider, useLocale } from "~/components/Locales";
 import { NotFound } from "~/components/NotFound";
 import appCss from "~/styles/app.css?url";
 import { seo } from "~/utils/seo";
@@ -63,15 +64,19 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+    <LocaleProvider>
+      <RootDocument>
+        <Outlet />
+      </RootDocument>
+    </LocaleProvider>
   );
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  //const { locale } = useLocale();
+  const locale = "en";
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <HeadContent />
       </head>

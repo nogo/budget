@@ -5,10 +5,12 @@ import { crupCategory } from "~/service/categories";
 import { Spinner } from "../Loader";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import { Category } from "~/generated/db";
+import { useTranslation } from "~/locales/translations";
 
 const CategoryAddForm: React.FC = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const t = useTranslation("CategoryAddForm");
 
   const { mutate } = useMutation({
     mutationFn: async (value: Category) => {
@@ -73,7 +75,7 @@ const CategoryAddForm: React.FC = () => {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                   required
-                  placeholder="Add a new category..."
+                  placeholder={t("addCategoryPlaceholder")}
                   className="grow-1"
                 />
               </div>
@@ -95,7 +97,7 @@ const CategoryAddForm: React.FC = () => {
                   onChange={(e) => field.handleChange(e.target.checked)}
                   className="h-4 w-4 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
                 />{" "}
-                Has Notes
+                {t("hasNotesLabel")}
               </label>
             );
           }}

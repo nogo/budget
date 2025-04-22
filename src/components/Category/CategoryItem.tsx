@@ -5,6 +5,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/solid";
 import { Category } from "~/generated/db";
+import { useTranslation } from "~/locales/translations";
 
 interface CategoryItemProps {
   category?: Category;
@@ -13,12 +14,14 @@ interface CategoryItemProps {
 const CategoryItem: React.FC<CategoryItemProps> = ({ category }) => {
   if (!category) return <></>;
 
+  const t = useTranslation("CategoryItem");
+
   return (
     <div className="flex flex-row justify-between border-t border-gray-300 px-4 py-2">
       <span>
         {category.name}{" "}
         <span className="text-xs text-gray-400">
-          {category.hasNotes && `with notes`}
+          {category.hasNotes && t(`withNotes`)}
         </span>
       </span>
       <div className="flex gap-4">

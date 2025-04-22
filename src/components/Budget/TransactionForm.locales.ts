@@ -1,0 +1,28 @@
+export default {
+  en: {
+    amount: "Amount",
+    amountRequired: "An amount is required",
+    amountGreaterThanZero: "Amount must be greater than 0",
+    invalidValue: "Invalid value",
+    category: "Category",
+    note: "Note",
+    date: "Date",
+    expense: "Expense",
+    income: "Income",
+    delete: "Delete",
+    save: "Save",
+  },
+  de: {
+    amount: "Betrag",
+    amountRequired: "Ein Betrag ist erforderlich",
+    amountGreaterThanZero: "Betrag muss größer als 0 sein",
+    invalidValue: "Ungültiger Wert",
+    category: "Kategorie",
+    note: "Notiz",
+    date: "Datum",
+    expense: "Ausgabe",
+    income: "Einnahme",
+    delete: "Löschen",
+    save: "Speichern",
+  },
+};

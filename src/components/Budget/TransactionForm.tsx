@@ -18,6 +18,7 @@ import { cn } from "~/utils/utils";
 import { z } from "zod";
 import dayjs from "dayjs";
 import { Spinner } from "../Loader";
+import { useTranslation } from "~/locales/translations";
 
 interface TransactionFormProps {
   currentMonthYear: YearMonth;
@@ -40,6 +41,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const queryClient = useQueryClient();
   const { data: categories } = useSuspenseQuery(categoriesQueryOptions());
   const yearMonthString = formatYearMonth(currentMonthYear);
+  const t = useTranslation("TransactionForm");
 
   const edit = useMutation({
     mutationFn: async (value: Transaction) => {
@@ -121,12 +123,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           <form.Field
             name="amount"
             validators={{
-              onBlur: ({ value }) => (value < 0 ? "Invalid value" : undefined),
+              onBlur: ({ value }) =>
+                value < 0.0 ? t("invalidValue") : undefined,
               onChange: ({ value }) => {
                 return !value
-                  ? "A amount is required"
+                  ? t("amountRequired")
                   : value <= 0.0
-                    ? "Amount must be greater than 0"
+                    ? t("amountGreaterThanZero")
                     : undefined;
               },
             }}
@@ -137,7 +140,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     htmlFor={field.name}
                     className="block text-sm/6 font-medium text-gray-900"
                   >
-                    Amount
+                    {t("amount")}
                   </label>
                   <div className="mt-1">
                     <div className="flex items-center bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-yellow-600">
@@ -149,6 +152,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
+                        onFocus={(e) => e.target.select()}
                         onChange={(e) =>
                           field.handleChange(handleAmountString(e.target.value))
                         }
@@ -175,7 +179,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     htmlFor={field.name}
                     className="block text-sm/6 font-medium text-gray-900"
                   >
-                    Category
+                    {t("category")}
                   </label>
                   <div className="mt-1">
                     <div className="flex items-center bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-yellow-600">
@@ -214,7 +218,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                         htmlFor={field.name}
                         className="block text-sm/6 font-medium text-gray-900"
                       >
-                        Note
+                        {t("note")}
                       </label>
                       <div className="mt-1">
                         <div className="flex items-center bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-yellow-600">
@@ -244,7 +248,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     htmlFor={field.name}
                     className="block text-sm/6 font-medium text-gray-900"
                   >
-                    Date
+                    {t("date")}
                   </label>
                   <div className="mt-1">
                     <div className="flex items-center bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-yellow-600">
@@ -286,7 +290,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                       onChange={(e) => field.handleChange("expense")}
                       required
                     />
-                    <span>Expense</span>
+                    <span>{t("expense")}</span>
                   </label>
                   <label htmlFor="income" className="flex gap-3">
                     <input
@@ -299,7 +303,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                       type="radio"
                       required
                     />
-                    <span>Income</span>
+                    <span>{t("income")}</span>
                   </label>
                 </div>
               );
@@ -317,7 +321,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 onClick={() => remove.mutate({ data: transaction.id })}
                 className="md rounded-full bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
               >
-                <TrashIcon className="h-5" />
+                <TrashIcon className="h-6" />
+                <span className="sr-only">{t("delete")}</span>
               </button>
             )}
 
@@ -330,7 +335,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     disabled={!canSubmit}
                     className="md rounded-full bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                   >
-                    {isSubmitting ? <Spinner /> : <CheckIcon className="h-5" />}
+                    {isSubmitting ? <Spinner /> : <CheckIcon className="h-6" />}
+                    <span className="sr-only">{t("save")}</span>
                   </button>
                 </>
               )}
@@ -341,6 +347,5 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     </div>
   );
 };
-
 
 export default TransactionForm;
