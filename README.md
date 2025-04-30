@@ -28,6 +28,10 @@ Here are some screenshots of the app in action:
 | ------------------------------- | ---------------------------------------------- |
 | ![Home](./screenshots/home.png) | ![Category list](./screenshots/categories.png) |
 
+| Review yearly                              | monthly                                      |
+| ------------------------------------------ | -------------------------------------------- |
+| ![Yearly](./screenshots/review_yearly.png) | ![Monthly](./screenshots/review_monthly.png) |
+
 ## Technology Stack 🛠️
 
 - ⚛️ React
