@@ -2,16 +2,8 @@ import { Link } from "@tanstack/react-router";
 import React from "react";
 import { formatCurrency } from "~/utils/format";
 import { cn } from "~/utils/utils";
-import {
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Line,
-  CartesianGrid,
-  ComposedChart,
-} from "recharts";
+import IncomeExpenseChart from "./IncomeExpenseChart";
+import { useTranslation } from "~/locales/translations";
 
 type YearlyDataRow = {
   year: number;
@@ -25,6 +17,8 @@ type YearlyProps = {
 };
 
 const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
+  const t = useTranslation("Review");
+
   const rowsWithTotal = data.map((row) => ({
     ...row,
     total: Math.abs(row.income) - Math.abs(row.expense),
@@ -37,8 +31,14 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
     return { ...row, accumulated: runningSum };
   });
 
-  const totalIncome = rowsWithTotal.reduce((sum, row) => sum + row.income, 0);
-  const totalExpense = rowsWithTotal.reduce((sum, row) => sum + row.expense, 0);
+  const totalIncome = rowsWithTotal.reduce(
+    (sum, row) => sum + (Number(row.income) || 0),
+    0,
+  );
+  const totalExpense = rowsWithTotal.reduce(
+    (sum, row) => sum + (Number(row.expense) || 0),
+    0,
+  );
   const totalTotal = rowsWithTotal.reduce((sum, row) => sum + row.total, 0);
 
   const striped = (index: number) => {
@@ -51,37 +51,26 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
 
   return (
     <>
-      <h1 className="text-2xl text-center font-bold mb-4">Review</h1>
-      <div
-        className="w-full my-8 p-3 border border-gray-300 shadow-md"
-        style={{ height: 320 }}
-      >
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={rowsWithAccumulated}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="year" />
-            <YAxis />
-            <Tooltip formatter={(value: number) => formatCurrency(value)} />
-            <Bar dataKey="total" barSize={20} fill="#733e0a" name="Net Total" />
-            <Line
-              type="monotone"
-              dataKey="accumulated"
-              stroke="#0074d9"
-              strokeWidth={3}
-              dot={false}
-              name="Accumulated Total"
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
-      </div>
+      <h1 className="text-2xl text-center font-bold mb-4">
+        {t("reviewTitle")}
+      </h1>
+      <IncomeExpenseChart data={rowsWithAccumulated} t={t} height={400} />
       <div className="overflow-x-auto">
         <table className="min-w-full shadow-sm">
           <thead>
             <tr className="border-b-2 border-gray-300">
-              <th className="px-4 py-2 text-left font-semibold">Month</th>
-              <th className="px-4 py-2 font-semibold text-right">Income</th>
-              <th className="px-4 py-2 font-semibold text-right">Expense</th>
-              <th className="px-4 py-2 font-semibold text-right">Total</th>
+              <th className="px-4 py-2 text-center font-semibold">
+                {t("year")}
+              </th>
+              <th className="px-4 py-2 font-semibold text-right">
+                {t("income")}
+              </th>
+              <th className="px-4 py-2 font-semibold text-right">
+                {t("expense")}
+              </th>
+              <th className="px-4 py-2 font-semibold text-right">
+                {t("total")}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -93,9 +82,10 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
                   "border-b border-gray-300 hover:bg-gray-100 transition-colors duration-200",
                 )}
               >
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 text-center">
                   <Link
                     to="/review/$year"
+                    className="block"
                     params={{
                       year: row.year.toString(),
                     }}
@@ -120,7 +110,7 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
               </tr>
             ))}
             <tr className="font-bold border-t-2 border-gray-300">
-              <td className="px-4 py-2">Total</td>
+              <td className="px-4 py-2 text-center">{t("total")}</td>
               <td className="px-4 py-2 text-right font-mono">
                 {formatCurrency(totalIncome)}
               </td>

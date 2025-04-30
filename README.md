@@ -11,10 +11,11 @@ A personal finance tracker built with React. It helps you track expenses and inc
 - 🕒 View transaction history in a clean, modern interface
 - 🐳 Simple deployment with container support
 - 🌍 Localization
+- 📈 Show yearly and monthly income expense charts to analyze your budget
 
 ### Future Plans 🚀
 
-- 📈 Generate expense reports by category or date range
+- 📈 Generate expense charts by category
 - 🔒 User authentication (Coming Soon)
 - 📶 Offline-first functionality with PWA support (Coming Soon)
 - 🔄 Export/Import data capabilities (Coming Soon)

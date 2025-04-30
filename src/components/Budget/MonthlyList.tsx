@@ -81,7 +81,6 @@ const MonthlyList: React.FC<MonthlyListProps> = ({
           <React.Fragment key={date}>
             <h2 className="flex items-end justify-between border-b border-gray-300 px-3 py-2 font-semibold">
               {date}
-              {calculateDayTotal(groupedTransactions[date])}
             </h2>
             {groupedTransactions[date].map((item) => (
               <MonthlyListItem

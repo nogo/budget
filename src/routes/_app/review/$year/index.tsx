@@ -1,44 +1,26 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import ReviewYearMonth from "~/components/Review/ReviewYearMonth";
+import { reviewYearMonthQueryOptions } from "~/service/review";
 
 export const Route = createFileRoute("/_app/review/$year/")({
   component: RouteComponent,
+  loader: async ({ params, context }) => {
+    return await context.queryClient.ensureQueryData(
+      reviewYearMonthQueryOptions(params.year),
+    );
+  },
 });
 
 function RouteComponent() {
-  // Generate test data for 12 months
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  const testData = months.map((month, i) => {
-    // For demonstration, let's say in March, July, and November, expenses are higher than income
-    let income = 2000 + i * 100;
-    let expense = 1500 + i * 80;
-    if (["March", "July", "November"].includes(month)) {
-      expense = income + 300 + i * 20; // expense > income
-    }
-    return {
-      month: i + 1, // change from month name to month number (1-based)
-      income,
-      expense,
-      total: 0, // will be recalculated in the component
-    };
-  });
+  const { year } = Route.useParams();
+  const { data: reviewYearMonth } = useSuspenseQuery(
+    reviewYearMonthQueryOptions(year),
+  );
 
   return (
     <div>
-      <ReviewYearMonth year={2024} data={testData} />
+      <ReviewYearMonth year={year} data={reviewYearMonth} />
     </div>
   );
 }
