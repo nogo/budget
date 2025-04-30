@@ -59,16 +59,16 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
         <table className="min-w-full shadow-sm">
           <thead>
             <tr className="border-b-2 border-gray-300">
-              <th className="px-4 py-2 text-center font-semibold">
+              <th className="md:px-4 md:py-2 text-center font-semibold">
                 {t("year")}
               </th>
-              <th className="px-4 py-2 font-semibold text-right">
+              <th className="md:px-4 md:py-2 font-semibold text-right">
                 {t("income")}
               </th>
-              <th className="px-4 py-2 font-semibold text-right">
+              <th className="md:px-4 md:py-2 font-semibold text-right">
                 {t("expense")}
               </th>
-              <th className="px-4 py-2 font-semibold text-right">
+              <th className="md:px-4 md:py-2 font-semibold text-right">
                 {t("total")}
               </th>
             </tr>
@@ -82,7 +82,7 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
                   "border-b border-gray-300 hover:bg-gray-100 transition-colors duration-200",
                 )}
               >
-                <td className="px-4 py-2 text-center">
+                <td className="md:px-4 md:py-2 text-center">
                   <Link
                     to="/review/$year"
                     className="block"
@@ -93,16 +93,16 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
                     {row.year}
                   </Link>
                 </td>
-                <td className="px-4 py-2 text-right font-mono">
+                <td className="md:px-4 md:py-2 text-right font-mono">
                   {formatCurrency(row.income)}
                 </td>
-                <td className="px-4 py-2 text-right font-mono">
+                <td className="md:px-4 md:py-2 text-right font-mono">
                   {formatCurrency(row.expense)}
                 </td>
                 <td
                   className={cn(
                     colored(row.total),
-                    "px-4 py-2 text-right font-mono",
+                    "md:px-4 md:py-2 text-right font-mono",
                   )}
                 >
                   {formatCurrency(row.total)}
@@ -110,17 +110,17 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
               </tr>
             ))}
             <tr className="font-bold border-t-2 border-gray-300">
-              <td className="px-4 py-2 text-center">{t("total")}</td>
-              <td className="px-4 py-2 text-right font-mono">
+              <td className="md:px-4 md:py-2 text-center">{t("total")}</td>
+              <td className="md:px-4 md:py-2 text-right font-mono">
                 {formatCurrency(totalIncome)}
               </td>
-              <td className="px-4 py-2 text-right font-mono">
+              <td className="md:px-4 md:py-2 text-right font-mono">
                 {formatCurrency(totalExpense)}
               </td>
               <td
                 className={cn(
                   colored(totalTotal),
-                  "px-4 py-2 text-right font-mono",
+                  "md:px-4 md:py-2 text-right font-mono",
                 )}
               >
                 {formatCurrency(totalTotal)}

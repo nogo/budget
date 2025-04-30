@@ -33,7 +33,7 @@ const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
         <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
         <XAxis dataKey={"year" in data[0] ? "year" : "month"} />
         <YAxis />
-        <Legend verticalAlign="top" />
+        <Legend />
         <Bar dataKey="income" barSize={20} fill="#31b763" name={t("income")} />
         <Bar
           dataKey="expense"
