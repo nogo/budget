@@ -7,14 +7,14 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { formatYearMonth, YearMonth } from "~/utils/yearmonth";
+import { formatYearMonth, YearMonth } from "~/lib/yearmonth";
 import {
   crupTransaction,
   removeTransaction,
   Transaction,
 } from "~/service/transactions";
 import { categoriesQueryOptions } from "~/service/categories";
-import { cn } from "~/utils/utils";
+import { cn } from "~/lib/utils";
 import { z } from "zod";
 import dayjs from "dayjs";
 import { Spinner } from "../Loader";

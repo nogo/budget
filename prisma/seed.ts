@@ -1,4 +1,4 @@
-import { db } from "~/utils/db";
+import { db } from "~/lib/db";
 import { categories, transactions } from "./seed/data";
 
 async function main() {

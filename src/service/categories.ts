@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { z } from "zod";
-import { db } from "~/utils/db";
+import { db } from "~/lib/db";
 
 export const listCategories = createServerFn().handler(async () => {
   return await db.category.findMany({

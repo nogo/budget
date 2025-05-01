@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import MonthlyList from "~/components/Budget/MonthlyList";
 import TransactionForm from "~/components/Budget/TransactionForm";
 import { listTransactionsQueryOptions } from "~/service/transactions";
-import { yearMonthNow } from "~/utils/yearmonth";
+import { yearMonthNow } from "~/lib/yearmonth";
 
 export const Route = createFileRoute("/_app/")({
   component: RouteComponent,

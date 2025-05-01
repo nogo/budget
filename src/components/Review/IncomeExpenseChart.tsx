@@ -4,60 +4,78 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ResponsiveContainer,
   Line,
   CartesianGrid,
   ComposedChart,
   Legend,
   Brush,
 } from "recharts";
-import { formatCurrency } from "~/utils/format";
+import { useTranslation } from "~/locales/translations";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "../ui/chart";
+import { formatCurrency } from "~/lib/format";
 
 type IncomeExpenseChartProps = {
   data: any[];
-  t: (key: string) => string;
-  height?: number;
 };
 
 const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
-  data,
-  t,
-  height = 400,
-}) => (
-  <div
-    className="w-full my-8 p-3 border border-gray-300 shadow-md"
-    style={{ height }}
-  >
-    <ResponsiveContainer width="100%" height="100%">
-      <ComposedChart data={data}>
-        <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
-        <XAxis dataKey={"year" in data[0] ? "year" : "month"} />
-        <YAxis />
-        <Legend />
-        <Bar dataKey="income" barSize={20} fill="#31b763" name={t("income")} />
-        <Bar
-          dataKey="expense"
-          barSize={20}
-          fill="#e7000b"
-          name={t("expense")}
-        />
-        <Line
-          type="monotone"
-          dataKey="accumulated"
-          stroke="#733e0a"
-          strokeWidth={3}
-          dot={false}
-          name={t("accumulatedTotal")}
-        />
-        <Brush
-          dataKey={"year" in data[0] ? "year" : "month"}
-          height={30}
-          stroke="#733e0a"
-        />
-        <Tooltip formatter={(value: number) => formatCurrency(value)} />
-      </ComposedChart>
-    </ResponsiveContainer>
-  </div>
-);
+  data: chartData,
+}) => {
+  const t = useTranslation("Review");
+  const dataX = "year" in chartData[0] ? "year" : "month";
+
+  const chartConfig = {
+    income: {
+      label: t("income"),
+      color: "var(--chart-1)",
+    },
+    expense: {
+      label: t("expense"),
+      color: "var(--chart-2)",
+    },
+    accumulated: {
+      label: t("accumulatedTotal"),
+      color: "var(--chart-3)",
+    },
+  } satisfies ChartConfig;
+
+  return (
+    <div className="w-full my-8 p-3 border border-gray-300 shadow-md">
+      <ChartContainer config={chartConfig}>
+        <ComposedChart accessibilityLayer data={chartData}>
+          <CartesianGrid vertical={false} />
+          <XAxis dataKey={dataX} tickMargin={3} />
+          <YAxis />
+          <Brush
+            dataKey={dataX}
+            height={30}
+            stroke="var(--color-accumulated)"
+          />
+          <ChartLegend content={<ChartLegendContent />} />
+          <ChartTooltip
+            cursor={false}
+            content={<ChartTooltipContent indicator="dot" />}
+          />
+          <Bar dataKey="income" fill="var(--color-income)" radius={4} />
+          <Bar dataKey="expense" fill="var(--color-expense)" radius={4} />
+          <Line
+            dataKey="accumulated"
+            type="monotone"
+            stroke="var(--color-accumulated)"
+            strokeWidth={4}
+            dot={false}
+          />
+        </ComposedChart>
+      </ChartContainer>
+    </div>
+  );
+};
 
 export default IncomeExpenseChart;

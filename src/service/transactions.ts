@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
-import { formatYearMonth, YearMonth, yearMonthNow } from "../utils/yearmonth";
+import { formatYearMonth, YearMonth, yearMonthNow } from "../lib/yearmonth";
 import { z } from "zod";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { db } from "~/utils/db";
+import { db } from "~/lib/db";
 
 dayjs.extend(utc);
 

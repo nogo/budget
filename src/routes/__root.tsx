@@ -10,7 +10,7 @@ import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { LocaleProvider } from "~/components/Locales";
 import { NotFound } from "~/components/NotFound";
 import appCss from "~/styles/app.css?url";
-import { seo } from "~/utils/seo";
+import { seo } from "~/lib/seo";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;

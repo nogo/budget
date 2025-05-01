@@ -1,28 +1,31 @@
 import { Link } from "@tanstack/react-router";
 import React from "react";
 import { formatCurrency } from "~/lib/format";
-import { cn } from "~/lib/utils";
-import IncomeExpenseChart from "./IncomeExpenseChart";
+import { cn, colored, striped } from "~/lib/utils";
 import { useTranslation } from "~/locales/translations";
+import IncomeExpenseChart from "./IncomeExpenseChart";
 
 type YearlyDataRow = {
-  year: number;
+  month: number;
   income: number;
   expense: number;
   total: number;
 };
 
 type YearlyProps = {
+  year: number;
   data: YearlyDataRow[];
 };
 
-const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
+const ReviewMonths: React.FC<YearlyProps> = ({ year, data }) => {
   const t = useTranslation("Review");
 
   const rowsWithTotal = data.map((row) => ({
     ...row,
     total: Math.abs(row.income) - Math.abs(row.expense),
   }));
+  const nextYear = Number(year) + 1;
+  const prevYear = Number(year) - 1;
 
   // Compute accumulated total
   let runningSum = 0;
@@ -32,28 +35,34 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
   });
 
   const totalIncome = rowsWithTotal.reduce(
-    (sum, row) => sum + (Number(row.income) || 0),
+    (sum, row) => sum + Number(row.income) || 0,
     0,
   );
   const totalExpense = rowsWithTotal.reduce(
-    (sum, row) => sum + (Number(row.expense) || 0),
+    (sum, row) => sum + Number(row.expense) || 0,
     0,
   );
   const totalTotal = rowsWithTotal.reduce((sum, row) => sum + row.total, 0);
 
-  const striped = (index: number) => {
-    return index % 2 === 0 ? "bg-gray-100" : "";
-  };
-
-  const colored = (value: number) => {
-    return value < 0 ? "text-red-600" : "text-green-600";
-  };
-
   return (
     <>
-      <h1 className="text-2xl text-center font-bold mb-4">
-        {t("reviewTitle")}
-      </h1>
+      <div className="flex justify-between">
+        <Link
+          to="/review/$year"
+          params={{ year: String(prevYear) }}
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300"
+        >
+          &larr; {prevYear}
+        </Link>
+        <h1 className="text-2xl text-center font-bold mb-4">{year}</h1>
+        <Link
+          to="/review/$year"
+          params={{ year: String(nextYear) }}
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300"
+        >
+          {nextYear} &rarr;
+        </Link>
+      </div>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
         <IncomeExpenseChart data={rowsWithAccumulated} />
         <div className="overflow-x-auto">
@@ -61,7 +70,7 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
             <thead>
               <tr className="border-b-2 border-gray-300">
                 <th className="md:px-4 md:py-2 text-center font-semibold">
-                  {t("year")}
+                  {t("month")}
                 </th>
                 <th className="md:px-4 md:py-2 font-semibold text-right">
                   {t("income")}
@@ -85,13 +94,13 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
                 >
                   <td className="md:px-4 md:py-2 text-center">
                     <Link
-                      to="/review/$year"
-                      className="block"
+                      to="/review/$year/$month"
                       params={{
-                        year: row.year.toString(),
+                        year: year.toString(),
+                        month: row.month.toString(),
                       }}
                     >
-                      {row.year}
+                      {row.month}
                     </Link>
                   </td>
                   <td className="md:px-4 md:py-2 text-right font-mono">
@@ -135,4 +144,4 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
   );
 };
 
-export default ReviewYears;
+export default ReviewMonths;

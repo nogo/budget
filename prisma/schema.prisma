@@ -56,3 +56,15 @@ view ReviewMonths {
   @@map("review_months")
   @@id([year, month])
 }
+
+view ReviewCategoryMonths {
+  year     Int
+  month    Int
+  categoryName String @map("category_name")
+  income   Decimal
+  expense  Decimal
+  total    Decimal
+
+  @@map("review_category_months")
+  @@id([year, month, categoryName])
+}

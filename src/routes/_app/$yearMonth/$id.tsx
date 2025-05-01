@@ -1,4 +1,4 @@
-import { parseYearMonth, YearMonth, yearMonthNow } from "~/utils/yearmonth";
+import { parseYearMonth, YearMonth, yearMonthNow } from "~/lib/yearmonth";
 import { createFileRoute } from "@tanstack/react-router";
 import MonthlyList from "~/components/Budget/MonthlyList";
 import TransactionForm from "~/components/Budget/TransactionForm";
