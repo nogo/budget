@@ -1,5 +1,4 @@
 import * as React from "react";
-import { CheckIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { useForm } from "@tanstack/react-form";
 import {
   useMutation,
@@ -12,13 +11,14 @@ import {
   crupTransaction,
   removeTransaction,
   Transaction,
-} from "~/service/transactions";
-import { categoriesQueryOptions } from "~/service/categories";
+} from "~/service/transactions.api";
 import { cn } from "~/lib/utils";
 import { z } from "zod";
 import dayjs from "dayjs";
 import { Spinner } from "../Loader";
 import { useTranslation } from "~/locales/translations";
+import { Check, Trash } from "lucide-react";
+import { categoryQueries } from "~/service/queries";
 
 interface TransactionFormProps {
   currentMonthYear: YearMonth;
@@ -39,7 +39,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { data: categories } = useSuspenseQuery(categoriesQueryOptions());
+  const { data: categories } = useSuspenseQuery(categoryQueries.list());
   const yearMonthString = formatYearMonth(currentMonthYear);
   const t = useTranslation("TransactionForm");
 
@@ -321,7 +321,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 onClick={() => remove.mutate({ data: transaction.id })}
                 className="md rounded-full bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
               >
-                <TrashIcon className="h-6" />
+                <Trash className="h-6" />
                 <span className="sr-only">{t("delete")}</span>
               </button>
             )}
@@ -335,7 +335,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                     disabled={!canSubmit}
                     className="md rounded-full bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                   >
-                    {isSubmitting ? <Spinner /> : <CheckIcon className="h-6" />}
+                    {isSubmitting ? <Spinner /> : <Check className="h-6" />}
                     <span className="sr-only">{t("save")}</span>
                   </button>
                 </>

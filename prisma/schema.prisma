@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client" // "prisma-client"
+  provider = "prisma-client"
   output = "../src/generated/db"
   previewFeatures = ["relationJoins", "views"]
 }

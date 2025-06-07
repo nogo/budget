@@ -1,7 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { crupCategory } from "~/service/categories";
+import { crupCategory } from "~/service/categories.api";
 import { Spinner } from "../Loader";
 import { Category } from "~/generated/db";
 

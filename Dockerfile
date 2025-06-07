@@ -1,36 +1,40 @@
-FROM node:23-alpine@sha256:86703151a18fcd06258e013073508c4afea8e19cd7ed451554221dd00aea83fc AS base
-
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+FROM oven/bun:1-alpine AS base
 
 FROM base AS deps
-USER node
+RUN mkdir -p /app && chown bun:bun /app
+USER bun
 WORKDIR /app
-COPY --chown=node:node package.json pnpm-lock.yaml* pnpm-workspace.yaml ./
+COPY --chown=bun:bun package.json ./
 USER root
-RUN pnpm install --frozen-lockfile
+RUN bun install --no-progress
 
 FROM base AS builder
-RUN mkdir -p /data && chown -R node:node /data
-USER node
+RUN mkdir -p /data && chown bun:bun /data && chmod 700 /data
+USER bun
 WORKDIR /app
-COPY --chown=node:node --from=deps /app/node_modules ./node_modules
-COPY --chown=node:node . .
+COPY --chown=bun:bun --from=deps /app/node_modules ./node_modules
+COPY --chown=bun:bun . .
 
-RUN pnpm prisma generate
-RUN pnpm build --preset node-server
+RUN bun run deploy
 
-CMD ["pnpm", "run", "start"]
 
-FROM node:23-alpine@sha256:86703151a18fcd06258e013073508c4afea8e19cd7ed451554221dd00aea83fc AS runner
-USER node
+CMD ["bun", "run", "dev"]
+
+FROM oven/bun:1-alpine AS runner
+USER bun
 WORKDIR /app
 
-COPY --chown=node:node --from=builder /app/.output ./
-COPY --chown=node:node --from=builder /app/src/generated/db/libquery*.so.node ./server/
-COPY --chown=node:node .env ./.env
+ENV TZ="Europe/Berlin"
+ENV NODE_ENV=production
+ENV DATABASE_URL="file:/data/budget.db"
+ENV BETTER_AUTH_SECRET=
+ENV VITE_BETTER_AUTH_URL=
+
+COPY --chown=bun:bun --from=builder /app/.output ./
+COPY --chown=bun:bun --from=builder /app/src/generated/prisma/libquery*.so.node ./server/
+COPY --chown=bun:bun healthcheck.js ./healthcheck.js 
 
 EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 CMD bun run /app/healthcheck.js || exit 1
 
-CMD ["node", "server/index.mjs"]
+CMD ["bun", "run", "server/index.mjs"]

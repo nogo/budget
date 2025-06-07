@@ -1,16 +1,16 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import CategoryAddForm from "~/components/Category/CategoryAddForm";
 import CategoryItem from "~/components/Category/CategoryItem";
-import { createFileRoute } from "@tanstack/react-router";
-import { listCategories } from "~/service/categories";
 import { useTranslation } from "~/locales/translations";
+import { categoryQueries } from "~/service/queries";
 
-export const Route = createFileRoute("/_app/categories/")({
+export const Route = createFileRoute({
   component: RouteComponent,
-  loader: async () => listCategories(),
+  loader: async ({ context }) => await context.queryClient.ensureQueryData(categoryQueries.list()),
 });
 
 function RouteComponent() {
-  const categories = Route.useLoaderData();
+  const { data: categories } = useSuspenseQuery(categoryQueries.list());
   const t = useTranslation();
 
   return (

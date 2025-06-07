@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Transaction } from "~/service/transactions";
+import { Transaction } from "~/service/transactions.api";
 import { formatCurrency } from "~/lib/format";
 import { cn } from "~/lib/utils";
 import { currentYearMonth, formatYearMonth } from "~/lib/yearmonth";

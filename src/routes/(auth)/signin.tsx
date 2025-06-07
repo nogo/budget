@@ -1,8 +1,7 @@
-import { WalletIcon } from "@heroicons/react/24/solid";
 import { useForm } from "@tanstack/react-form";
-import { createFileRoute } from "@tanstack/react-router";
+import { Wallet } from "lucide-react";
 
-export const Route = createFileRoute("/(auth)/signin")({
+export const Route = createFileRoute({
   component: SignIn,
 });
 
@@ -30,7 +29,7 @@ function SignIn() {
           }}
         >
           <div className="flex text-yellow-800 justify-center items-center gap-2 text-4xl font-bold capitalize pb-6">
-            <WalletIcon className="h-9" />
+            <Wallet className="h-9" />
             <span>Budget</span>
           </div>
 

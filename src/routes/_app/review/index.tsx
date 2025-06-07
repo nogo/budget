@@ -1,17 +1,16 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
 import ReviewYears from "~/components/Review/ReviewYears";
-import { ReviewYear, reviewYearsQueryOptions } from "~/service/review";
+import { reviewQueries } from "~/service/queries";
 
-export const Route = createFileRoute("/_app/review/")({
+export const Route = createFileRoute({
   component: RouteComponent,
   loader: async ({ context }) => {
-    return await context.queryClient.ensureQueryData(reviewYearsQueryOptions());
+    return await context.queryClient.ensureQueryData(reviewQueries.years());
   },
 });
 
 function RouteComponent() {
-  const { data: reviewYears } = useSuspenseQuery(reviewYearsQueryOptions());
+  const { data: reviewYears } = useSuspenseQuery(reviewQueries.years());
 
   return (
     <div>

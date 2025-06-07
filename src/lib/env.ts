@@ -1,9 +1,14 @@
 import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.string().url(),
+    DATABASE_URL: z
+      .string()
+      .regex(/^(file:).+/, {
+        message:
+          "Invalid DATABASE_URL format. Must start with 'sqlite://' or 'file:'.",
+      }),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),

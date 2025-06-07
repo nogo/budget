@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { CalculatorIcon, TagIcon, WalletIcon } from "@heroicons/react/24/solid";
+import { Calculator, Tag, Wallet } from "lucide-react";
 import { useTranslation } from "~/locales/translations";
 
 const Navbar: React.FC = () => {
@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
             to="/"
             className="shrink-0 flex items-center gap-2 text-2xl font-bold capitalize"
           >
-            <WalletIcon className="h-7" />
+            <Wallet className="h-7" />
             <span>Budget</span>
           </Link>
         </div>
@@ -23,14 +23,14 @@ const Navbar: React.FC = () => {
             to={"/categories"}
             className="flex items-center gap-1 text-sm p-3 hover:bg-yellow-700"
           >
-            <TagIcon className="h-4" />
+            <Tag className="h-4" />
             <span className="max-md:hidden">{t("categories")}</span>
           </Link>
           <Link
             to={"/review"}
             className="flex items-center gap-1 text-sm p-3 hover:bg-yellow-700"
           >
-            <CalculatorIcon className="h-4" />
+            <Calculator className="h-4" />
             <span className="max-md:hidden">{t("review")}</span>
           </Link>
         </div>

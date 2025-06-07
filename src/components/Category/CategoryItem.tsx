@@ -1,9 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import {
-  ArrowRightEndOnRectangleIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/solid";
+import { Merge, Pencil, Trash } from "lucide-react";
 import { Category } from "~/generated/db";
 import { useTranslation } from "~/locales/translations";
 
@@ -29,20 +25,20 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ category }) => {
           to="/categories/$categoryId/edit"
           params={{ categoryId: category.id.toString() }}
         >
-          <PencilIcon className="h-5" />
+          <Pencil className="h-5" />
         </Link>
         <Link
           to="/categories/$categoryId/merge"
           params={{ categoryId: category.id.toString() }}
         >
-          <ArrowRightEndOnRectangleIcon className="h-5" />
+          <Merge className="h-5" />
         </Link>
         <Link
           to="/categories/$categoryId/remove"
           params={{ categoryId: category.id.toString() }}
           className="text-red-500"
         >
-          <TrashIcon className="h-5" />
+          <Trash className="h-5" />
         </Link>
       </div>
     </div>

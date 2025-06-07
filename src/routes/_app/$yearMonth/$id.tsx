@@ -1,14 +1,10 @@
-import { parseYearMonth, YearMonth, yearMonthNow } from "~/lib/yearmonth";
-import { createFileRoute } from "@tanstack/react-router";
+import { parseYearMonth, yearMonthNow } from "~/lib/yearmonth";
 import MonthlyList from "~/components/Budget/MonthlyList";
 import TransactionForm from "~/components/Budget/TransactionForm";
-import {
-  findTransactionsQueryOptions,
-  listTransactionsQueryOptions,
-} from "~/service/transactions";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { transactionQueries } from "~/service/queries";
 
-export const Route = createFileRoute("/_app/$yearMonth/$id")({
+export const Route = createFileRoute({
   component: YearMonthItemEdit,
   beforeLoad: async ({ params }) => {
     const yearMonth = parseYearMonth(params.yearMonth);
@@ -17,9 +13,9 @@ export const Route = createFileRoute("/_app/$yearMonth/$id")({
   loader: async ({ context, params: { id } }) => {
     return Promise.all([
       context.queryClient.ensureQueryData(
-        listTransactionsQueryOptions(context.currentMonthYear),
+        transactionQueries.list(context.currentMonthYear),
       ),
-      context.queryClient.ensureQueryData(findTransactionsQueryOptions(id)),
+      context.queryClient.ensureQueryData(transactionQueries.detail(id)),
     ]);
   },
 });
@@ -29,7 +25,7 @@ function YearMonthItemEdit() {
   const { id } = Route.useParams();
 
   const transactionsQuery = useSuspenseQuery(
-    listTransactionsQueryOptions(currentMonthYear),
+    transactionQueries.list(currentMonthYear),
   );
   const transactions = transactionsQuery.data;
 

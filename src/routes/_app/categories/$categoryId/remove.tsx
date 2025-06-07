@@ -1,9 +1,9 @@
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import { NotFound } from "~/components/NotFound";
-import { categoryQueryOptions, removeCategory } from "~/service/categories";
+import { categoryQueryOptions, removeCategory } from "~/service/categories.api";
 
-export const Route = createFileRoute("/_app/categories/$categoryId/remove")({
+export const Route = createFileRoute({
   component: RouteComponent,
   loader: async ({ params: { categoryId }, context }) => {
     const data = await context.queryClient.ensureQueryData(

@@ -8,100 +8,102 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AppRouteImport } from './routes/_app/route'
-import { Route as AppIndexImport } from './routes/_app/index'
-import { Route as authSigninImport } from './routes/(auth)/signin'
-import { Route as authLogoutImport } from './routes/(auth)/logout'
-import { Route as AppReviewIndexImport } from './routes/_app/review/index'
-import { Route as AppCategoriesIndexImport } from './routes/_app/categories/index'
-import { Route as AppYearMonthIndexImport } from './routes/_app/$yearMonth/index'
-import { Route as AppYearMonthIdImport } from './routes/_app/$yearMonth/$id'
-import { Route as AppReviewYearIndexImport } from './routes/_app/review/$year/index'
-import { Route as AppReviewYearMonthImport } from './routes/_app/review/$year/$month'
-import { Route as AppCategoriesCategoryIdRemoveImport } from './routes/_app/categories/$categoryId/remove'
-import { Route as AppCategoriesCategoryIdMergeImport } from './routes/_app/categories/$categoryId/merge'
-import { Route as AppCategoriesCategoryIdEditImport } from './routes/_app/categories/$categoryId/edit'
+import { Route as AppRouteRouteImport } from './routes/_app/route'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as authSigninRouteImport } from './routes/(auth)/signin'
+import { Route as authLogoutRouteImport } from './routes/(auth)/logout'
+import { Route as AppReviewIndexRouteImport } from './routes/_app/review/index'
+import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
+import { Route as AppYearMonthIndexRouteImport } from './routes/_app/$yearMonth/index'
+import { Route as AppYearMonthIdRouteImport } from './routes/_app/$yearMonth/$id'
+import { Route as AppReviewYearIndexRouteImport } from './routes/_app/review/$year/index'
+import { Route as AppReviewYearMonthRouteImport } from './routes/_app/review/$year/$month'
+import { Route as AppCategoriesCategoryIdRemoveRouteImport } from './routes/_app/categories/$categoryId/remove'
+import { Route as AppCategoriesCategoryIdMergeRouteImport } from './routes/_app/categories/$categoryId/merge'
+import { Route as AppCategoriesCategoryIdEditRouteImport } from './routes/_app/categories/$categoryId/edit'
 
 // Create/Update Routes
 
-const AppRouteRoute = AppRouteImport.update({
+const AppRouteRoute = AppRouteRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AppIndexRoute = AppIndexImport.update({
+const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
-const authSigninRoute = authSigninImport.update({
+const authSigninRoute = authSigninRouteImport.update({
   id: '/(auth)/signin',
   path: '/signin',
   getParentRoute: () => rootRoute,
 } as any)
 
-const authLogoutRoute = authLogoutImport.update({
+const authLogoutRoute = authLogoutRouteImport.update({
   id: '/(auth)/logout',
   path: '/logout',
   getParentRoute: () => rootRoute,
 } as any)
 
-const AppReviewIndexRoute = AppReviewIndexImport.update({
+const AppReviewIndexRoute = AppReviewIndexRouteImport.update({
   id: '/review/',
   path: '/review/',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
-const AppCategoriesIndexRoute = AppCategoriesIndexImport.update({
+const AppCategoriesIndexRoute = AppCategoriesIndexRouteImport.update({
   id: '/categories/',
   path: '/categories/',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
-const AppYearMonthIndexRoute = AppYearMonthIndexImport.update({
+const AppYearMonthIndexRoute = AppYearMonthIndexRouteImport.update({
   id: '/$yearMonth/',
   path: '/$yearMonth/',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
-const AppYearMonthIdRoute = AppYearMonthIdImport.update({
+const AppYearMonthIdRoute = AppYearMonthIdRouteImport.update({
   id: '/$yearMonth/$id',
   path: '/$yearMonth/$id',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
-const AppReviewYearIndexRoute = AppReviewYearIndexImport.update({
+const AppReviewYearIndexRoute = AppReviewYearIndexRouteImport.update({
   id: '/review/$year/',
   path: '/review/$year/',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
-const AppReviewYearMonthRoute = AppReviewYearMonthImport.update({
+const AppReviewYearMonthRoute = AppReviewYearMonthRouteImport.update({
   id: '/review/$year/$month',
   path: '/review/$year/$month',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
 const AppCategoriesCategoryIdRemoveRoute =
-  AppCategoriesCategoryIdRemoveImport.update({
+  AppCategoriesCategoryIdRemoveRouteImport.update({
     id: '/categories/$categoryId/remove',
     path: '/categories/$categoryId/remove',
     getParentRoute: () => AppRouteRoute,
   } as any)
 
 const AppCategoriesCategoryIdMergeRoute =
-  AppCategoriesCategoryIdMergeImport.update({
+  AppCategoriesCategoryIdMergeRouteImport.update({
     id: '/categories/$categoryId/merge',
     path: '/categories/$categoryId/merge',
     getParentRoute: () => AppRouteRoute,
   } as any)
 
 const AppCategoriesCategoryIdEditRoute =
-  AppCategoriesCategoryIdEditImport.update({
+  AppCategoriesCategoryIdEditRouteImport.update({
     id: '/categories/$categoryId/edit',
     path: '/categories/$categoryId/edit',
     getParentRoute: () => AppRouteRoute,
@@ -115,94 +117,214 @@ declare module '@tanstack/react-router' {
       id: '/_app'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppRouteRouteImport
       parentRoute: typeof rootRoute
     }
     '/(auth)/logout': {
       id: '/(auth)/logout'
       path: '/logout'
       fullPath: '/logout'
-      preLoaderRoute: typeof authLogoutImport
+      preLoaderRoute: typeof authLogoutRouteImport
       parentRoute: typeof rootRoute
     }
     '/(auth)/signin': {
       id: '/(auth)/signin'
       path: '/signin'
       fullPath: '/signin'
-      preLoaderRoute: typeof authSigninImport
+      preLoaderRoute: typeof authSigninRouteImport
       parentRoute: typeof rootRoute
     }
     '/_app/': {
       id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AppIndexImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRouteRouteImport
     }
     '/_app/$yearMonth/$id': {
       id: '/_app/$yearMonth/$id'
       path: '/$yearMonth/$id'
       fullPath: '/$yearMonth/$id'
-      preLoaderRoute: typeof AppYearMonthIdImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppYearMonthIdRouteImport
+      parentRoute: typeof AppRouteRouteImport
     }
     '/_app/$yearMonth/': {
       id: '/_app/$yearMonth/'
       path: '/$yearMonth'
       fullPath: '/$yearMonth'
-      preLoaderRoute: typeof AppYearMonthIndexImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppYearMonthIndexRouteImport
+      parentRoute: typeof AppRouteRouteImport
     }
     '/_app/categories/': {
       id: '/_app/categories/'
       path: '/categories'
       fullPath: '/categories'
-      preLoaderRoute: typeof AppCategoriesIndexImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppCategoriesIndexRouteImport
+      parentRoute: typeof AppRouteRouteImport
     }
     '/_app/review/': {
       id: '/_app/review/'
       path: '/review'
       fullPath: '/review'
-      preLoaderRoute: typeof AppReviewIndexImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppReviewIndexRouteImport
+      parentRoute: typeof AppRouteRouteImport
     }
     '/_app/categories/$categoryId/edit': {
       id: '/_app/categories/$categoryId/edit'
       path: '/categories/$categoryId/edit'
       fullPath: '/categories/$categoryId/edit'
-      preLoaderRoute: typeof AppCategoriesCategoryIdEditImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppCategoriesCategoryIdEditRouteImport
+      parentRoute: typeof AppRouteRouteImport
     }
     '/_app/categories/$categoryId/merge': {
       id: '/_app/categories/$categoryId/merge'
       path: '/categories/$categoryId/merge'
       fullPath: '/categories/$categoryId/merge'
-      preLoaderRoute: typeof AppCategoriesCategoryIdMergeImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppCategoriesCategoryIdMergeRouteImport
+      parentRoute: typeof AppRouteRouteImport
     }
     '/_app/categories/$categoryId/remove': {
       id: '/_app/categories/$categoryId/remove'
       path: '/categories/$categoryId/remove'
       fullPath: '/categories/$categoryId/remove'
-      preLoaderRoute: typeof AppCategoriesCategoryIdRemoveImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppCategoriesCategoryIdRemoveRouteImport
+      parentRoute: typeof AppRouteRouteImport
     }
     '/_app/review/$year/$month': {
       id: '/_app/review/$year/$month'
       path: '/review/$year/$month'
       fullPath: '/review/$year/$month'
-      preLoaderRoute: typeof AppReviewYearMonthImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppReviewYearMonthRouteImport
+      parentRoute: typeof AppRouteRouteImport
     }
     '/_app/review/$year/': {
       id: '/_app/review/$year/'
       path: '/review/$year'
       fullPath: '/review/$year'
-      preLoaderRoute: typeof AppReviewYearIndexImport
-      parentRoute: typeof AppRouteImport
+      preLoaderRoute: typeof AppReviewYearIndexRouteImport
+      parentRoute: typeof AppRouteRouteImport
     }
   }
+}
+
+// Add type-safety to the createFileRoute function across the route tree
+
+declare module './routes/_app/route' {
+  const createFileRoute: CreateFileRoute<
+    '/_app',
+    FileRoutesByPath['/_app']['parentRoute'],
+    FileRoutesByPath['/_app']['id'],
+    FileRoutesByPath['/_app']['path'],
+    FileRoutesByPath['/_app']['fullPath']
+  >
+}
+declare module './routes/(auth)/logout' {
+  const createFileRoute: CreateFileRoute<
+    '/(auth)/logout',
+    FileRoutesByPath['/(auth)/logout']['parentRoute'],
+    FileRoutesByPath['/(auth)/logout']['id'],
+    FileRoutesByPath['/(auth)/logout']['path'],
+    FileRoutesByPath['/(auth)/logout']['fullPath']
+  >
+}
+declare module './routes/(auth)/signin' {
+  const createFileRoute: CreateFileRoute<
+    '/(auth)/signin',
+    FileRoutesByPath['/(auth)/signin']['parentRoute'],
+    FileRoutesByPath['/(auth)/signin']['id'],
+    FileRoutesByPath['/(auth)/signin']['path'],
+    FileRoutesByPath['/(auth)/signin']['fullPath']
+  >
+}
+declare module './routes/_app/index' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/',
+    FileRoutesByPath['/_app/']['parentRoute'],
+    FileRoutesByPath['/_app/']['id'],
+    FileRoutesByPath['/_app/']['path'],
+    FileRoutesByPath['/_app/']['fullPath']
+  >
+}
+declare module './routes/_app/$yearMonth/$id' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/$yearMonth/$id',
+    FileRoutesByPath['/_app/$yearMonth/$id']['parentRoute'],
+    FileRoutesByPath['/_app/$yearMonth/$id']['id'],
+    FileRoutesByPath['/_app/$yearMonth/$id']['path'],
+    FileRoutesByPath['/_app/$yearMonth/$id']['fullPath']
+  >
+}
+declare module './routes/_app/$yearMonth/index' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/$yearMonth/',
+    FileRoutesByPath['/_app/$yearMonth/']['parentRoute'],
+    FileRoutesByPath['/_app/$yearMonth/']['id'],
+    FileRoutesByPath['/_app/$yearMonth/']['path'],
+    FileRoutesByPath['/_app/$yearMonth/']['fullPath']
+  >
+}
+declare module './routes/_app/categories/index' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/categories/',
+    FileRoutesByPath['/_app/categories/']['parentRoute'],
+    FileRoutesByPath['/_app/categories/']['id'],
+    FileRoutesByPath['/_app/categories/']['path'],
+    FileRoutesByPath['/_app/categories/']['fullPath']
+  >
+}
+declare module './routes/_app/review/index' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/review/',
+    FileRoutesByPath['/_app/review/']['parentRoute'],
+    FileRoutesByPath['/_app/review/']['id'],
+    FileRoutesByPath['/_app/review/']['path'],
+    FileRoutesByPath['/_app/review/']['fullPath']
+  >
+}
+declare module './routes/_app/categories/$categoryId/edit' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/categories/$categoryId/edit',
+    FileRoutesByPath['/_app/categories/$categoryId/edit']['parentRoute'],
+    FileRoutesByPath['/_app/categories/$categoryId/edit']['id'],
+    FileRoutesByPath['/_app/categories/$categoryId/edit']['path'],
+    FileRoutesByPath['/_app/categories/$categoryId/edit']['fullPath']
+  >
+}
+declare module './routes/_app/categories/$categoryId/merge' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/categories/$categoryId/merge',
+    FileRoutesByPath['/_app/categories/$categoryId/merge']['parentRoute'],
+    FileRoutesByPath['/_app/categories/$categoryId/merge']['id'],
+    FileRoutesByPath['/_app/categories/$categoryId/merge']['path'],
+    FileRoutesByPath['/_app/categories/$categoryId/merge']['fullPath']
+  >
+}
+declare module './routes/_app/categories/$categoryId/remove' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/categories/$categoryId/remove',
+    FileRoutesByPath['/_app/categories/$categoryId/remove']['parentRoute'],
+    FileRoutesByPath['/_app/categories/$categoryId/remove']['id'],
+    FileRoutesByPath['/_app/categories/$categoryId/remove']['path'],
+    FileRoutesByPath['/_app/categories/$categoryId/remove']['fullPath']
+  >
+}
+declare module './routes/_app/review/$year/$month' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/review/$year/$month',
+    FileRoutesByPath['/_app/review/$year/$month']['parentRoute'],
+    FileRoutesByPath['/_app/review/$year/$month']['id'],
+    FileRoutesByPath['/_app/review/$year/$month']['path'],
+    FileRoutesByPath['/_app/review/$year/$month']['fullPath']
+  >
+}
+declare module './routes/_app/review/$year/index' {
+  const createFileRoute: CreateFileRoute<
+    '/_app/review/$year/',
+    FileRoutesByPath['/_app/review/$year/']['parentRoute'],
+    FileRoutesByPath['/_app/review/$year/']['id'],
+    FileRoutesByPath['/_app/review/$year/']['path'],
+    FileRoutesByPath['/_app/review/$year/']['fullPath']
+  >
 }
 
 // Create and export the route tree

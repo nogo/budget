@@ -1,29 +1,26 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
 import MonthlyList from "~/components/Budget/MonthlyList";
 import TransactionForm from "~/components/Budget/TransactionForm";
-import { listTransactionsQueryOptions } from "~/service/transactions";
 import { yearMonthNow } from "~/lib/yearmonth";
+import { transactionQueries } from "~/service/queries";
 
-export const Route = createFileRoute("/_app/")({
+export const Route = createFileRoute({
   component: RouteComponent,
   beforeLoad: async () => {
     return { currentMonthYear: yearMonthNow() };
   },
   loader: async ({ context }) => {
     return await context.queryClient.ensureQueryData(
-      listTransactionsQueryOptions(context.currentMonthYear),
+      transactionQueries.list(context.currentMonthYear),
     );
   },
 });
 
 function RouteComponent() {
   const { currentMonthYear } = Route.useRouteContext();
-
-  const transactionQuery = useSuspenseQuery(
-    listTransactionsQueryOptions(currentMonthYear),
+  const { data: transactions } = useSuspenseQuery(
+    transactionQueries.list(currentMonthYear),
   );
-  const transactions = transactionQuery.data;
 
   return (
     <div className="flex flex-col gap-4 md:flex-row">

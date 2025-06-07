@@ -1,11 +1,11 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { crupCategory } from "~/service/categories";
+import { crupCategory } from "~/service/categories.api";
 import { Spinner } from "../Loader";
-import { CheckIcon } from "@heroicons/react/24/solid";
 import { Category } from "~/generated/db";
 import { useTranslation } from "~/locales/translations";
+import { Check } from "lucide-react";
 
 const CategoryAddForm: React.FC = () => {
   const router = useRouter();
@@ -111,7 +111,7 @@ const CategoryAddForm: React.FC = () => {
                 disabled={!canSubmit}
                 className="md rounded-full bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
               >
-                {isSubmitting ? <Spinner /> : <CheckIcon className="h-5" />}
+                {isSubmitting ? <Spinner /> : <Check className="h-5" />}
               </button>
             </>
           )}
