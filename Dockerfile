@@ -14,9 +14,7 @@ USER bun
 WORKDIR /app
 COPY --chown=bun:bun --from=deps /app/node_modules ./node_modules
 COPY --chown=bun:bun . .
-
 RUN bun run deploy
-
 
 CMD ["bun", "run", "dev"]
 
