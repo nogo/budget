@@ -5,7 +5,6 @@ import {
   createFileRoute,
 } from "@tanstack/react-router";
 import { NotFound } from "~/components/NotFound";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { categoryQueries } from "~/service/queries";
 import { useTranslation } from "~/locales/translations";
 

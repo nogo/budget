@@ -7,8 +7,15 @@ import { reviewQueries } from "~/service/queries";
 export const Route = createFileRoute("/_app/review/$year/$month")({
   component: RouteComponent,
   loader: async ({ params, context }) => {
+    const yearNumber = parseInt(params.year)
+      ? parseInt(params.year)
+      : new Date().getFullYear();
+    const monthNumber = parseInt(params.month)
+      ? parseInt(params.month)
+      : new Date().getMonth() + 1;
+
     return await context.queryClient.ensureQueryData(
-      reviewQueries.month(params.year, params.month),
+      reviewQueries.month(yearNumber, monthNumber),
     );
   },
 });

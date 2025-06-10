@@ -7,8 +7,8 @@ dayjs.extend(utc);
 export const ListTransactionSchema = z
   .string()
   .optional()
-  .transform((d) => dayjs.utc(d, "YYYY-MM", true))
-  .default(() => dayjs().format("YYYY-MM"));
+  .catch(() => dayjs().format("YYYY-MM"))
+  .transform((d) => dayjs.utc(d, "YYYY-MM", true));
 
 export const TransactionCreateSchema = z.object({
   id: z.number().optional(),

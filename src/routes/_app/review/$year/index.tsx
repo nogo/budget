@@ -1,20 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import ReviewMonths from "~/components/Review/ReviewMonths";
 import { reviewQueries } from "~/service/queries";
 
 export const Route = createFileRoute("/_app/review/$year/")({
   component: RouteComponent,
   loader: async ({ params, context }) => {
-    return await context.queryClient.ensureQueryData(
-      reviewQueries.year(params.year),
-    );
+    const yearNumber = parseInt(params.year)
+      ? parseInt(params.year)
+      : new Date().getFullYear();
+
+    return await context.queryClient.fetchQuery(reviewQueries.year(yearNumber));
   },
 });
 
 function RouteComponent() {
   const { year } = Route.useParams();
-  const { data } = useSuspenseQuery(reviewQueries.year(year));
+  const yearNumber = parseInt(year) ? parseInt(year) : new Date().getFullYear();
+  const data = Route.useLoaderData();
 
-  return <ReviewMonths year={year} data={data} />;
+  return <ReviewMonths year={yearNumber} data={data} />;
 }
