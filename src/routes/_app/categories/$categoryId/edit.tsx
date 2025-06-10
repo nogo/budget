@@ -1,8 +1,13 @@
 import CategoryEditForm from "~/components/Category/CategoryEditForm";
-import { ErrorComponent, ErrorComponentProps, createFileRoute } from "@tanstack/react-router";
+import {
+  ErrorComponent,
+  ErrorComponentProps,
+  createFileRoute,
+} from "@tanstack/react-router";
 import { NotFound } from "~/components/NotFound";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { categoryQueries } from "~/service/queries";
+import { useTranslation } from "~/locales/translations";
 
 export const Route = createFileRoute("/_app/categories/$categoryId/edit")({
   component: RouteComponent,
@@ -12,21 +17,20 @@ export const Route = createFileRoute("/_app/categories/$categoryId/edit")({
     );
     return data;
   },
-  //errorComponent: CategoryErrorComponent,
   notFoundComponent: () => {
     return <NotFound>Category not found</NotFound>;
   },
 });
 
 function RouteComponent() {
-  const { categoryId } = Route.useParams();
-  const categoryQuery = useSuspenseQuery(categoryQueries.detail(categoryId));
-  const category = categoryQuery.data;
+  const category = Route.useLoaderData();
+  const t = useTranslation("Categories");
 
   return (
-    <>
+    <div className="grid grid-cols-1 border border-gray-300 shadow-md">
+      <h1 className="p-2 text-center font-bold">{t("editCategory")}</h1>
       <CategoryEditForm category={category} />
-    </>
+    </div>
   );
 }
 

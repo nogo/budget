@@ -15,7 +15,7 @@ export default {
     hasNotesLabel: "mit Notizen",
     withNotes: "mit Notizen",
     submit: "Kategorie hinzufügen",
-    editCategory: "Kategory bearbeiten",
+    editCategory: "Kategorie bearbeiten",
     cancel: "Zurück",
     removeQuestion: "Du bist dabei $1 zu entfernen?",
     yesRemove: "Ja, $1 entfernen",

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import ReviewMonths from "~/components/Review/ReviewMonths";
 import { reviewQueries } from "~/service/queries";
@@ -16,9 +16,5 @@ function RouteComponent() {
   const { year } = Route.useParams();
   const { data } = useSuspenseQuery(reviewQueries.year(year));
 
-  return (
-    <div>
-      <ReviewMonths year={year} data={data} />
-    </div>
-  );
+  return <ReviewMonths year={year} data={data} />;
 }

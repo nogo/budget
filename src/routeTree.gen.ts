@@ -13,6 +13,8 @@ import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as authSigninRouteImport } from './routes/(auth)/signin'
 import { Route as authLogoutRouteImport } from './routes/(auth)/logout'
+import { Route as AppReviewRouteRouteImport } from './routes/_app/review/route'
+import { Route as AppCategoriesRouteRouteImport } from './routes/_app/categories/route'
 import { Route as AppReviewIndexRouteImport } from './routes/_app/review/index'
 import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
 import { Route as AppYearMonthIndexRouteImport } from './routes/_app/$yearMonth/index'
@@ -42,15 +44,25 @@ const authLogoutRoute = authLogoutRouteImport.update({
   path: '/logout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppReviewIndexRoute = AppReviewIndexRouteImport.update({
-  id: '/review/',
-  path: '/review/',
+const AppReviewRouteRoute = AppReviewRouteRouteImport.update({
+  id: '/review',
+  path: '/review',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const AppCategoriesIndexRoute = AppCategoriesIndexRouteImport.update({
-  id: '/categories/',
-  path: '/categories/',
+const AppCategoriesRouteRoute = AppCategoriesRouteRouteImport.update({
+  id: '/categories',
+  path: '/categories',
   getParentRoute: () => AppRouteRoute,
+} as any)
+const AppReviewIndexRoute = AppReviewIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppReviewRouteRoute,
+} as any)
+const AppCategoriesIndexRoute = AppCategoriesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppCategoriesRouteRoute,
 } as any)
 const AppYearMonthIndexRoute = AppYearMonthIndexRouteImport.update({
   id: '/$yearMonth/',
@@ -63,43 +75,45 @@ const AppYearMonthIdRoute = AppYearMonthIdRouteImport.update({
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppReviewYearIndexRoute = AppReviewYearIndexRouteImport.update({
-  id: '/review/$year/',
-  path: '/review/$year/',
-  getParentRoute: () => AppRouteRoute,
+  id: '/$year/',
+  path: '/$year/',
+  getParentRoute: () => AppReviewRouteRoute,
 } as any)
 const AppReviewYearMonthRoute = AppReviewYearMonthRouteImport.update({
-  id: '/review/$year/$month',
-  path: '/review/$year/$month',
-  getParentRoute: () => AppRouteRoute,
+  id: '/$year/$month',
+  path: '/$year/$month',
+  getParentRoute: () => AppReviewRouteRoute,
 } as any)
 const AppCategoriesCategoryIdRemoveRoute =
   AppCategoriesCategoryIdRemoveRouteImport.update({
-    id: '/categories/$categoryId/remove',
-    path: '/categories/$categoryId/remove',
-    getParentRoute: () => AppRouteRoute,
+    id: '/$categoryId/remove',
+    path: '/$categoryId/remove',
+    getParentRoute: () => AppCategoriesRouteRoute,
   } as any)
 const AppCategoriesCategoryIdMergeRoute =
   AppCategoriesCategoryIdMergeRouteImport.update({
-    id: '/categories/$categoryId/merge',
-    path: '/categories/$categoryId/merge',
-    getParentRoute: () => AppRouteRoute,
+    id: '/$categoryId/merge',
+    path: '/$categoryId/merge',
+    getParentRoute: () => AppCategoriesRouteRoute,
   } as any)
 const AppCategoriesCategoryIdEditRoute =
   AppCategoriesCategoryIdEditRouteImport.update({
-    id: '/categories/$categoryId/edit',
-    path: '/categories/$categoryId/edit',
-    getParentRoute: () => AppRouteRoute,
+    id: '/$categoryId/edit',
+    path: '/$categoryId/edit',
+    getParentRoute: () => AppCategoriesRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '': typeof AppRouteRouteWithChildren
+  '/categories': typeof AppCategoriesRouteRouteWithChildren
+  '/review': typeof AppReviewRouteRouteWithChildren
   '/logout': typeof authLogoutRoute
   '/signin': typeof authSigninRoute
   '/': typeof AppIndexRoute
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
-  '/categories': typeof AppCategoriesIndexRoute
-  '/review': typeof AppReviewIndexRoute
+  '/categories/': typeof AppCategoriesIndexRoute
+  '/review/': typeof AppReviewIndexRoute
   '/categories/$categoryId/edit': typeof AppCategoriesCategoryIdEditRoute
   '/categories/$categoryId/merge': typeof AppCategoriesCategoryIdMergeRoute
   '/categories/$categoryId/remove': typeof AppCategoriesCategoryIdRemoveRoute
@@ -123,6 +137,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteRouteWithChildren
+  '/_app/categories': typeof AppCategoriesRouteRouteWithChildren
+  '/_app/review': typeof AppReviewRouteRouteWithChildren
   '/(auth)/logout': typeof authLogoutRoute
   '/(auth)/signin': typeof authSigninRoute
   '/_app/': typeof AppIndexRoute
@@ -140,13 +156,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/categories'
+    | '/review'
     | '/logout'
     | '/signin'
     | '/'
     | '/$yearMonth/$id'
     | '/$yearMonth'
-    | '/categories'
-    | '/review'
+    | '/categories/'
+    | '/review/'
     | '/categories/$categoryId/edit'
     | '/categories/$categoryId/merge'
     | '/categories/$categoryId/remove'
@@ -169,6 +187,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/_app/categories'
+    | '/_app/review'
     | '/(auth)/logout'
     | '/(auth)/signin'
     | '/_app/'
@@ -197,6 +217,20 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof AppRouteRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_app/categories': {
+      id: '/_app/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof AppCategoriesRouteRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/review': {
+      id: '/_app/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof AppReviewRouteRouteImport
+      parentRoute: typeof AppRouteRoute
     }
     '/(auth)/logout': {
       id: '/(auth)/logout'
@@ -235,80 +269,103 @@ declare module '@tanstack/react-router' {
     }
     '/_app/categories/': {
       id: '/_app/categories/'
-      path: '/categories'
-      fullPath: '/categories'
+      path: '/'
+      fullPath: '/categories/'
       preLoaderRoute: typeof AppCategoriesIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+      parentRoute: typeof AppCategoriesRouteRoute
     }
     '/_app/review/': {
       id: '/_app/review/'
-      path: '/review'
-      fullPath: '/review'
+      path: '/'
+      fullPath: '/review/'
       preLoaderRoute: typeof AppReviewIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+      parentRoute: typeof AppReviewRouteRoute
     }
     '/_app/categories/$categoryId/edit': {
       id: '/_app/categories/$categoryId/edit'
-      path: '/categories/$categoryId/edit'
+      path: '/$categoryId/edit'
       fullPath: '/categories/$categoryId/edit'
       preLoaderRoute: typeof AppCategoriesCategoryIdEditRouteImport
-      parentRoute: typeof AppRouteRoute
+      parentRoute: typeof AppCategoriesRouteRoute
     }
     '/_app/categories/$categoryId/merge': {
       id: '/_app/categories/$categoryId/merge'
-      path: '/categories/$categoryId/merge'
+      path: '/$categoryId/merge'
       fullPath: '/categories/$categoryId/merge'
       preLoaderRoute: typeof AppCategoriesCategoryIdMergeRouteImport
-      parentRoute: typeof AppRouteRoute
+      parentRoute: typeof AppCategoriesRouteRoute
     }
     '/_app/categories/$categoryId/remove': {
       id: '/_app/categories/$categoryId/remove'
-      path: '/categories/$categoryId/remove'
+      path: '/$categoryId/remove'
       fullPath: '/categories/$categoryId/remove'
       preLoaderRoute: typeof AppCategoriesCategoryIdRemoveRouteImport
-      parentRoute: typeof AppRouteRoute
+      parentRoute: typeof AppCategoriesRouteRoute
     }
     '/_app/review/$year/$month': {
       id: '/_app/review/$year/$month'
-      path: '/review/$year/$month'
+      path: '/$year/$month'
       fullPath: '/review/$year/$month'
       preLoaderRoute: typeof AppReviewYearMonthRouteImport
-      parentRoute: typeof AppRouteRoute
+      parentRoute: typeof AppReviewRouteRoute
     }
     '/_app/review/$year/': {
       id: '/_app/review/$year/'
-      path: '/review/$year'
+      path: '/$year'
       fullPath: '/review/$year'
       preLoaderRoute: typeof AppReviewYearIndexRouteImport
-      parentRoute: typeof AppRouteRoute
+      parentRoute: typeof AppReviewRouteRoute
     }
   }
 }
 
-interface AppRouteRouteChildren {
-  AppIndexRoute: typeof AppIndexRoute
-  AppYearMonthIdRoute: typeof AppYearMonthIdRoute
-  AppYearMonthIndexRoute: typeof AppYearMonthIndexRoute
+interface AppCategoriesRouteRouteChildren {
   AppCategoriesIndexRoute: typeof AppCategoriesIndexRoute
-  AppReviewIndexRoute: typeof AppReviewIndexRoute
   AppCategoriesCategoryIdEditRoute: typeof AppCategoriesCategoryIdEditRoute
   AppCategoriesCategoryIdMergeRoute: typeof AppCategoriesCategoryIdMergeRoute
   AppCategoriesCategoryIdRemoveRoute: typeof AppCategoriesCategoryIdRemoveRoute
+}
+
+const AppCategoriesRouteRouteChildren: AppCategoriesRouteRouteChildren = {
+  AppCategoriesIndexRoute: AppCategoriesIndexRoute,
+  AppCategoriesCategoryIdEditRoute: AppCategoriesCategoryIdEditRoute,
+  AppCategoriesCategoryIdMergeRoute: AppCategoriesCategoryIdMergeRoute,
+  AppCategoriesCategoryIdRemoveRoute: AppCategoriesCategoryIdRemoveRoute,
+}
+
+const AppCategoriesRouteRouteWithChildren =
+  AppCategoriesRouteRoute._addFileChildren(AppCategoriesRouteRouteChildren)
+
+interface AppReviewRouteRouteChildren {
+  AppReviewIndexRoute: typeof AppReviewIndexRoute
   AppReviewYearMonthRoute: typeof AppReviewYearMonthRoute
   AppReviewYearIndexRoute: typeof AppReviewYearIndexRoute
 }
 
+const AppReviewRouteRouteChildren: AppReviewRouteRouteChildren = {
+  AppReviewIndexRoute: AppReviewIndexRoute,
+  AppReviewYearMonthRoute: AppReviewYearMonthRoute,
+  AppReviewYearIndexRoute: AppReviewYearIndexRoute,
+}
+
+const AppReviewRouteRouteWithChildren = AppReviewRouteRoute._addFileChildren(
+  AppReviewRouteRouteChildren,
+)
+
+interface AppRouteRouteChildren {
+  AppCategoriesRouteRoute: typeof AppCategoriesRouteRouteWithChildren
+  AppReviewRouteRoute: typeof AppReviewRouteRouteWithChildren
+  AppIndexRoute: typeof AppIndexRoute
+  AppYearMonthIdRoute: typeof AppYearMonthIdRoute
+  AppYearMonthIndexRoute: typeof AppYearMonthIndexRoute
+}
+
 const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppCategoriesRouteRoute: AppCategoriesRouteRouteWithChildren,
+  AppReviewRouteRoute: AppReviewRouteRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppYearMonthIdRoute: AppYearMonthIdRoute,
   AppYearMonthIndexRoute: AppYearMonthIndexRoute,
-  AppCategoriesIndexRoute: AppCategoriesIndexRoute,
-  AppReviewIndexRoute: AppReviewIndexRoute,
-  AppCategoriesCategoryIdEditRoute: AppCategoriesCategoryIdEditRoute,
-  AppCategoriesCategoryIdMergeRoute: AppCategoriesCategoryIdMergeRoute,
-  AppCategoriesCategoryIdRemoveRoute: AppCategoriesCategoryIdRemoveRoute,
-  AppReviewYearMonthRoute: AppReviewYearMonthRoute,
-  AppReviewYearIndexRoute: AppReviewYearIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
