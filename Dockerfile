@@ -29,7 +29,7 @@ ENV BETTER_AUTH_SECRET=
 ENV VITE_BETTER_AUTH_URL=
 
 COPY --chown=bun:bun --from=builder /app/.output ./
-COPY --chown=bun:bun --from=builder /app/src/generated/prisma/libquery*.so.node ./server/
+COPY --chown=bun:bun --from=builder /app/src/generated/db/libquery*.so.node ./server/
 COPY --chown=bun:bun healthcheck.js ./healthcheck.js 
 
 EXPOSE 3000
