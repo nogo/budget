@@ -6,11 +6,15 @@ import { Spinner } from "../Loader";
 import { Category } from "~/generated/db";
 import { useTranslation } from "~/locales/translations";
 import { Check } from "lucide-react";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Checkbox } from "../ui/checkbox";
+import { Button } from "../ui/button";
 
 const CategoryAddForm: React.FC = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const t = useTranslation("CategoryAddForm");
+  const t = useTranslation("Categories");
 
   const { mutate } = useMutation({
     mutationFn: async (value: Category) => {
@@ -68,7 +72,7 @@ const CategoryAddForm: React.FC = () => {
           children={(field) => {
             return (
               <div className="flex grow-1 gap-3 border-b border-gray-300">
-                <input
+                <Input
                   id={field.name}
                   name={field.name}
                   value={field.state.value}
@@ -86,19 +90,17 @@ const CategoryAddForm: React.FC = () => {
           name="hasNotes"
           children={(field) => {
             return (
-              <label
+              <Label
                 htmlFor={field.name}
                 className="ml-2 block text-sm text-gray-900"
               >
-                <input
+                <Checkbox
                   id={field.name}
-                  type="checkbox"
                   checked={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                  onCheckedChange={(checked) => field.handleChange(checked)}
                 />{" "}
                 {t("hasNotesLabel")}
-              </label>
+              </Label>
             );
           }}
         />
@@ -106,13 +108,9 @@ const CategoryAddForm: React.FC = () => {
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
             <>
-              <button
-                type="submit"
-                disabled={!canSubmit}
-                className="md rounded-full bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-              >
+              <Button type="submit" disabled={!canSubmit}>
                 {isSubmitting ? <Spinner /> : <Check className="h-5" />}
-              </button>
+              </Button>
             </>
           )}
         />

@@ -4,6 +4,16 @@ import { formatCurrency } from "~/lib/format";
 import { cn } from "~/lib/utils";
 import IncomeExpenseChart from "./IncomeExpenseChart";
 import { useTranslation } from "~/locales/translations";
+import { Button, buttonVariants } from "../ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 
 type YearlyDataRow = {
   year: number;
@@ -57,78 +67,68 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
         <IncomeExpenseChart data={rowsWithAccumulated} />
         <div className="overflow-x-auto">
-          <table className="min-w-full shadow-sm">
-            <thead>
-              <tr className="border-b-2 border-gray-300">
-                <th className="md:px-4 md:py-2 text-center font-semibold">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-semibold text-center">
                   {t("year")}
-                </th>
-                <th className="md:px-4 md:py-2 font-semibold text-right">
+                </TableHead>
+                <TableHead className="font-semibold text-right">
                   {t("income")}
-                </th>
-                <th className="md:px-4 md:py-2 font-semibold text-right">
+                </TableHead>
+                <TableHead className="font-semibold text-right">
                   {t("expense")}
-                </th>
-                <th className="md:px-4 md:py-2 font-semibold text-right">
+                </TableHead>
+                <TableHead className="font-semibold text-right">
                   {t("total")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {rowsWithTotal.map((row, idx) => (
-                <tr
-                  key={idx}
-                  className={cn(
-                    striped(idx),
-                    "border-b border-gray-300 hover:bg-gray-100 transition-colors duration-200",
-                  )}
-                >
-                  <td className="md:px-4 md:py-2 text-center">
+                <TableRow key={idx}>
+                  <TableCell className="text-center">
                     <Link
                       to="/review/$year"
-                      className="block"
                       params={{
                         year: row.year.toString(),
                       }}
+                      className={buttonVariants({ variant: "outline" })}
                     >
                       {row.year}
                     </Link>
-                  </td>
-                  <td className="md:px-4 md:py-2 text-right font-mono">
+                  </TableCell>
+                  <TableCell className="text-right font-mono">
                     {formatCurrency(row.income)}
-                  </td>
-                  <td className="md:px-4 md:py-2 text-right font-mono">
+                  </TableCell>
+                  <TableCell className="text-right font-mono">
                     {formatCurrency(row.expense)}
-                  </td>
-                  <td
-                    className={cn(
-                      colored(row.total),
-                      "md:px-4 md:py-2 text-right font-mono",
-                    )}
+                  </TableCell>
+                  <TableCell
+                    className={cn(colored(row.total), "text-right font-mono")}
                   >
                     {formatCurrency(row.total)}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-              <tr className="font-bold border-t-2 border-gray-300">
-                <td className="md:px-4 md:py-2 text-center">{t("total")}</td>
-                <td className="md:px-4 md:py-2 text-right font-mono">
+            </TableBody>
+            <TableFooter>
+              <TableRow className="font-bold border-t-2">
+                <TableCell className="text-center">{t("total")}</TableCell>
+                <TableCell className="text-right font-mono">
                   {formatCurrency(totalIncome)}
-                </td>
-                <td className="md:px-4 md:py-2 text-right font-mono">
+                </TableCell>
+                <TableCell className="text-right font-mono">
                   {formatCurrency(totalExpense)}
-                </td>
-                <td
-                  className={cn(
-                    colored(totalTotal),
-                    "md:px-4 md:py-2 text-right font-mono",
-                  )}
+                </TableCell>
+                <TableCell
+                  className={cn(colored(totalTotal), "text-right font-mono")}
                 >
                   {formatCurrency(totalTotal)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
         </div>
       </div>
     </>

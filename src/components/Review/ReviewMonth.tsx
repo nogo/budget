@@ -1,18 +1,6 @@
-import { Link } from "@tanstack/react-router";
 import React from "react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  LabelList,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Link } from "@tanstack/react-router";
+import { Pie, PieChart } from "recharts";
 import { useTranslation } from "~/locales/translations";
 import { formatCurrency } from "~/lib/format";
 import { cn, colored, colorFromString, striped } from "~/lib/utils";
@@ -28,6 +16,17 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "../ui/chart";
+import { buttonVariants } from "../ui/button";
+import { ArrowBigLeftDash, ArrowBigRightDash } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 
 type CategoryMonthDataRow = {
   category: string;
@@ -82,9 +81,9 @@ const ReviewMonth: React.FC<CategoryMonthProps> = ({ date, data }) => {
         <Link
           to="/review/$year/$month"
           params={{ year: prev.year.toString(), month: prev.month.toString() }}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300"
+          className={buttonVariants({ variant: "secondary" })}
         >
-          &larr; {formatYearMonth(prev)}
+          <ArrowBigLeftDash /> {formatYearMonth(prev)}
         </Link>
         <h1 className="text-2xl text-center font-bold mb-4">
           {formatYearMonth(date)}
@@ -92,9 +91,9 @@ const ReviewMonth: React.FC<CategoryMonthProps> = ({ date, data }) => {
         <Link
           to="/review/$year/$month"
           params={{ year: next.year.toString(), month: next.month.toString() }}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300"
+          className={buttonVariants({ variant: "secondary" })}
         >
-          {formatYearMonth(next)} &rarr;
+          {formatYearMonth(next)} <ArrowBigRightDash />
         </Link>
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
@@ -129,70 +128,58 @@ const ReviewMonth: React.FC<CategoryMonthProps> = ({ date, data }) => {
           </ChartContainer>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full shadow-sm">
-            <thead>
-              <tr className="border-b-2 border-gray-300">
-                <th className="md:px-4 md:py-2 text-center font-semibold">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-semibold text-center">
                   {t("month")}
-                </th>
-                <th className="md:px-4 md:py-2 font-semibold text-right">
+                </TableHead>
+                <TableHead className="font-semibold text-right">
                   {t("income")}
-                </th>
-                <th className="md:px-4 md:py-2 font-semibold text-right">
+                </TableHead>
+                <TableHead className="font-semibold text-right">
                   {t("expense")}
-                </th>
-                <th className="md:px-4 md:py-2 font-semibold text-right">
+                </TableHead>
+                <TableHead className="font-semibold text-right">
                   {t("total")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {rowsWithTotal.map((row, idx) => (
-                <tr
-                  key={idx}
-                  className={cn(
-                    striped(idx),
-                    "border-b border-gray-300 hover:bg-gray-100 transition-colors duration-200",
-                  )}
-                >
-                  <td className="md:px-4 md:py-2 text-center">
-                    {row.category}
-                  </td>
-                  <td className="md:px-4 md:py-2 text-right font-mono">
+                <TableRow key={idx} className={cn(striped(idx))}>
+                  <TableCell className="text-center">{row.category}</TableCell>
+                  <TableCell className="text-right font-mono">
                     {formatCurrency(row.income)}
-                  </td>
-                  <td className="md:px-4 md:py-2 text-right font-mono">
+                  </TableCell>
+                  <TableCell className="text-right font-mono">
                     {formatCurrency(row.expense)}
-                  </td>
-                  <td
-                    className={cn(
-                      colored(row.total),
-                      "md:px-4 md:py-2 text-right font-mono",
-                    )}
+                  </TableCell>
+                  <TableCell
+                    className={cn(colored(row.total), "text-right font-mono")}
                   >
                     {formatCurrency(row.total)}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-              <tr className="font-bold border-t-2 border-gray-300">
-                <td className="md:px-4 md:py-2 text-center">{t("total")}</td>
-                <td className="md:px-4 md:py-2 text-right font-mono">
+            </TableBody>
+            <TableFooter>
+              <TableRow className="font-bold border-t-2">
+                <TableCell className="text-center">{t("total")}</TableCell>
+                <TableCell className="text-right font-mono">
                   {formatCurrency(totalIncome)}
-                </td>
-                <td className="md:px-4 md:py-2 text-right font-mono">
+                </TableCell>
+                <TableCell className="text-right font-mono">
                   {formatCurrency(totalExpense)}
-                </td>
-                <td
-                  className={cn(
-                    colored(totalTotal),
-                    "md:px-4 md:py-2 text-right font-mono",
-                  )}
+                </TableCell>
+                <TableCell
+                  className={cn(colored(totalTotal), "text-right font-mono")}
                 >
                   {formatCurrency(totalTotal)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
         </div>
       </div>
     </>

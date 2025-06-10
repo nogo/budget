@@ -33,6 +33,21 @@ export function useTranslation(componentKey?: string) {
     translations = translationsMap[ROOT_KEY]?.[locale];
   }
   translations = translations || {};
-  const t = (k: string) => translations[k] || k;
-  return t;
+
+  return (key: string, params?: any[]) => {
+    const str = translations[key] || key;
+    if (params) {
+      const parts = str.split(/(\$\d+)/g); // Split by $1, $2, etc.
+      return parts.map((part, idx) => {
+        const match = part.match(/^\$(\d+)$/);
+        if (match) {
+          const paramIdx = parseInt(match[1], 10) - 1;
+          return params[paramIdx] !== undefined ? params[paramIdx] : part;
+        }
+        return part;
+      });
+    } else {
+      return str;
+    }
+  };
 }

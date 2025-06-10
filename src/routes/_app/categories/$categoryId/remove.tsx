@@ -1,15 +1,15 @@
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
+import { useRouter, createFileRoute } from "@tanstack/react-router";
 import { NotFound } from "~/components/NotFound";
-import { categoryQueryOptions, removeCategory } from "~/service/categories.api";
+import { Button } from "~/components/ui/button";
+import { useTranslation } from "~/locales/translations";
+import { categoryQueries, useRemoveCategoryMutation } from "~/service/queries";
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_app/categories/$categoryId/remove")({
   component: RouteComponent,
   loader: async ({ params: { categoryId }, context }) => {
-    const data = await context.queryClient.ensureQueryData(
-      categoryQueryOptions(categoryId),
+    return await context.queryClient.fetchQuery(
+      categoryQueries.detail(categoryId),
     );
-    return data;
   },
   notFoundComponent: () => {
     return <NotFound>Category not found</NotFound>;
@@ -17,43 +17,35 @@ export const Route = createFileRoute({
 });
 
 function RouteComponent() {
-  const { categoryId } = Route.useParams();
-  const { data: category, isLoading } = useSuspenseQuery(
-    categoryQueryOptions(categoryId),
-  );
+  const category = Route.useLoaderData();
   const router = useRouter();
+  const t = useTranslation("Categories");
 
-  if (isLoading || !category) return <div>Loading</div>;
+  if (!category) return <div>Loading</div>;
 
-  const deleteCategory = useMutation({
-    mutationKey: ["remove-category", category.id],
-    mutationFn: async () => {
-      await removeCategory({ data: category.id });
-    },
-    onSuccess: () => {
-      router.invalidate();
-      router.navigate({ to: "/categories" });
-    },
-  });
+  const removeMutation = useRemoveCategoryMutation();
 
   return (
     <div className="flex flex-col justify-center p-4">
       <h1 className="text-center text-2xl font-bold">
-        You are about to remove {category.name}?
+        {t("removeQuestion", [category.name])}
       </h1>
       <div className="flex grow-1 justify-between">
-        <button
-          onClick={() => deleteCategory.mutate()}
-          className="mt-4 rounded-full bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
+        <Button
+          variant="destructive"
+          onClick={() => {
+            removeMutation.mutate({ data: { id: category.id } });
+            router.navigate({ to: "/categories" });
+          }}
         >
-          Yes, remove {category.name}
-        </button>
-        <button
+          {t("yesRemove", [category.name])}
+        </Button>
+        <Button
+          variant="secondary"
           onClick={() => router.navigate({ to: "/categories" })}
-          className="mt-4 rounded-full bg-gray-500 px-4 py-2 font-bold text-white hover:bg-gray-700"
         >
-          No, keep {category.name}
-        </button>
+          {t("noKeep", [category.name])}
+        </Button>
       </div>
     </div>
   );

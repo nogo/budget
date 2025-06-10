@@ -1,18 +1,20 @@
-import { Navigate } from "@tanstack/react-router";
+import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { parseYearMonth, yearMonthNow } from "~/lib/yearmonth";
 import TransactionForm from "~/components/Budget/TransactionForm";
 import MonthlyList from "~/components/Budget/MonthlyList";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { transactionQueries } from "~/service/queries";
+import MonthlyListNav from "~/components/Budget/MonthlyListNav";
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_app/$yearMonth/")({
   component: YearMonthComponent,
   beforeLoad: async ({ params }) => {
     const yearMonth = parseYearMonth(params.yearMonth);
     return { currentMonthYear: yearMonth ? yearMonth : yearMonthNow() };
   },
   loader: async ({ context }) => {
-    return await context.queryClient.ensureQueryData(transactionQueries.list(context.currentMonthYear));
+    return await context.queryClient.fetchQuery(
+      transactionQueries.list(context.currentMonthYear),
+    );
   },
 });
 
@@ -23,16 +25,24 @@ function YearMonthComponent() {
     return <Navigate from="/$yearMonth" to="/" replace={true} />;
   }
 
-  const transactionQuery = useSuspenseQuery(transactionQueries.list(currentMonthYear));
-  const transactions = transactionQuery.data;
+  const transactions = Route.useLoaderData();
 
   return (
-    <div className="flex flex-col gap-4 md:flex-row">
-      <TransactionForm currentMonthYear={currentMonthYear} />
-      <MonthlyList
-        transactions={transactions}
-        currentMonthYear={currentMonthYear}
-      />
-    </div>
+    <>
+      <div className="w-full md:w-1/5">
+        <div
+          className="sticky top-0 bg-white p-6 border shadow-md"
+          style={{ top: "calc(4rem + 1rem)" }}
+        >
+          <TransactionForm currentMonthYear={currentMonthYear} />
+        </div>
+      </div>
+      <div className="w-full md:w-4/5 relative">
+        <MonthlyList
+          transactions={transactions}
+          currentMonthYear={currentMonthYear}
+        />
+      </div>
+    </>
   );
 }

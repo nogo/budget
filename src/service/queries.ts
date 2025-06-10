@@ -1,7 +1,21 @@
-import { queryOptions } from "@tanstack/react-query";
-import { fetchCategory, listCategories } from "./categories.api";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  crupCategory,
+  fetchCategory,
+  listCategories,
+  removeCategory,
+} from "./categories.api";
 import { reviewCategoryMonth, reviewMonths, reviewYears } from "./review.api";
-import { findTransactions, listTransactions } from "./transactions.api";
+import {
+  crupTransaction,
+  findTransactions,
+  listTransactions,
+  removeTransaction,
+} from "./transactions.api";
 import { formatYearMonth, YearMonth, yearMonthNow } from "~/lib/yearmonth";
 
 export const categoryQueries = {
@@ -11,12 +25,34 @@ export const categoryQueries = {
       queryKey: [...categoryQueries.all, "list"],
       queryFn: () => listCategories(),
     }),
-  detail: (contactId: number) =>
+  detail: (categoryId: string) =>
     queryOptions({
-      queryKey: [...categoryQueries.all, "detail", contactId],
-      queryFn: () => fetchCategory({ data: { id: contactId } }),
-      enabled: !!contactId,
+      queryKey: [...categoryQueries.all, "detail", categoryId],
+      queryFn: () => fetchCategory({ data: { id: categoryId } }),
+      enabled: !!categoryId,
     }),
+};
+
+export const useCrupCategoryMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: crupCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: categoryQueries.all });
+    },
+  });
+};
+
+export const useRemoveCategoryMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: removeCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: categoryQueries.all });
+    },
+  });
 };
 
 export const reviewQueries = {
@@ -66,10 +102,32 @@ export const transactionQueries = {
       queryFn: () => listTransactions({ data: yearMonthString }),
     });
   },
-  detail: (id: number) =>
+  detail: (transactionId: string) =>
     queryOptions({
-      queryKey: [...transactionQueries.all, "detail", id],
-      queryFn: () => findTransactions({ data: { id: id } }),
-      enabled: !!id,
+      queryKey: [...transactionQueries.all, "detail", transactionId],
+      queryFn: () => findTransactions({ data: { id: transactionId } }),
+      enabled: !!transactionId,
     }),
+};
+
+export const useCrupTransactionMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: crupTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: transactionQueries.all });
+    },
+  });
+};
+
+export const useRemoveTransactionMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: removeTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: transactionQueries.all });
+    },
+  });
 };

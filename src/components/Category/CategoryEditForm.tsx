@@ -1,9 +1,13 @@
 import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { crupCategory } from "~/service/categories.api";
 import { Spinner } from "../Loader";
 import { Category } from "~/generated/db";
+import { useCrupCategoryMutation } from "~/service/queries";
+import { useTranslation } from "~/locales/translations";
+import { Edit2 } from "lucide-react";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { Checkbox } from "../ui/checkbox";
 
 interface CategoryFormProps {
   category: Category;
@@ -11,17 +15,8 @@ interface CategoryFormProps {
 
 const CategoryEditForm: React.FC<CategoryFormProps> = ({ category }) => {
   const router = useRouter();
-  const queryClient = useQueryClient();
-
-  const { mutate } = useMutation({
-    mutationFn: async (value: Category) => {
-      await crupCategory({ data: value });
-    },
-    onSettled: () =>
-      queryClient.invalidateQueries({
-        queryKey: ["categories"],
-      }),
-  });
+  const crupMutation = useCrupCategoryMutation();
+  const t = useTranslation("Categories");
 
   const form = useForm({
     defaultValues: {
@@ -30,19 +25,16 @@ const CategoryEditForm: React.FC<CategoryFormProps> = ({ category }) => {
       hasNotes: category.hasNotes,
     },
     onSubmit: ({ formApi, value }) => {
-      mutate(value, {
-        onSuccess: () => {
-          formApi.reset();
-          router.invalidate();
-          router.navigate({ to: "/categories" });
-        },
-      });
+      crupMutation.mutateAsync({ data: value });
+      formApi.reset();
+      router.invalidate();
+      router.navigate({ to: "/categories" });
     },
   });
 
   return (
     <div className="flex flex-col p-4">
-      <h1 className="text-2xl font-bold">Edit Category</h1>
+      <h1 className="text-2xl font-bold">{t("editCategory")}</h1>
       <form
         className="mt-2 grid gap-y-4 border border-t border-gray-300 bg-white p-6 px-4 py-2 shadow-md"
         onSubmit={(e) => {
@@ -99,20 +91,13 @@ const CategoryEditForm: React.FC<CategoryFormProps> = ({ category }) => {
           name="hasNotes"
           children={(field) => {
             return (
-              <div className="">
-                <label
-                  htmlFor={field.name}
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  <input
-                    id={field.name}
-                    type="checkbox"
-                    checked={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
-                  />{" "}
-                  Has Notes
-                </label>
+              <div className="flex gap-1">
+                <Checkbox
+                  id={field.name}
+                  checked={field.state.value}
+                  onCheckedChange={(checked) => field.handleChange(checked)}
+                />
+                <Label htmlFor={field.name}>{t("hasNotesLabel")}</Label>
               </div>
             );
           }}
@@ -120,15 +105,18 @@ const CategoryEditForm: React.FC<CategoryFormProps> = ({ category }) => {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <>
-              <button
-                type="submit"
-                disabled={!canSubmit}
-                className="md rounded-full bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+            <div className="flex justify-between">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => router.navigate({ to: "/categories" })}
               >
-                {isSubmitting ? <Spinner /> : "Update"}
-              </button>
-            </>
+                {t("cancel")}
+              </Button>
+              <Button type="submit" disabled={!canSubmit}>
+                {isSubmitting ? <Spinner /> : <Edit2 />}
+              </Button>
+            </div>
           )}
         />
       </form>

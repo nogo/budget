@@ -3,11 +3,9 @@ import {
   Bar,
   XAxis,
   YAxis,
-  Tooltip,
   Line,
   CartesianGrid,
   ComposedChart,
-  Legend,
   Brush,
 } from "recharts";
 import { useTranslation } from "~/locales/translations";
@@ -19,7 +17,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "../ui/chart";
-import { formatCurrency } from "~/lib/format";
 
 type IncomeExpenseChartProps = {
   data: any[];

@@ -1,7 +1,8 @@
+import { createFileRoute } from "@tanstack/react-router"
 import { useForm } from "@tanstack/react-form";
 import { Wallet } from "lucide-react";
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/(auth)/signin")({
   component: SignIn,
 });
 

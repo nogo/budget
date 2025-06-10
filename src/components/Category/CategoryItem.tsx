@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Merge, Pencil, Trash } from "lucide-react";
+import { Merge, Pencil, Trash2 } from "lucide-react";
 import { Category } from "~/generated/db";
 import { useTranslation } from "~/locales/translations";
 
@@ -10,7 +10,7 @@ interface CategoryItemProps {
 const CategoryItem: React.FC<CategoryItemProps> = ({ category }) => {
   if (!category) return <></>;
 
-  const t = useTranslation("CategoryItem");
+  const t = useTranslation("Categories");
 
   return (
     <div className="flex flex-row justify-between border-t border-gray-300 px-4 py-2">
@@ -25,20 +25,20 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ category }) => {
           to="/categories/$categoryId/edit"
           params={{ categoryId: category.id.toString() }}
         >
-          <Pencil className="h-5" />
+          <Pencil />
         </Link>
         <Link
           to="/categories/$categoryId/merge"
           params={{ categoryId: category.id.toString() }}
         >
-          <Merge className="h-5" />
+          <Merge />
         </Link>
         <Link
           to="/categories/$categoryId/remove"
           params={{ categoryId: category.id.toString() }}
           className="text-red-500"
         >
-          <Trash className="h-5" />
+          <Trash2 />
         </Link>
       </div>
     </div>

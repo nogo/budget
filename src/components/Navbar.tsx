@@ -6,8 +6,8 @@ const Navbar: React.FC = () => {
   const t = useTranslation("Navbar");
 
   return (
-    <div className="fixed top-0 z-10 w-full bg-yellow-900 text-white shadow-2xl">
-      <div className="flex h-14 items-center justify-between gap-8 px-4 sm:px-6">
+    <nav className="fixed top-0 z-10 w-full bg-yellow-900 text-white shadow-2xl">
+      <div className="flex items-center justify-between gap-8 px-4 sm:px-6">
         <div className="flex items-center gap-2">
           <Link
             to="/"
@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
       </div>
-    </div>
+    </nav>
   );
 };
 

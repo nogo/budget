@@ -4,6 +4,17 @@ import { formatCurrency } from "~/lib/format";
 import { cn, colored, striped } from "~/lib/utils";
 import { useTranslation } from "~/locales/translations";
 import IncomeExpenseChart from "./IncomeExpenseChart";
+import { buttonVariants } from "../ui/button";
+import { ArrowBigLeftDash, ArrowBigRightDash } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 
 type YearlyDataRow = {
   month: number;
@@ -50,94 +61,85 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data }) => {
         <Link
           to="/review/$year"
           params={{ year: String(prevYear) }}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300"
+          className={buttonVariants({ variant: "secondary" })}
         >
-          &larr; {prevYear}
+          <ArrowBigLeftDash /> {prevYear}
         </Link>
         <h1 className="text-2xl text-center font-bold mb-4">{year}</h1>
         <Link
           to="/review/$year"
           params={{ year: String(nextYear) }}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300"
+          className={buttonVariants({ variant: "secondary" })}
         >
-          {nextYear} &rarr;
+          {nextYear} <ArrowBigRightDash />
         </Link>
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
         <IncomeExpenseChart data={rowsWithAccumulated} />
         <div className="overflow-x-auto">
-          <table className="min-w-full shadow-sm">
-            <thead>
-              <tr className="border-b-2 border-gray-300">
-                <th className="md:px-4 md:py-2 text-center font-semibold">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-semibold text-center">
                   {t("month")}
-                </th>
-                <th className="md:px-4 md:py-2 font-semibold text-right">
+                </TableHead>
+                <TableHead className="font-semibold text-right">
                   {t("income")}
-                </th>
-                <th className="md:px-4 md:py-2 font-semibold text-right">
+                </TableHead>
+                <TableHead className="font-semibold text-right">
                   {t("expense")}
-                </th>
-                <th className="md:px-4 md:py-2 font-semibold text-right">
+                </TableHead>
+                <TableHead className="font-semibold text-right">
                   {t("total")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {rowsWithTotal.map((row, idx) => (
-                <tr
-                  key={idx}
-                  className={cn(
-                    striped(idx),
-                    "border-b border-gray-300 hover:bg-gray-100 transition-colors duration-200",
-                  )}
-                >
-                  <td className="md:px-4 md:py-2 text-center">
+                <TableRow key={idx} className={cn(striped(idx))}>
+                  <TableCell className="text-center">
                     <Link
                       to="/review/$year/$month"
                       params={{
                         year: year.toString(),
                         month: row.month.toString(),
                       }}
+                      className={buttonVariants({ variant: "outline" })}
                     >
                       {row.month}
                     </Link>
-                  </td>
-                  <td className="md:px-4 md:py-2 text-right font-mono">
+                  </TableCell>
+                  <TableCell className="text-right font-mono">
                     {formatCurrency(row.income)}
-                  </td>
-                  <td className="md:px-4 md:py-2 text-right font-mono">
+                  </TableCell>
+                  <TableCell className="text-right font-mono">
                     {formatCurrency(row.expense)}
-                  </td>
-                  <td
-                    className={cn(
-                      colored(row.total),
-                      "md:px-4 md:py-2 text-right font-mono",
-                    )}
+                  </TableCell>
+                  <TableCell
+                    className={cn(colored(row.total), "text-right font-mono")}
                   >
                     {formatCurrency(row.total)}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-              <tr className="font-bold border-t-2 border-gray-300">
-                <td className="md:px-4 md:py-2 text-center">{t("total")}</td>
-                <td className="md:px-4 md:py-2 text-right font-mono">
+            </TableBody>
+            <TableFooter>
+              <TableRow className="font-bold border-t-2">
+                <TableCell className="text-center">{t("total")}</TableCell>
+                <TableCell className="text-right font-mono">
                   {formatCurrency(totalIncome)}
-                </td>
-                <td className="md:px-4 md:py-2 text-right font-mono">
+                </TableCell>
+                <TableCell className="text-right font-mono">
                   {formatCurrency(totalExpense)}
-                </td>
-                <td
-                  className={cn(
-                    colored(totalTotal),
-                    "md:px-4 md:py-2 text-right font-mono",
-                  )}
+                </TableCell>
+                <TableCell
+                  className={cn(colored(totalTotal), "text-right font-mono")}
                 >
                   {formatCurrency(totalTotal)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
         </div>
       </div>
     </>

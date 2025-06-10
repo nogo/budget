@@ -1,14 +1,14 @@
 import CategoryEditForm from "~/components/Category/CategoryEditForm";
-import { ErrorComponent, ErrorComponentProps } from "@tanstack/react-router";
-import { categoryQueryOptions } from "~/service/categories.api";
+import { ErrorComponent, ErrorComponentProps, createFileRoute } from "@tanstack/react-router";
 import { NotFound } from "~/components/NotFound";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { categoryQueries } from "~/service/queries";
 
-export const Route = createFileRoute({
+export const Route = createFileRoute("/_app/categories/$categoryId/edit")({
   component: RouteComponent,
   loader: async ({ params: { categoryId }, context }) => {
     const data = await context.queryClient.ensureQueryData(
-      categoryQueryOptions(categoryId),
+      categoryQueries.detail(categoryId),
     );
     return data;
   },
@@ -20,7 +20,7 @@ export const Route = createFileRoute({
 
 function RouteComponent() {
   const { categoryId } = Route.useParams();
-  const categoryQuery = useSuspenseQuery(categoryQueryOptions(categoryId));
+  const categoryQuery = useSuspenseQuery(categoryQueries.detail(categoryId));
   const category = categoryQuery.data;
 
   return (
