@@ -1,9 +1,11 @@
 {
+  "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "moduleResolution": "Bundler",
     "module": "ESNext",
     "target": "ES2022",
+    "strict": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
     "baseUrl": ".",
