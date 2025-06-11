@@ -97,7 +97,7 @@ const CategoryAddForm: React.FC = () => {
                 <Checkbox
                   id={field.name}
                   checked={field.state.value}
-                  onCheckedChange={(checked) => field.handleChange(checked)}
+                  onCheckedChange={(checked) => field.handleChange(checked === true)}
                 />{" "}
                 {t("hasNotesLabel")}
               </Label>

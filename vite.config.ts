@@ -7,5 +7,11 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  plugins: [tsConfigPaths(), tailwindcss(), tanstackStart({ target: "bun" })],
+  plugins: [
+    tsConfigPaths({
+      projects: ["./tsconfig.json"],
+    }),
+    tailwindcss(),
+    tanstackStart({ target: "bun" }),
+  ],
 });

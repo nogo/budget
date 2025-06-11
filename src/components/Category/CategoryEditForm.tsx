@@ -1,13 +1,18 @@
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "@tanstack/react-router";
 import { Spinner } from "../Loader";
-import { Category } from "~/generated/db";
 import { useCrupCategoryMutation } from "~/service/queries";
 import { useTranslation } from "~/locales/translations";
 import { Edit2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
+
+interface Category {
+  id: number;
+  name: string;
+  hasNotes: boolean;
+}
 
 interface CategoryFormProps {
   category: Category;
@@ -93,7 +98,9 @@ const CategoryEditForm: React.FC<CategoryFormProps> = ({ category }) => {
               <Checkbox
                 id={field.name}
                 checked={field.state.value}
-                onCheckedChange={(checked) => field.handleChange(checked)}
+                onCheckedChange={(checked) =>
+                  field.handleChange(checked == true)
+                }
               />
               <Label htmlFor={field.name}>{t("hasNotesLabel")}</Label>
             </div>

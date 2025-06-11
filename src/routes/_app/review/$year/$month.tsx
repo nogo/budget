@@ -22,7 +22,9 @@ export const Route = createFileRoute("/_app/review/$year/$month")({
 
 function RouteComponent() {
   const { year, month } = Route.useParams();
-  const { data } = useSuspenseQuery(reviewQueries.month(year, month));
+  const yearNumber = parseInt(year) ? parseInt(year) : new Date().getFullYear();
+  const monthNumber = parseInt(month) ? parseInt(month) : new Date().getMonth() + 1;
+  const { data } = useSuspenseQuery(reviewQueries.month(yearNumber, monthNumber));
   const date = parseYearMonth(year + "-" + month.padStart(2, "0"));
 
   return <ReviewMonth date={date} data={data} />;

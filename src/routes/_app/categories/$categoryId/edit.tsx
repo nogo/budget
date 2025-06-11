@@ -25,6 +25,10 @@ function RouteComponent() {
   const category = Route.useLoaderData();
   const t = useTranslation("Categories");
 
+  if (!category) {
+    return <NotFound>Category not found</NotFound>;
+  }
+
   return (
     <div className="grid grid-cols-1 border border-gray-300 shadow-md">
       <h1 className="p-2 text-center font-bold">{t("editCategory")}</h1>

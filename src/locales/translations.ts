@@ -20,9 +20,8 @@ for (const path in allLocalesModules) {
       .pop()
       ?.replace(/\.locales\.(ts|js)$/, "") || "root";
 
-  // @ts-ignore
-  translationsMap[fileName] =
-    allLocalesModules[path].default || allLocalesModules[path];
+  const module = allLocalesModules[path] as { default?: any };
+  translationsMap[fileName] = module.default || module;
 }
 
 export function useTranslation(componentKey?: string) {
@@ -35,19 +34,14 @@ export function useTranslation(componentKey?: string) {
   translations = translations || {};
 
   return (key: string, params?: any[]) => {
-    const str = translations[key] || key;
+    let str = translations[key] || key;
     if (params) {
-      const parts = str.split(/(\$\d+)/g); // Split by $1, $2, etc.
-      return parts.map((part, idx) => {
-        const match = part.match(/^\$(\d+)$/);
-        if (match) {
-          const paramIdx = parseInt(match[1], 10) - 1;
-          return params[paramIdx] !== undefined ? params[paramIdx] : part;
-        }
-        return part;
+      // Replace $1, $2, ... with params[0], params[1], ...
+      str = str.replace(/\$(\d+)/g, (_, n) => {
+        const idx = parseInt(n, 10) - 1;
+        return params[idx] !== undefined ? String(params[idx]) : `$${n}`;
       });
-    } else {
-      return str;
     }
+    return str;
   };
 }

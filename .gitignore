@@ -8,6 +8,7 @@ yarn.lock
 .env*.local
 .vercel
 .output
+.nitro
 .vinxi
 
 /build/

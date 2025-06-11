@@ -11,7 +11,7 @@ export const listCategories = createServerFn().handler(async () => {
   });
 });
 
-export const fetchCategory = createServerFn({ method: "GET" })
+export const fetchCategory = createServerFn()
   .validator(IdSchema)
   .handler(async ({ data }) => {
     return await db.category.findFirst({ where: { id: data.id } });

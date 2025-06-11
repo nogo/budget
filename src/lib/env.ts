@@ -3,22 +3,22 @@ import { z } from "zod/v4";
 
 export const env = createEnv({
   server: {
-    DATABASE_URL: z
-      .string()
-      .regex(/^(file:).+/, {
-        message:
-          "Invalid DATABASE_URL format. Must start with 'sqlite://' or 'file:'.",
-      }),
+    DATABASE_URL: z.string().regex(/^(file:).+/, {
+      message:
+        "Invalid DATABASE_URL format. Must start with 'sqlite://' or 'file:'.",
+    }),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    BETTER_AUTH_SECRET: z.string(),
   },
 
-  clientPrefix: "PUBLIC_",
+  clientPrefix: "VITE_",
 
   client: {
-    PUBLIC_LOCALE: z.string().optional().default("de-DE"),
-    PUBLIC_CURRENCY: z.string().optional().default("EUR"),
+    VITE_LOCALE: z.string().optional().default("de-DE"),
+    VITE_CURRENCY: z.string().optional().default("EUR"),
+    VITE_BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
   },
 
   /**
@@ -28,8 +28,10 @@ export const env = createEnv({
   runtimeEnvStrict: {
     NODE_ENV: process.env.NODE_ENV,
     DATABASE_URL: process.env.DATABASE_URL,
-    PUBLIC_LOCALE: process.env.PUBLIC_LOCALE,
-    PUBLIC_CURRENCY: process.env.PUBLIC_CURRENCY,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    VITE_LOCALE: process.env.VITE_LOCALE,
+    VITE_CURRENCY: process.env.VITE_CURRENCY,
+    VITE_BETTER_AUTH_URL: process.env.VITE_BETTER_AUTH_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
