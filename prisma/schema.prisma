@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client"
-  output = "../src/generated/db"
+  provider        = "prisma-client"
+  output          = "../src/generated/db"
   previewFeatures = ["relationJoins", "views"]
 }
 
@@ -10,22 +10,23 @@ datasource db {
 }
 
 model Category {
-  id       Int      @id @default(autoincrement())
-  name     String   @unique
-  hasNotes Boolean  @default(false) @map("has_notes")
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  hasNotes Boolean @default(false) @map("has_notes")
 
   transactions Transaction[]
+
   @@map("categories")
 }
 
 model Transaction {
-  id          Int      @id @default(autoincrement())
-  amount      Decimal
-  type        TransactionType @default(expense)
-  category    Category @relation(fields: [categoryId], references: [id])
-  categoryId  Int @map("category_id")
-  date        Int
-  note        String @default("")
+  id         Int             @id @default(autoincrement())
+  amount     Decimal
+  type       TransactionType @default(expense)
+  category   Category        @relation(fields: [categoryId], references: [id])
+  categoryId Int             @map("category_id")
+  date       Int
+  note       String          @default("")
 
   @@index([type])
   @@index([date])
@@ -38,33 +39,95 @@ enum TransactionType {
 }
 
 view ReviewYears {
-  year     Int @id
-  income   Decimal
-  expense  Decimal
-  total    Decimal
+  year    Int     @id
+  income  Decimal
+  expense Decimal
+  total   Decimal
 
   @@map("review_years")
 }
 
 view ReviewMonths {
-  year     Int
-  month    Int
-  income   Decimal
-  expense  Decimal
-  total    Decimal
+  year    Int
+  month   Int
+  income  Decimal
+  expense Decimal
+  total   Decimal
 
-  @@map("review_months")
   @@id([year, month])
+  @@map("review_months")
 }
 
 view ReviewCategoryMonths {
-  year     Int
-  month    Int
-  categoryName String @map("category_name")
-  income   Decimal
-  expense  Decimal
-  total    Decimal
+  year         Int
+  month        Int
+  categoryName String  @map("category_name")
+  income       Decimal
+  expense      Decimal
+  total        Decimal
 
-  @@map("review_category_months")
   @@id([year, month, categoryName])
+  @@map("review_category_months")
+}
+
+// BetterAuth
+
+model User {
+  id            String    @id @default(cuid(2))
+  name          String
+  email         String
+  emailVerified Boolean   @map("email_verified")
+  image         String?
+  createdAt     DateTime  @map("created_at")
+  updatedAt     DateTime  @map("updated_at")
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid(2))
+  expiresAt DateTime @map("expires_at")
+  token     String
+  createdAt DateTime @map("created_at")
+  updatedAt DateTime @map("updated_at")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid(2))
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @map("user_id")
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @map("created_at")
+  updatedAt             DateTime  @map("updated_at")
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime  @map("expires_at")
+  createdAt  DateTime? @map("created_at")
+  updatedAt  DateTime? @map("updated_at")
+
+  @@map("verification")
 }

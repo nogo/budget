@@ -1,7 +1,16 @@
 import { db } from "~/lib/db";
 import { categories, transactions } from "./seed/data";
+import { auth } from "~/lib/auth/server";
 
 async function main() {
+  await auth.api.signUpEmail({
+    body: {
+      name: "Demo User",
+      email: "demo@budget.com",
+      password: "budget2025",
+    } as never,
+  });
+
   await db.category.createMany({
     data: categories,
   });

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { db } from "~/lib/db";
 import { ReviewMonthSchema, ReviewMonthsSchema } from "./review.schema";
+import { userRequiredMiddleware } from "./auth.api";
 
 export type ReviewYear = {
   year: number;
@@ -19,13 +20,15 @@ function transformToReviewYear(item: any): ReviewYear {
   return result;
 }
 
-export const reviewYears = createServerFn().handler(async () => {
-  return await db.reviewYears
-    .findMany({
-      orderBy: { year: "asc" },
-    })
-    .then((items) => items.map((item) => transformToReviewYear(item)));
-});
+export const reviewYears = createServerFn()
+  .middleware([userRequiredMiddleware])
+  .handler(async () => {
+    return await db.reviewYears
+      .findMany({
+        orderBy: { year: "asc" },
+      })
+      .then((items) => items.map((item) => transformToReviewYear(item)));
+  });
 
 export type ReviewMonth = {
   month: number;
@@ -46,6 +49,7 @@ function transformToReviewMonth(item: any): ReviewMonth {
 
 export const reviewMonths = createServerFn()
   .validator(ReviewMonthsSchema)
+  .middleware([userRequiredMiddleware])
   .handler(async ({ data: year }) => {
     return await db.reviewMonths
       .findMany({
@@ -76,6 +80,7 @@ function transformToReviewCategoryMonth(item: any): ReviewCategoryMonth {
 
 export const reviewCategoryMonth = createServerFn()
   .validator(ReviewMonthSchema)
+  .middleware([userRequiredMiddleware])
   .handler(async ({ data }) => {
     return await db.reviewCategoryMonths
       .findMany({

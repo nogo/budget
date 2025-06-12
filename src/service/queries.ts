@@ -17,6 +17,17 @@ import {
   removeTransaction,
 } from "./transactions.api";
 import { formatYearMonth, YearMonth, yearMonthNow } from "~/lib/yearmonth";
+import { getUserSession } from "./auth.api";
+
+export const authQueries = {
+  all: ["auth"],
+  user: () =>
+    queryOptions({
+      queryKey: [...authQueries.all, "user"],
+      queryFn: () => getUserSession(),
+      staleTime: 5000,
+    }),
+};
 
 export const categoryQueries = {
   all: ["categories"],

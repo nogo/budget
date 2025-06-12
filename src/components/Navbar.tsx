@@ -1,9 +1,17 @@
-import { Link } from "@tanstack/react-router";
-import { Calculator, Tag, Wallet } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Calculator, LogOut, PowerOff, Tag, Wallet } from "lucide-react";
 import { useTranslation } from "~/locales/translations";
+import { Button } from "./ui/button";
+import { authClient } from "~/lib/auth/client";
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
   const t = useTranslation("Navbar");
+
+  const logout = async () => {
+    await authClient.signOut();
+    navigate({ to: "/login" });
+  };
 
   return (
     <nav className="fixed top-0 z-10 w-full bg-yellow-900 text-white shadow-2xl">
@@ -33,6 +41,10 @@ const Navbar: React.FC = () => {
             <Calculator className="h-4" />
             <span className="max-md:hidden">{t("review")}</span>
           </Link>
+
+          <Button variant="ghost" onClick={logout}>
+            <LogOut />
+          </Button>
         </div>
       </div>
     </nav>

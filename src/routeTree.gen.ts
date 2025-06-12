@@ -8,11 +8,14 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createServerRootRoute } from '@tanstack/react-start/server'
+
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
-import { Route as authSigninRouteImport } from './routes/(auth)/signin'
 import { Route as authLogoutRouteImport } from './routes/(auth)/logout'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as authJoinRouteImport } from './routes/(auth)/join'
 import { Route as AppReviewRouteRouteImport } from './routes/_app/review/route'
 import { Route as AppCategoriesRouteRouteImport } from './routes/_app/categories/route'
 import { Route as AppReviewIndexRouteImport } from './routes/_app/review/index'
@@ -24,6 +27,9 @@ import { Route as AppReviewYearMonthRouteImport } from './routes/_app/review/$ye
 import { Route as AppCategoriesCategoryIdRemoveRouteImport } from './routes/_app/categories/$categoryId/remove'
 import { Route as AppCategoriesCategoryIdMergeRouteImport } from './routes/_app/categories/$categoryId/merge'
 import { Route as AppCategoriesCategoryIdEditRouteImport } from './routes/_app/categories/$categoryId/edit'
+import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.$'
+
+const rootServerRouteImport = createServerRootRoute()
 
 const AppRouteRoute = AppRouteRouteImport.update({
   id: '/_app',
@@ -34,14 +40,19 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRouteRoute,
 } as any)
-const authSigninRoute = authSigninRouteImport.update({
-  id: '/(auth)/signin',
-  path: '/signin',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const authLogoutRoute = authLogoutRouteImport.update({
   id: '/(auth)/logout',
   path: '/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authLoginRoute = authLoginRouteImport.update({
+  id: '/(auth)/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authJoinRoute = authJoinRouteImport.update({
+  id: '/(auth)/join',
+  path: '/join',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppReviewRouteRoute = AppReviewRouteRouteImport.update({
@@ -102,13 +113,19 @@ const AppCategoriesCategoryIdEditRoute =
     path: '/$categoryId/edit',
     getParentRoute: () => AppCategoriesRouteRoute,
   } as any)
+const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '': typeof AppRouteRouteWithChildren
   '/categories': typeof AppCategoriesRouteRouteWithChildren
   '/review': typeof AppReviewRouteRouteWithChildren
+  '/join': typeof authJoinRoute
+  '/login': typeof authLoginRoute
   '/logout': typeof authLogoutRoute
-  '/signin': typeof authSigninRoute
   '/': typeof AppIndexRoute
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
@@ -121,8 +138,9 @@ export interface FileRoutesByFullPath {
   '/review/$year': typeof AppReviewYearIndexRoute
 }
 export interface FileRoutesByTo {
+  '/join': typeof authJoinRoute
+  '/login': typeof authLoginRoute
   '/logout': typeof authLogoutRoute
-  '/signin': typeof authSigninRoute
   '/': typeof AppIndexRoute
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
@@ -139,8 +157,9 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteRouteWithChildren
   '/_app/categories': typeof AppCategoriesRouteRouteWithChildren
   '/_app/review': typeof AppReviewRouteRouteWithChildren
+  '/(auth)/join': typeof authJoinRoute
+  '/(auth)/login': typeof authLoginRoute
   '/(auth)/logout': typeof authLogoutRoute
-  '/(auth)/signin': typeof authSigninRoute
   '/_app/': typeof AppIndexRoute
   '/_app/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/_app/$yearMonth/': typeof AppYearMonthIndexRoute
@@ -158,8 +177,9 @@ export interface FileRouteTypes {
     | ''
     | '/categories'
     | '/review'
+    | '/join'
+    | '/login'
     | '/logout'
-    | '/signin'
     | '/'
     | '/$yearMonth/$id'
     | '/$yearMonth'
@@ -172,8 +192,9 @@ export interface FileRouteTypes {
     | '/review/$year'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/join'
+    | '/login'
     | '/logout'
-    | '/signin'
     | '/'
     | '/$yearMonth/$id'
     | '/$yearMonth'
@@ -189,8 +210,9 @@ export interface FileRouteTypes {
     | '/_app'
     | '/_app/categories'
     | '/_app/review'
+    | '/(auth)/join'
+    | '/(auth)/login'
     | '/(auth)/logout'
-    | '/(auth)/signin'
     | '/_app/'
     | '/_app/$yearMonth/$id'
     | '/_app/$yearMonth/'
@@ -205,8 +227,30 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
+  authJoinRoute: typeof authJoinRoute
+  authLoginRoute: typeof authLoginRoute
   authLogoutRoute: typeof authLogoutRoute
-  authSigninRoute: typeof authSigninRoute
+}
+export interface FileServerRoutesByFullPath {
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+}
+export interface FileServerRoutesByTo {
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+}
+export interface FileServerRoutesById {
+  __root__: typeof rootServerRouteImport
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+}
+export interface FileServerRouteTypes {
+  fileServerRoutesByFullPath: FileServerRoutesByFullPath
+  fullPaths: '/api/auth/$'
+  fileServerRoutesByTo: FileServerRoutesByTo
+  to: '/api/auth/$'
+  id: '__root__' | '/api/auth/$'
+  fileServerRoutesById: FileServerRoutesById
+}
+export interface RootServerRouteChildren {
+  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -218,18 +262,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/categories': {
-      id: '/_app/categories'
-      path: '/categories'
-      fullPath: '/categories'
-      preLoaderRoute: typeof AppCategoriesRouteRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/review': {
-      id: '/_app/review'
-      path: '/review'
-      fullPath: '/review'
-      preLoaderRoute: typeof AppReviewRouteRouteImport
+    '/_app/': {
+      id: '/_app/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/(auth)/logout': {
@@ -239,18 +276,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(auth)/signin': {
-      id: '/(auth)/signin'
-      path: '/signin'
-      fullPath: '/signin'
-      preLoaderRoute: typeof authSigninRouteImport
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_app/': {
-      id: '/_app/'
+    '/(auth)/join': {
+      id: '/(auth)/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof authJoinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/review': {
+      id: '/_app/review'
+      path: '/review'
+      fullPath: '/review'
+      preLoaderRoute: typeof AppReviewRouteRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/categories': {
+      id: '/_app/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof AppCategoriesRouteRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/review/': {
+      id: '/_app/review/'
       path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AppIndexRouteImport
+      fullPath: '/review/'
+      preLoaderRoute: typeof AppReviewIndexRouteImport
+      parentRoute: typeof AppReviewRouteRoute
+    }
+    '/_app/categories/': {
+      id: '/_app/categories/'
+      path: '/'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof AppCategoriesIndexRouteImport
+      parentRoute: typeof AppCategoriesRouteRoute
+    }
+    '/_app/$yearMonth/': {
+      id: '/_app/$yearMonth/'
+      path: '/$yearMonth'
+      fullPath: '/$yearMonth'
+      preLoaderRoute: typeof AppYearMonthIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/$yearMonth/$id': {
@@ -260,32 +332,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppYearMonthIdRouteImport
       parentRoute: typeof AppRouteRoute
     }
-    '/_app/$yearMonth/': {
-      id: '/_app/$yearMonth/'
-      path: '/$yearMonth'
-      fullPath: '/$yearMonth'
-      preLoaderRoute: typeof AppYearMonthIndexRouteImport
-      parentRoute: typeof AppRouteRoute
-    }
-    '/_app/categories/': {
-      id: '/_app/categories/'
-      path: '/'
-      fullPath: '/categories/'
-      preLoaderRoute: typeof AppCategoriesIndexRouteImport
-      parentRoute: typeof AppCategoriesRouteRoute
-    }
-    '/_app/review/': {
-      id: '/_app/review/'
-      path: '/'
-      fullPath: '/review/'
-      preLoaderRoute: typeof AppReviewIndexRouteImport
+    '/_app/review/$year/': {
+      id: '/_app/review/$year/'
+      path: '/$year'
+      fullPath: '/review/$year'
+      preLoaderRoute: typeof AppReviewYearIndexRouteImport
       parentRoute: typeof AppReviewRouteRoute
     }
-    '/_app/categories/$categoryId/edit': {
-      id: '/_app/categories/$categoryId/edit'
-      path: '/$categoryId/edit'
-      fullPath: '/categories/$categoryId/edit'
-      preLoaderRoute: typeof AppCategoriesCategoryIdEditRouteImport
+    '/_app/review/$year/$month': {
+      id: '/_app/review/$year/$month'
+      path: '/$year/$month'
+      fullPath: '/review/$year/$month'
+      preLoaderRoute: typeof AppReviewYearMonthRouteImport
+      parentRoute: typeof AppReviewRouteRoute
+    }
+    '/_app/categories/$categoryId/remove': {
+      id: '/_app/categories/$categoryId/remove'
+      path: '/$categoryId/remove'
+      fullPath: '/categories/$categoryId/remove'
+      preLoaderRoute: typeof AppCategoriesCategoryIdRemoveRouteImport
       parentRoute: typeof AppCategoriesRouteRoute
     }
     '/_app/categories/$categoryId/merge': {
@@ -295,26 +360,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCategoriesCategoryIdMergeRouteImport
       parentRoute: typeof AppCategoriesRouteRoute
     }
-    '/_app/categories/$categoryId/remove': {
-      id: '/_app/categories/$categoryId/remove'
-      path: '/$categoryId/remove'
-      fullPath: '/categories/$categoryId/remove'
-      preLoaderRoute: typeof AppCategoriesCategoryIdRemoveRouteImport
+    '/_app/categories/$categoryId/edit': {
+      id: '/_app/categories/$categoryId/edit'
+      path: '/$categoryId/edit'
+      fullPath: '/categories/$categoryId/edit'
+      preLoaderRoute: typeof AppCategoriesCategoryIdEditRouteImport
       parentRoute: typeof AppCategoriesRouteRoute
     }
-    '/_app/review/$year/$month': {
-      id: '/_app/review/$year/$month'
-      path: '/$year/$month'
-      fullPath: '/review/$year/$month'
-      preLoaderRoute: typeof AppReviewYearMonthRouteImport
-      parentRoute: typeof AppReviewRouteRoute
-    }
-    '/_app/review/$year/': {
-      id: '/_app/review/$year/'
-      path: '/$year'
-      fullPath: '/review/$year'
-      preLoaderRoute: typeof AppReviewYearIndexRouteImport
-      parentRoute: typeof AppReviewRouteRoute
+  }
+}
+declare module '@tanstack/react-start/server' {
+  interface ServerFileRoutesByPath {
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
+      parentRoute: typeof rootServerRouteImport
     }
   }
 }
@@ -374,9 +436,16 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
+  authJoinRoute: authJoinRoute,
+  authLoginRoute: authLoginRoute,
   authLogoutRoute: authLogoutRoute,
-  authSigninRoute: authSigninRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+const rootServerRouteChildren: RootServerRouteChildren = {
+  ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+}
+export const serverRouteTree = rootServerRouteImport
+  ._addFileChildren(rootServerRouteChildren)
+  ._addFileTypes<FileServerRouteTypes>()

@@ -10,12 +10,20 @@ import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { LocaleProvider } from "~/components/Locales";
 import { NotFound } from "~/components/NotFound";
 import { seo } from "~/lib/seo";
+import { authQueries } from "~/service/queries";
 
 import appCss from "~/styles/app.css?url";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
+  beforeLoad: async ({ context }) => {
+    const userSession = await context.queryClient.fetchQuery(
+      authQueries.user(),
+    );
+
+    return { userSession };
+  },
   head: () => ({
     meta: [
       {
