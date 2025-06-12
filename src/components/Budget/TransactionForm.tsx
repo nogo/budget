@@ -140,31 +140,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           );
         }}
       />
-      <form.Field
-        name="date"
-        children={(field) => {
-          return (
-            <div className="grid w-full gap-1.5">
-              <Label htmlFor={field.name}>{t("date")}</Label>
-              <Input
-                type="date"
-                id={field.name}
-                name={field.name}
-                value={dayjs(field.state.value).format("YYYY-MM-DD")}
-                onBlur={field.handleBlur}
-                onChange={(e) =>
-                  field.handleChange(
-                    e.target.valueAsDate
-                      ? e.target.valueAsDate
-                      : dayjs().toDate(),
-                  )
-                }
-                required
-              />
-            </div>
-          );
-        }}
-      />
 
       <form.Field
         name="categoryId"
@@ -218,6 +193,31 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           />
         )}
       />
+      <form.Field
+        name="date"
+        children={(field) => {
+          return (
+            <div className="grid w-full gap-1.5">
+              <Label htmlFor={field.name}>{t("date")}</Label>
+              <Input
+                type="date"
+                id={field.name}
+                name={field.name}
+                value={dayjs(field.state.value).format("YYYY-MM-DD")}
+                onBlur={field.handleBlur}
+                onChange={(e) =>
+                  field.handleChange(
+                    e.target.valueAsDate
+                      ? e.target.valueAsDate
+                      : dayjs().toDate(),
+                  )
+                }
+                required
+              />
+            </div>
+          );
+        }}
+      />
 
       <form.Field
         name="type"
@@ -235,7 +235,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                   onChange={(e) => field.handleChange("expense")}
                   required
                 />
-                <span>{t("expense")}</span>
+                <span className="text-red-600">{t("expense")}</span>
               </Label>
               <Label htmlFor="income" className="flex gap-2">
                 <Input
@@ -248,7 +248,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                   type="radio"
                   required
                 />
-                <span>{t("income")}</span>
+                <span className="text-green-600">{t("income")}</span>
               </Label>
             </div>
           );
