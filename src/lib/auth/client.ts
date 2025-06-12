@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { createAuthClient } from "better-auth/react";
+import { usernameClient } from "better-auth/client/plugins";
 import { authQueries } from "~/service/queries";
+import { env } from "../env";
 
 export const authClient = createAuthClient({
-  baseURL: "http://localhost:3000",
+  baseURL: env.VITE_BETTER_AUTH_URL,
+  plugins: [usernameClient()],
 });
 
 export const useAuthentication = () => {

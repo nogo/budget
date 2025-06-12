@@ -40,7 +40,7 @@ function Login() {
 
   const form = useForm({
     defaultValues: {
-      email: env.VITE_AUTH_DEFAULT_USER ?? "",
+      username: env.VITE_AUTH_DEFAULT_USER ?? "",
       password: env.VITE_AUTH_DEFAULT_PASSWORD ?? "",
     },
     onSubmit: async ({ formApi, value }) => {
@@ -66,13 +66,12 @@ function Login() {
           }}
         >
           <form.Field
-            name="email"
+            name="username"
             children={(field) => {
               return (
                 <div className="grid gap-1.5">
-                  <Label htmlFor={field.name}>{t("email")}</Label>
+                  <Label htmlFor={field.name}>{t("username")}</Label>
                   <Input
-                    type="email"
                     id={field.name}
                     name={field.name}
                     value={field.state.value}
@@ -131,8 +130,8 @@ function Login() {
 }
 
 const logIn = async (data: LogInSchema) => {
-  const { error, data: response } = await authClient.signIn.email({
-    email: data.email,
+  const { error, data: response } = await authClient.signIn.username({
+    username: data.username,
     password: data.password,
   });
 

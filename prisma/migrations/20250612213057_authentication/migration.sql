@@ -2,6 +2,8 @@
 CREATE TABLE "user" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "displayUsername" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "email_verified" BOOLEAN NOT NULL,
     "image" TEXT,
@@ -49,6 +51,9 @@ CREATE TABLE "verification" (
     "created_at" DATETIME,
     "updated_at" DATETIME
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "user_username_key" ON "user"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");

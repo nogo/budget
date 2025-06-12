@@ -73,24 +73,25 @@ view ReviewCategoryMonths {
 // BetterAuth
 
 model User {
-  id            String    @id @default(cuid(2))
-  name          String
-  email         String
-  emailVerified Boolean   @map("email_verified")
-  image         String?
-  createdAt     DateTime  @map("created_at")
-  updatedAt     DateTime  @map("updated_at")
-  sessions      Session[]
-  accounts      Account[]
+  id              String    @id @default(cuid(2))
+  name            String
+  username        String    @unique
+  displayUsername String
+  email           String    @unique
+  emailVerified   Boolean   @map("email_verified")
+  image           String?
+  createdAt       DateTime  @map("created_at")
+  updatedAt       DateTime  @map("updated_at")
+  sessions        Session[]
+  accounts        Account[]
 
-  @@unique([email])
   @@map("user")
 }
 
 model Session {
   id        String   @id @default(cuid(2))
   expiresAt DateTime @map("expires_at")
-  token     String
+  token     String   @unique
   createdAt DateTime @map("created_at")
   updatedAt DateTime @map("updated_at")
   ipAddress String?  @map("ip_address")
@@ -98,7 +99,6 @@ model Session {
   userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@map("session")
 }
 

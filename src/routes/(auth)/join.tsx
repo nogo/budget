@@ -40,6 +40,7 @@ function Join() {
   const form = useForm({
     defaultValues: {
       name: "",
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -84,6 +85,25 @@ function Join() {
               );
             }}
           />
+          <form.Field
+            name="username"
+            children={(field) => {
+              return (
+                <div className="grid gap-1.5">
+                  <Label htmlFor={field.name}>{t("username")}</Label>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    required
+                  />
+                </div>
+              );
+            }}
+          />
+
           <form.Field
             name="email"
             children={(field) => {
@@ -170,9 +190,10 @@ function Join() {
 
 const join = async (data: JoinSchema) => {
   const { error } = await authClient.signUp.email({
-    name: data.name,
     email: data.email,
+    username: data.username,
     password: data.password,
+    name: data.name,
   });
 
   if (error) {

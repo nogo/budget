@@ -6,6 +6,7 @@ async function main() {
   await auth.api.signUpEmail({
     body: {
       name: "Demo User",
+      username: "demo",
       email: "demo@budget.com",
       password: "budget2025",
     } as never,

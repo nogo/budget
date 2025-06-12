@@ -1,6 +1,7 @@
 export default {
   en: {
     name: "Name",
+    username: "Username",
     email: "Email",
     password: "Password",
     confirmPassword: "Confirm Password",
@@ -12,6 +13,7 @@ export default {
   },
   de: {
     name: "Name",
+    username: "Benutzername",
     email: "E-Mail",
     password: "Passwort",
     confirmPassword: "Passwort bestätigen",
