@@ -13,7 +13,6 @@ import { createServerRootRoute } from '@tanstack/react-start/server'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
-import { Route as authLogoutRouteImport } from './routes/(auth)/logout'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authJoinRouteImport } from './routes/(auth)/join'
 import { Route as AppReviewRouteRouteImport } from './routes/_app/review/route'
@@ -39,11 +38,6 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRouteRoute,
-} as any)
-const authLogoutRoute = authLogoutRouteImport.update({
-  id: '/(auth)/logout',
-  path: '/logout',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
@@ -125,7 +119,6 @@ export interface FileRoutesByFullPath {
   '/review': typeof AppReviewRouteRouteWithChildren
   '/join': typeof authJoinRoute
   '/login': typeof authLoginRoute
-  '/logout': typeof authLogoutRoute
   '/': typeof AppIndexRoute
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
@@ -140,7 +133,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/join': typeof authJoinRoute
   '/login': typeof authLoginRoute
-  '/logout': typeof authLogoutRoute
   '/': typeof AppIndexRoute
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
@@ -159,7 +151,6 @@ export interface FileRoutesById {
   '/_app/review': typeof AppReviewRouteRouteWithChildren
   '/(auth)/join': typeof authJoinRoute
   '/(auth)/login': typeof authLoginRoute
-  '/(auth)/logout': typeof authLogoutRoute
   '/_app/': typeof AppIndexRoute
   '/_app/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/_app/$yearMonth/': typeof AppYearMonthIndexRoute
@@ -179,7 +170,6 @@ export interface FileRouteTypes {
     | '/review'
     | '/join'
     | '/login'
-    | '/logout'
     | '/'
     | '/$yearMonth/$id'
     | '/$yearMonth'
@@ -194,7 +184,6 @@ export interface FileRouteTypes {
   to:
     | '/join'
     | '/login'
-    | '/logout'
     | '/'
     | '/$yearMonth/$id'
     | '/$yearMonth'
@@ -212,7 +201,6 @@ export interface FileRouteTypes {
     | '/_app/review'
     | '/(auth)/join'
     | '/(auth)/login'
-    | '/(auth)/logout'
     | '/_app/'
     | '/_app/$yearMonth/$id'
     | '/_app/$yearMonth/'
@@ -229,7 +217,6 @@ export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   authJoinRoute: typeof authJoinRoute
   authLoginRoute: typeof authLoginRoute
-  authLogoutRoute: typeof authLogoutRoute
 }
 export interface FileServerRoutesByFullPath {
   '/api/auth/$': typeof ApiAuthSplatServerRoute
@@ -268,13 +255,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRouteRoute
-    }
-    '/(auth)/logout': {
-      id: '/(auth)/logout'
-      path: '/logout'
-      fullPath: '/logout'
-      preLoaderRoute: typeof authLogoutRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/(auth)/login': {
       id: '/(auth)/login'
@@ -438,7 +418,6 @@ const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   authJoinRoute: authJoinRoute,
   authLoginRoute: authLoginRoute,
-  authLogoutRoute: authLogoutRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
