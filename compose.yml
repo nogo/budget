@@ -18,7 +18,7 @@ services:
       - .env
     volumes:
       - budget-data:/data
-    command: ["node", "run", "db:deploy"]
+    command: ["pnpm", "run", "db:deploy"]
 
 volumes:
   budget-data:
