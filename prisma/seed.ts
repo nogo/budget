@@ -1,5 +1,5 @@
-import { db } from "~/lib/db";
 import { categories, transactions } from "./seed/data";
+import prisma from "~/lib/prisma";
 import { auth } from "~/lib/auth/server";
 
 async function main() {
@@ -12,12 +12,12 @@ async function main() {
     } as never,
   });
 
-  await db.category.createMany({
+  await prisma.category.createMany({
     data: categories,
   });
 
   for (const t of transactions) {
-    await db.transaction.create({
+    await prisma.transaction.create({
       data: t,
       include: {
         category: true,
@@ -28,10 +28,10 @@ async function main() {
 
 main()
   .then(async () => {
-    await db.$disconnect();
+    await prisma.$disconnect();
   })
   .catch(async (e) => {
     console.error(e);
-    await db.$disconnect();
+    await prisma.$disconnect();
     process.exit(1);
   });

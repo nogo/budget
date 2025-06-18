@@ -1,7 +1,8 @@
 generator client {
   provider        = "prisma-client"
-  output          = "../src/generated/db"
-  previewFeatures = ["relationJoins", "views"]
+  output          = "../src/generated/prisma"
+  runtime         = "bun"
+  previewFeatures = ["views", "relationJoins", "driverAdapters", "queryCompiler"]
 }
 
 datasource db {
@@ -15,6 +16,7 @@ model Category {
   hasNotes Boolean @default(false) @map("has_notes")
 
   transactions Transaction[]
+  template     Template[]
 
   @@map("categories")
 }
@@ -36,6 +38,19 @@ model Transaction {
 enum TransactionType {
   expense
   income
+}
+
+model Template {
+  id         Int             @id @default(autoincrement())
+  amount     Decimal
+  type       TransactionType @default(expense)
+  category   Category        @relation(fields: [categoryId], references: [id])
+  categoryId Int             @map("category_id")
+  day        Int
+  note       String          @default("")
+
+  @@index([type])
+  @@map("templates")
 }
 
 view ReviewYears {

@@ -17,9 +17,11 @@ import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as authJoinRouteImport } from './routes/(auth)/join'
 import { Route as AppReviewRouteRouteImport } from './routes/_app/review/route'
 import { Route as AppCategoriesRouteRouteImport } from './routes/_app/categories/route'
+import { Route as AppTemplatesIndexRouteImport } from './routes/_app/templates/index'
 import { Route as AppReviewIndexRouteImport } from './routes/_app/review/index'
 import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
 import { Route as AppYearMonthIndexRouteImport } from './routes/_app/$yearMonth/index'
+import { Route as AppTemplatesTemplateIdRouteImport } from './routes/_app/templates/$templateId'
 import { Route as AppYearMonthIdRouteImport } from './routes/_app/$yearMonth/$id'
 import { Route as AppReviewYearIndexRouteImport } from './routes/_app/review/$year/index'
 import { Route as AppReviewYearMonthRouteImport } from './routes/_app/review/$year/$month'
@@ -59,6 +61,11 @@ const AppCategoriesRouteRoute = AppCategoriesRouteRouteImport.update({
   path: '/categories',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const AppTemplatesIndexRoute = AppTemplatesIndexRouteImport.update({
+  id: '/templates/',
+  path: '/templates/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
 const AppReviewIndexRoute = AppReviewIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -72,6 +79,11 @@ const AppCategoriesIndexRoute = AppCategoriesIndexRouteImport.update({
 const AppYearMonthIndexRoute = AppYearMonthIndexRouteImport.update({
   id: '/$yearMonth/',
   path: '/$yearMonth/',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+const AppTemplatesTemplateIdRoute = AppTemplatesTemplateIdRouteImport.update({
+  id: '/templates/$templateId',
+  path: '/templates/$templateId',
   getParentRoute: () => AppRouteRoute,
 } as any)
 const AppYearMonthIdRoute = AppYearMonthIdRouteImport.update({
@@ -114,16 +126,17 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '': typeof AppRouteRouteWithChildren
   '/categories': typeof AppCategoriesRouteRouteWithChildren
   '/review': typeof AppReviewRouteRouteWithChildren
   '/join': typeof authJoinRoute
   '/login': typeof authLoginRoute
   '/': typeof AppIndexRoute
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
+  '/templates/$templateId': typeof AppTemplatesTemplateIdRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
   '/categories/': typeof AppCategoriesIndexRoute
   '/review/': typeof AppReviewIndexRoute
+  '/templates': typeof AppTemplatesIndexRoute
   '/categories/$categoryId/edit': typeof AppCategoriesCategoryIdEditRoute
   '/categories/$categoryId/merge': typeof AppCategoriesCategoryIdMergeRoute
   '/categories/$categoryId/remove': typeof AppCategoriesCategoryIdRemoveRoute
@@ -135,9 +148,11 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/': typeof AppIndexRoute
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
+  '/templates/$templateId': typeof AppTemplatesTemplateIdRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
   '/categories': typeof AppCategoriesIndexRoute
   '/review': typeof AppReviewIndexRoute
+  '/templates': typeof AppTemplatesIndexRoute
   '/categories/$categoryId/edit': typeof AppCategoriesCategoryIdEditRoute
   '/categories/$categoryId/merge': typeof AppCategoriesCategoryIdMergeRoute
   '/categories/$categoryId/remove': typeof AppCategoriesCategoryIdRemoveRoute
@@ -153,9 +168,11 @@ export interface FileRoutesById {
   '/(auth)/login': typeof authLoginRoute
   '/_app/': typeof AppIndexRoute
   '/_app/$yearMonth/$id': typeof AppYearMonthIdRoute
+  '/_app/templates/$templateId': typeof AppTemplatesTemplateIdRoute
   '/_app/$yearMonth/': typeof AppYearMonthIndexRoute
   '/_app/categories/': typeof AppCategoriesIndexRoute
   '/_app/review/': typeof AppReviewIndexRoute
+  '/_app/templates/': typeof AppTemplatesIndexRoute
   '/_app/categories/$categoryId/edit': typeof AppCategoriesCategoryIdEditRoute
   '/_app/categories/$categoryId/merge': typeof AppCategoriesCategoryIdMergeRoute
   '/_app/categories/$categoryId/remove': typeof AppCategoriesCategoryIdRemoveRoute
@@ -165,16 +182,17 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | ''
     | '/categories'
     | '/review'
     | '/join'
     | '/login'
     | '/'
     | '/$yearMonth/$id'
+    | '/templates/$templateId'
     | '/$yearMonth'
     | '/categories/'
     | '/review/'
+    | '/templates'
     | '/categories/$categoryId/edit'
     | '/categories/$categoryId/merge'
     | '/categories/$categoryId/remove'
@@ -186,9 +204,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/'
     | '/$yearMonth/$id'
+    | '/templates/$templateId'
     | '/$yearMonth'
     | '/categories'
     | '/review'
+    | '/templates'
     | '/categories/$categoryId/edit'
     | '/categories/$categoryId/merge'
     | '/categories/$categoryId/remove'
@@ -203,9 +223,11 @@ export interface FileRouteTypes {
     | '/(auth)/login'
     | '/_app/'
     | '/_app/$yearMonth/$id'
+    | '/_app/templates/$templateId'
     | '/_app/$yearMonth/'
     | '/_app/categories/'
     | '/_app/review/'
+    | '/_app/templates/'
     | '/_app/categories/$categoryId/edit'
     | '/_app/categories/$categoryId/merge'
     | '/_app/categories/$categoryId/remove'
@@ -284,6 +306,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCategoriesRouteRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/_app/templates/': {
+      id: '/_app/templates/'
+      path: '/templates'
+      fullPath: '/templates'
+      preLoaderRoute: typeof AppTemplatesIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
     '/_app/review/': {
       id: '/_app/review/'
       path: '/'
@@ -303,6 +332,13 @@ declare module '@tanstack/react-router' {
       path: '/$yearMonth'
       fullPath: '/$yearMonth'
       preLoaderRoute: typeof AppYearMonthIndexRouteImport
+      parentRoute: typeof AppRouteRoute
+    }
+    '/_app/templates/$templateId': {
+      id: '/_app/templates/$templateId'
+      path: '/templates/$templateId'
+      fullPath: '/templates/$templateId'
+      preLoaderRoute: typeof AppTemplatesTemplateIdRouteImport
       parentRoute: typeof AppRouteRoute
     }
     '/_app/$yearMonth/$id': {
@@ -399,7 +435,9 @@ interface AppRouteRouteChildren {
   AppReviewRouteRoute: typeof AppReviewRouteRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
   AppYearMonthIdRoute: typeof AppYearMonthIdRoute
+  AppTemplatesTemplateIdRoute: typeof AppTemplatesTemplateIdRoute
   AppYearMonthIndexRoute: typeof AppYearMonthIndexRoute
+  AppTemplatesIndexRoute: typeof AppTemplatesIndexRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
@@ -407,7 +445,9 @@ const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppReviewRouteRoute: AppReviewRouteRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppYearMonthIdRoute: AppYearMonthIdRoute,
+  AppTemplatesTemplateIdRoute: AppTemplatesTemplateIdRoute,
   AppYearMonthIndexRoute: AppYearMonthIndexRoute,
+  AppTemplatesIndexRoute: AppTemplatesIndexRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(

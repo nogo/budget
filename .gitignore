@@ -27,7 +27,7 @@ yarn.lock
 
 # production
 /build
-src/generated/db
+src/generated
 
 # debug
 npm-debug.log*

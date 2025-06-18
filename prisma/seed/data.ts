@@ -1,12 +1,11 @@
-import { TransactionType } from "~/generated/db";
+import { TransactionType } from "~/generated/prisma/enums";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 // Helper to get a unix timestamp (seconds) for a given month offset and day
 function getTimestamp(monthOffset: number, day: number) {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth() + monthOffset;
-  const date = new Date(year, month, day, 0, 0, 0, 0);
-  return date.getTime() / 1000;
+  return dayjs().subtract(monthOffset, "month").day(day).startOf("day").unix();
 }
 
 export const categories = [

@@ -2,7 +2,7 @@ import { createMiddleware, createServerFn, json } from "@tanstack/react-start";
 import { getWebRequest } from "@tanstack/react-start/server";
 import { auth } from "~/lib/auth/server";
 import { UserMetaSchema } from "./auth.schema";
-import { db } from "~/lib/db";
+import prisma from "~/lib/prisma";
 
 export const getUserSession = createServerFn({ method: "GET" }).handler(
   async () => {
@@ -45,7 +45,7 @@ export const updateUser = createServerFn()
   .validator(UserMetaSchema)
   .middleware([userRequiredMiddleware])
   .handler(async ({ data, context: { userSession } }) => {
-    await db.user.update({
+    await prisma.user.update({
       where: {
         id: userSession.user.id,
       },

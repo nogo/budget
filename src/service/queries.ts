@@ -11,6 +11,12 @@ import {
 } from "./categories.api";
 import { reviewCategoryMonth, reviewMonths, reviewYears } from "./review.api";
 import {
+  crupTemplate,
+  fetchTemplate,
+  listTemplates,
+  removeTemplate,
+} from "./templates.api";
+import {
   crupTransaction,
   findTransactions,
   listTransactions,
@@ -100,6 +106,48 @@ export const reviewQueries = {
       enabled: !!year,
     });
   },
+};
+
+export const templateQueries = {
+  all: ["templates"],
+  list: () =>
+    queryOptions({
+      queryKey: [...templateQueries.all, "list"],
+      queryFn: () => listTemplates({ data: { categoryId: undefined } }),
+    }),
+  listByCategory: (categoryId: string) =>
+    queryOptions({
+      queryKey: [...templateQueries.all, "list", "withCategory", categoryId],
+      queryFn: () => listTemplates({ data: { categoryId: categoryId } }),
+    }),
+  detail: (templateId: string) =>
+    queryOptions({
+      queryKey: [...templateQueries.all, "detail", templateId],
+      queryFn: () => fetchTemplate({ data: { id: templateId } }),
+      enabled: !!templateId,
+    }),
+};
+
+export const useCrupTemplateMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: crupTemplate,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: templateQueries.all });
+    },
+  });
+};
+
+export const useRemoveTemplateMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: removeTemplate,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: templateQueries.all });
+    },
+  });
 };
 
 export const transactionQueries = {

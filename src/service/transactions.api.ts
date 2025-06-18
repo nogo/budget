@@ -1,9 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
-import { db } from "~/lib/db";
 import { IdSchema } from "./schema";
 import { ListTransactionSchema, TransactionCreateSchema } from "./transactions.schema";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import prisma from "~/lib/prisma";
 
 dayjs.extend(utc);
 
@@ -41,7 +41,7 @@ export const listTransactions = createServerFn()
     const startDate = data.startOf("month").unix();
     const endDate = data.endOf("month").unix();
 
-    return await db.transaction
+    return await prisma.transaction
       .findMany({
         where: {
           date: {
@@ -71,7 +71,7 @@ export const listTransactions = createServerFn()
 export const findTransactions = createServerFn()
   .validator(IdSchema)
   .handler(async ({ data }) => {
-    return await db.transaction
+    return await prisma.transaction
       .findFirst({
         where: {
           id: data.id,
@@ -84,7 +84,7 @@ export const crupTransaction = createServerFn({ method: "POST" })
   .validator(TransactionCreateSchema)
   .handler(async ({ data: transactionData }) => {
     if (transactionData.id && transactionData.id > 0) {
-      return await db.transaction
+      return await prisma.transaction
         .update({
           where: { id: transactionData.id },
           data: {
@@ -98,7 +98,7 @@ export const crupTransaction = createServerFn({ method: "POST" })
         })
         .then((item) => transformToTransaction(item));
     } else {
-      return await db.transaction
+      return await prisma.transaction
         .create({
           data: {
             amount: transactionData.amount,
@@ -120,7 +120,7 @@ export const crupTransaction = createServerFn({ method: "POST" })
 export const removeTransaction = createServerFn({ method: "POST" })
   .validator(IdSchema)
   .handler(async ({ data }) => {
-    return await db.transaction
+    return await prisma.transaction
       .delete({
         where: {
           id: data.id,

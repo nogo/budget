@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { db } from "~/lib/db";
 import { ReviewMonthSchema, ReviewMonthsSchema } from "./review.schema";
 import { userRequiredMiddleware } from "./auth.api";
+import prisma from "~/lib/prisma";
 
 export type ReviewYear = {
   year: number;
@@ -23,7 +23,7 @@ function transformToReviewYear(item: any): ReviewYear {
 export const reviewYears = createServerFn()
   .middleware([userRequiredMiddleware])
   .handler(async () => {
-    return await db.reviewYears
+    return await prisma.reviewYears
       .findMany({
         orderBy: { year: "asc" },
       })
@@ -51,7 +51,7 @@ export const reviewMonths = createServerFn()
   .validator(ReviewMonthsSchema)
   .middleware([userRequiredMiddleware])
   .handler(async ({ data: year }) => {
-    return await db.reviewMonths
+    return await prisma.reviewMonths
       .findMany({
         where: {
           year: year,
@@ -82,7 +82,7 @@ export const reviewCategoryMonth = createServerFn()
   .validator(ReviewMonthSchema)
   .middleware([userRequiredMiddleware])
   .handler(async ({ data }) => {
-    return await db.reviewCategoryMonths
+    return await prisma.reviewCategoryMonths
       .findMany({
         where: {
           year: data.year,

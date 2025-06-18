@@ -4,33 +4,25 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { formatYearMonth, YearMonth } from "~/lib/yearmonth";
 import { Transaction } from "~/service/transactions.api";
-import { cn } from "~/lib/utils";
-import { z } from "zod/v4";
-import dayjs from "dayjs";
+import { cn, handleAmountString } from "~/lib/utils";
 import { Spinner } from "../Loader";
 import { useTranslation } from "~/locales/translations";
-import { Check, Trash2 } from "lucide-react";
+import { Check, Save, Trash2 } from "lucide-react";
 import {
   categoryQueries,
+  useCrupTemplateMutation,
   useCrupTransactionMutation,
   useRemoveTransactionMutation,
 } from "~/service/queries";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import clsx from "clsx";
+import TemplateCloud from "../templates/TemplateCloud";
+import { defaultDate, formatIsoDate } from "~/lib/date";
 
 interface TransactionFormProps {
   currentMonthYear: YearMonth;
   transaction?: Transaction | undefined;
-}
-
-function handleAmountString(value: string) {
-  try {
-    return z.coerce.number().positive().parse(value);
-  } catch (e) {
-    return 0.0;
-  }
 }
 
 const TransactionForm: React.FC<TransactionFormProps> = ({
@@ -42,23 +34,25 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const { data: categories } = useSuspenseQuery(categoryQueries.list());
 
   const router = useRouter();
-  const t = useTranslation("TransactionForm");
+  const t = useTranslation("budget");
 
   const editMutation = useCrupTransactionMutation();
   const removeMutation = useRemoveTransactionMutation();
+  const crupTemplateMutation = useCrupTemplateMutation();
 
-  const navigateBack = () =>
+  const navigateBack = () => {
     router.navigate({
       to: "/$yearMonth",
       params: { yearMonth: yearMonthString },
     });
+  };
 
   const form = useForm({
     defaultValues: {
       id: transaction?.id ?? -1,
       amount: transaction?.amount ?? 0.0,
       categoryId: transaction?.categoryId ?? categories[0]?.id,
-      date: transaction?.date ?? new Date(),
+      date: transaction?.date ?? defaultDate(currentMonthYear),
       type: transaction?.type ?? "expense",
       note: transaction?.note ?? "",
     },
@@ -75,6 +69,23 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       categories.find((category) => category.id === categoryId)?.hasNotes ||
       false
     );
+  };
+
+  const fillForm = function ({
+    note,
+    day,
+    amount,
+    type,
+  }: {
+    note: string;
+    day: number;
+    amount: number;
+    type: "expense" | "income";
+  }) {
+    form.setFieldValue("note", note);
+    form.setFieldValue("date", defaultDate(currentMonthYear, day));
+    form.setFieldValue("amount", amount);
+    form.setFieldValue("type", type);
   };
 
   return (
@@ -169,28 +180,31 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       <form.Subscribe
         selector={(state) => state.values.categoryId}
         children={(categoryId) => (
-          <form.Field
-            name="note"
-            children={(field) => {
-              return (
-                <div
-                  className={clsx(
-                    "grid w-full gap-1.5",
-                    showNote(categoryId) ? "" : "hidden",
-                  )}
-                >
-                  <Label htmlFor={field.name}>{t("note")}</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  />
-                </div>
-              );
-            }}
-          />
+          <>
+            <form.Field
+              name="note"
+              children={(field) => {
+                return (
+                  <div
+                    className={cn(
+                      "grid w-full gap-1.5",
+                      showNote(categoryId) ? "" : "hidden",
+                    )}
+                  >
+                    <Label htmlFor={field.name}>{t("note")}</Label>
+                    <Input
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </div>
+                );
+              }}
+            />
+            <TemplateCloud categoryId={categoryId} onClick={fillForm} />
+          </>
         )}
       />
       <form.Field
@@ -203,13 +217,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 type="date"
                 id={field.name}
                 name={field.name}
-                value={dayjs(field.state.value).format("YYYY-MM-DD")}
+                value={formatIsoDate(field.state.value)}
                 onBlur={field.handleBlur}
                 onChange={(e) =>
                   field.handleChange(
-                    e.target.valueAsDate
-                      ? e.target.valueAsDate
-                      : dayjs().toDate(),
+                    e.target.valueAsDate ? e.target.valueAsDate : defaultDate(),
                   )
                 }
                 required
@@ -255,41 +267,60 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         }}
       />
 
-      <div
-        className={cn(
-          "flex items-center gap-x-6",
-          transaction ? "justify-between" : "justify-end",
-        )}
-      >
-        {transaction && (
-          <Button
-            variant="destructive"
-            onClick={() => {
-              removeMutation
-                .mutateAsync({ data: { id: transaction.id } })
-                .then(() => navigateBack());
-            }}
+      <form.Subscribe
+        selector={(state) => [state.canSubmit, state.isSubmitting]}
+        children={([canSubmit, isSubmitting]) => (
+          <div
+            className={cn(
+              transaction
+                ? "flex items-center gap-x-6 justify-between"
+                : "grid w-full",
+            )}
           >
-            <Trash2 />
-            <span className="sr-only">{t("delete")}</span>
-          </Button>
-        )}
+            {transaction && (
+              <>
+                <Button
+                  variant="destructive"
+                  disabled={!canSubmit}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    removeMutation.mutateAsync(
+                      { data: { id: transaction.id } },
+                      { onSettled: () => navigateBack() },
+                    );
+                  }}
+                >
+                  <Trash2 />
+                  <span className="sr-only">{t("delete")}</span>
+                </Button>
+                <Button
+                  variant="secondary"
+                  disabled={!canSubmit}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    crupTemplateMutation.mutateAsync({
+                      data: {
+                        categoryId: transaction.categoryId,
+                        note: transaction.note,
+                        amount: transaction.amount,
+                        type: transaction.type,
+                        day: transaction.date.getDate(),
+                      },
+                    });
+                  }}
+                >
+                  <Save />
+                  <span className="sr-only">{t("save")}</span>
+                </Button>
+              </>
+            )}
 
-        <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
-            <Button
-              type="submit"
-              variant={"default"}
-              disabled={!canSubmit}
-              className="bg-green-600"
-            >
+            <Button type="submit" disabled={!canSubmit}>
               {isSubmitting ? <Spinner /> : <Check />}
-              <span className="sr-only">{t("save")}</span>
             </Button>
-          )}
-        />
-      </div>
+          </div>
+        )}
+      />
     </form>
   );
 };

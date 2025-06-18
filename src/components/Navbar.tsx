@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
-import { Calculator, LogOut, Tag, Wallet } from "lucide-react";
+import { Calculator, LogOut, NotepadTextDashed, Tag, Wallet } from "lucide-react";
 import { authClient } from "~/lib/auth/client";
 import { useTranslation } from "~/locales/translations";
 import { Button } from "./ui/button";
@@ -36,6 +36,13 @@ const Navbar: React.FC = () => {
           >
             <Tag className="h-4" />
             <span className="max-md:hidden">{t("categories")}</span>
+          </Link>
+          <Link
+            to="/templates"
+            className="flex items-center gap-1 text-sm p-3 hover:bg-yellow-700"
+          >
+            <NotepadTextDashed className="h-4" />
+            <span className="max-md:hidden">{t("templates")}</span>
           </Link>
           <Link
             to="/review"
