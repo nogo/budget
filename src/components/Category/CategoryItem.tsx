@@ -1,7 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Merge, Pencil, Trash2 } from "lucide-react";
-import { Category } from "~/generated/db";
 import { useTranslation } from "~/locales/translations";
+
+type Category = {
+  id: number;
+  name: string;
+  hasNotes: boolean;
+};
 
 interface CategoryItemProps {
   category?: Category;

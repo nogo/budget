@@ -34,7 +34,7 @@ const TemplateAddForm: React.FC = () => {
             formApi.reset();
             router.invalidate();
           },
-        },
+        }
       );
     },
   });
@@ -92,7 +92,7 @@ const TemplateAddForm: React.FC = () => {
                 <div
                   className={clsx(
                     "grid w-full gap-1.5",
-                    showNote(categoryId) ? "" : "hidden",
+                    showNote(categoryId) ? "" : "hidden"
                   )}
                 >
                   <Label htmlFor={field.name}>{t("note")}</Label>
@@ -176,8 +176,8 @@ const TemplateAddForm: React.FC = () => {
             return !value
               ? t("amountRequired")
               : value <= 0.0
-                ? t("amountGreaterThanZero")
-                : undefined;
+              ? t("amountGreaterThanZero")
+              : undefined;
           },
         }}
         children={(field) => {

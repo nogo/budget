@@ -12,6 +12,6 @@ export default defineConfig({
       projects: ["./tsconfig.json"],
     }),
     tailwindcss(),
-    tanstackStart({ target: "bun" }),
+    tanstackStart({ target: "node" }),
   ],
 });

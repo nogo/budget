@@ -58,7 +58,7 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
     },
   });
 
-  const showNote = function (categoryId: string | number) {
+  const showNote = function (categoryId: string | number | undefined) {
     if (!categories) return false;
 
     return (
@@ -128,7 +128,7 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
                 <div
                   className={clsx(
                     "grid w-full gap-1.5",
-                    showNote(categoryId) ? "" : "hidden",
+                    showNote(categoryId) ? "" : "hidden"
                   )}
                 >
                   <Label htmlFor={field.name}>{t("note")}</Label>
@@ -213,8 +213,8 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
             return !value
               ? t("amountRequired")
               : value <= 0.0
-                ? t("amountGreaterThanZero")
-                : undefined;
+              ? t("amountGreaterThanZero")
+              : undefined;
           },
         }}
         children={(field) => {
@@ -254,7 +254,7 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
               onClick={() => {
                 removeMutation.mutateAsync(
                   { data: { id: template.id } },
-                  { onSuccess: () => navigateBack() },
+                  { onSuccess: () => navigateBack() }
                 );
               }}
             >

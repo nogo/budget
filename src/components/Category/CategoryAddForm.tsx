@@ -3,13 +3,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { crupCategory } from "~/service/categories.api";
 import { Spinner } from "../Loader";
-import { Category } from "~/generated/db";
 import { useTranslation } from "~/locales/translations";
 import { Check } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
 import { Button } from "../ui/button";
+
+type Category = {
+  id: number;
+  name: string;
+  hasNotes: boolean;
+};
 
 const CategoryAddForm: React.FC = () => {
   const router = useRouter();
@@ -97,7 +102,9 @@ const CategoryAddForm: React.FC = () => {
                 <Checkbox
                   id={field.name}
                   checked={field.state.value}
-                  onCheckedChange={(checked) => field.handleChange(checked === true)}
+                  onCheckedChange={(checked) =>
+                    field.handleChange(checked === true)
+                  }
                 />{" "}
                 {t("hasNotesLabel")}
               </Label>
