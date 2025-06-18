@@ -16,9 +16,6 @@ yarn-debug.log
 yarn-error.log
 pnpm-debug.log
 
-# Build output
-.vinxi
-.vercel
 
 # Environment variables
 .env
