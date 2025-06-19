@@ -37,7 +37,7 @@ const TemplateCloud: React.FC<Props> = ({ categoryId, onClick }) => {
     template.type === "expense" ? "text-red-600" : "text-green-600";
 
   return (
-    <div className="flex gap-3 items-center">
+    <div className="flex flex-wrap gap-3 items-center pt-3">
       {templates?.map((template) => (
         <Button
           variant="outline"

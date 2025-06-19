@@ -95,7 +95,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         e.stopPropagation();
         form.handleSubmit();
       }}
-      className="grid gap-4"
     >
       <form.Field
         name="id"
@@ -156,7 +155,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         name="categoryId"
         children={(field) => {
           return (
-            <div className="grid w-full gap-1.5">
+            <div className="grid w-full gap-1.5 pt-3">
               <Label htmlFor={field.name}>{t("category")}</Label>
               <select
                 id={field.name}
@@ -187,7 +186,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 return (
                   <div
                     className={cn(
-                      "grid w-full gap-1.5",
+                      "grid w-full gap-1.5 pt-3",
                       showNote(categoryId) ? "" : "hidden",
                     )}
                   >
@@ -211,7 +210,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         name="date"
         children={(field) => {
           return (
-            <div className="grid w-full gap-1.5">
+            <div className="grid w-full gap-1.5 pt-3">
               <Label htmlFor={field.name}>{t("date")}</Label>
               <Input
                 type="date"
@@ -235,7 +234,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         name="type"
         children={(field) => {
           return (
-            <div className="grid w-full grid-cols-2 place-items-center items-center px-4">
+            <div className="grid w-full grid-cols-2 place-items-center items-center px-4 pt-3">
               <Label htmlFor="expense" className="flex gap-2">
                 <Input
                   id="expense"
@@ -273,7 +272,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           <div
             className={cn(
               transaction
-                ? "flex items-center gap-x-6 justify-between"
+                ? "flex items-center gap-x-6 justify-between pt-3"
                 : "grid w-full",
             )}
           >
