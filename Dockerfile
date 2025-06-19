@@ -18,6 +18,7 @@ RUN bunx prisma generate
 RUN bunx --bun vite build --mode production
 
 FROM oven/bun:1-alpine AS runner
+RUN mkdir -p /data && chown bun:bun /data
 USER bun
 WORKDIR /app
 
@@ -31,7 +32,6 @@ ENV VITE_BETTER_AUTH_URL=
 
 COPY --chown=bun:bun --from=builder /app/.output ./
 
-RUN mkdir -p /data
 VOLUME ["/data"]
 EXPOSE 3000
 
