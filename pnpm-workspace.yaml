@@ -1,9 +1,0 @@
-ignoredBuiltDependencies:
-  - '@parcel/watcher'
-  - '@tailwindcss/oxide'
-
-onlyBuiltDependencies:
-  - '@prisma/client'
-  - '@prisma/engines'
-  - esbuild
-  - prisma

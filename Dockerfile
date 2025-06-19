@@ -1,29 +1,27 @@
-FROM node:24-alpine AS base
+FROM oven/bun:1-alpine AS base
 
 FROM base AS deps
 RUN apk add --no-cache build-base python3
-RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN mkdir -p /app && chown node:node /app
-USER node
+RUN mkdir -p /app && chown bun:bun /app
+USER bun
 WORKDIR /app
-COPY --chown=node:node package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY --chown=bun:bun package.json bun.lock ./
 USER root
-RUN pnpm install --frozen-lockfile --prod=false
+RUN bun install --no-progress
 
 FROM base AS builder
-RUN corepack enable && corepack prepare pnpm@latest --activate
-RUN mkdir -p /data && chown node:node /data && chmod 700 /data
-USER node
+RUN mkdir -p /data && chown bun:bun /data && chmod 700 /data
+USER bun
 WORKDIR /app
-COPY --chown=node:node --from=deps /app/node_modules ./node_modules
-COPY --chown=node:node . .
-RUN pnpm prisma generate
-RUN pnpm build
+COPY --chown=bun:bun --from=deps /app/node_modules ./node_modules
+COPY --chown=bun:bun . .
+RUN bunx prisma generate
+RUN bunx --bun vite build --mode production
 
-CMD ["pnpm", "dev"]
+CMD ["bun", "run", "dev"]
 
-FROM node:24-alpine AS runner
-USER node
+FROM oven/bun:1-alpine AS runner
+USER bun
 WORKDIR /app
 
 ENV TZ="Europe/Berlin"
@@ -34,8 +32,8 @@ ENV VITE_LOCALE="de-DE"
 ENV VITE_CURRENCY="EUR"
 ENV VITE_BETTER_AUTH_URL=
 
-COPY --chown=node:node --from=builder /app/.output ./
+COPY --chown=bun:bun --from=builder /app/.output ./
 
 EXPOSE 3000
 
-CMD ["node", "run", "server/index.mjs"]
+CMD ["bun", "run", "server/index.mjs"]
