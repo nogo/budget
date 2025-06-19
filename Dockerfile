@@ -1,7 +1,6 @@
-FROM oven/bun:1-slim AS base
+FROM oven/bun:1-alpine AS base
 
 FROM base AS deps
-RUN apt-get update && apt-get install -y python3 build-essential libsqlite3-dev
 RUN mkdir -p /app && chown bun:bun /app
 USER bun
 WORKDIR /app
