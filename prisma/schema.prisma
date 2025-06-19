@@ -2,7 +2,7 @@ generator client {
   provider        = "prisma-client"
   output          = "../src/generated/prisma"
   runtime         = "bun"
-  previewFeatures = ["views", "relationJoins", "driverAdapters"]
+  previewFeatures = ["views", "relationJoins", "driverAdapters", "queryCompiler"]
 }
 
 datasource db {

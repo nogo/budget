@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+    "postbuild": "cp ./node_modules/@prisma/client/runtime/query_compiler_bg.sqlite.wasm ./.output/server/node_modules/@prisma/client/runtime/",
     "deploy": "prisma generate && vite build",
     "start": "node .output/server/index.mjs",
     "db:deploy": "prisma migrate deploy",

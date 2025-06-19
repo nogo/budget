@@ -13,8 +13,9 @@ USER bun
 WORKDIR /app
 COPY --chown=bun:bun --from=deps /app/node_modules ./node_modules
 COPY --chown=bun:bun . .
-RUN bunx prisma generate
+RUN bunx --bun prisma generate
 RUN bunx --bun vite build --mode production
+RUN bun run postbuild
 
 FROM oven/bun:1-alpine AS runner
 RUN mkdir -p /data && chown bun:bun /data
