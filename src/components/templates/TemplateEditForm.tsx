@@ -3,7 +3,7 @@ import { useRouter } from "@tanstack/react-router";
 import { Spinner } from "../Loader";
 import {
   categoryQueries,
-  useCrupCategoryMutation,
+  useCrupTemplateMutation,
   useRemoveTemplateMutation,
 } from "~/service/queries";
 import { useTranslation } from "~/locales/translations";
@@ -33,7 +33,7 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
   const t = useTranslation("templates");
   const { data: categories } = useQuery(categoryQueries.list());
 
-  const crupMutation = useCrupCategoryMutation();
+  const crupMutation = useCrupTemplateMutation();
   const removeMutation = useRemoveTemplateMutation();
 
   const navigateBack = () =>
@@ -128,7 +128,7 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
                 <div
                   className={clsx(
                     "grid w-full gap-1.5",
-                    showNote(categoryId) ? "" : "hidden"
+                    showNote(categoryId) ? "" : "hidden",
                   )}
                 >
                   <Label htmlFor={field.name}>{t("note")}</Label>
@@ -213,8 +213,8 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
             return !value
               ? t("amountRequired")
               : value <= 0.0
-              ? t("amountGreaterThanZero")
-              : undefined;
+                ? t("amountGreaterThanZero")
+                : undefined;
           },
         }}
         children={(field) => {
@@ -254,7 +254,7 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
               onClick={() => {
                 removeMutation.mutateAsync(
                   { data: { id: template.id } },
-                  { onSuccess: () => navigateBack() }
+                  { onSuccess: () => navigateBack() },
                 );
               }}
             >
