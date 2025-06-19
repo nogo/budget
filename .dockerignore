@@ -5,6 +5,7 @@ node_modules
 screenshots
 src/generated
 
+.env*
 .env.example
 .git
 .gitignore
