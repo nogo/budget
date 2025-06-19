@@ -16,7 +16,7 @@ export function convertDriverError(error: any): DriverAdapterErrorObject {
         .split("constraint failed: ")
         .at(1)
         ?.split(", ")
-        .map((field) => field.split(".").pop()!);
+        .map((field: any) => field.split(".").pop()!);
       return {
         kind: "UniqueConstraintViolation",
         constraint: fields !== undefined ? { fields } : undefined,
@@ -27,7 +27,7 @@ export function convertDriverError(error: any): DriverAdapterErrorObject {
         .split("constraint failed: ")
         .at(1)
         ?.split(", ")
-        .map((field) => field.split(".").pop()!);
+        .map((field: any) => field.split(".").pop()!);
       return {
         kind: "NullConstraintViolation",
         constraint: fields !== undefined ? { fields } : undefined,

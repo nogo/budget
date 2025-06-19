@@ -83,7 +83,7 @@ class BunSQLiteQueryable implements SqlQueryable {
 
       // Using stmt.values() to ensure an array of arrays, consistent with Row type.
       const values = stmt.values(...args) as unknown[][];
-      const declaredTypes = columns.map((col) => null); // bun:sqlite does not expose declared types directly
+      const declaredTypes = columns.map((col: any) => null); // bun:sqlite does not expose declared types directly
       const columnNames = columns;
 
       return Promise.resolve({ declaredTypes, columnNames, values });
