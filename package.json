@@ -51,13 +51,12 @@
     "@types/react-dom": "^19.1.6",
     "prisma": "^6.10.1",
     "tailwindcss": "^4.1.10",
-    "tsx": "^4.20.3",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5.8.3",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "prisma": {
     "schema": "prisma/schema.prisma",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "bun prisma/seed.js"
   }
 }

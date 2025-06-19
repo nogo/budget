@@ -1,6 +1,6 @@
-import { categories, transactions } from "./seed/data";
-import prisma from "~/lib/prisma";
-import { auth } from "~/lib/auth/server";
+const { categories, transactions } = require("./seed/data");
+const prisma = require("~/lib/prisma").default;
+const { auth } = require("~/lib/auth/server");
 
 async function main() {
   await auth.api.signUpEmail({
@@ -9,7 +9,7 @@ async function main() {
       username: "demo",
       email: "demo@budget.com",
       password: "budget2025",
-    } as never,
+    },
   });
 
   await prisma.category.createMany({
