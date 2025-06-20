@@ -11,7 +11,7 @@ import { Button, buttonVariants } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { authClient } from "~/lib/auth/client";
-import { env } from "~/lib/env";
+import { env } from "~/lib/env/client";
 import { useTranslation } from "~/locales/translations";
 import { JoinSchema } from "~/service/auth.schema";
 

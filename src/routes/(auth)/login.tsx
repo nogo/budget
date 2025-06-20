@@ -11,7 +11,7 @@ import { Input } from "~/components/ui/input";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { authClient } from "~/lib/auth/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { env } from "~/lib/env";
+import { env } from "~/lib/env/client";
 import { LogInSchema } from "~/service/auth.schema";
 import { AllowRegistration } from "~/components/auth/allow-registration";
 import { useTranslation } from "~/locales/translations";

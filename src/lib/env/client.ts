@@ -6,17 +6,6 @@ const getViteEnv = (key: string) => {
 };
 
 export const env = createEnv({
-  server: {
-    DATABASE_URL: z.string().regex(/^(file:).+/, {
-      message:
-        "Invalid DATABASE_URL format. Must start with 'sqlite://' or 'file:'.",
-    }),
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
-    BETTER_AUTH_SECRET: z.string(),
-  },
-
   clientPrefix: "PUBLIC_",
   client: {
     PUBLIC_LOCALE: z.string().optional().default("de-DE"),
@@ -33,9 +22,6 @@ export const env = createEnv({
   },
 
   runtimeEnvStrict: {
-    NODE_ENV: process.env.NODE_ENV,
-    DATABASE_URL: process.env.DATABASE_URL,
-    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     PUBLIC_LOCALE: getViteEnv("PUBLIC_LOCALE"),
     PUBLIC_CURRENCY: getViteEnv("PUBLIC_CURRENCY"),
     PUBLIC_BETTER_AUTH_URL: getViteEnv("PUBLIC_BETTER_AUTH_URL"),

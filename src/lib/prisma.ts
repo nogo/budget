@@ -1,4 +1,4 @@
-import { env } from "./env";
+import { env } from "./env/server";
 import { PrismaClient } from "~/generated/prisma/client";
 import { PrismaBunSQLite } from "./sqlite";
 

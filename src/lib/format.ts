@@ -1,4 +1,4 @@
-import { env } from "~/lib/env";
+import { env } from "~/lib/env/client";
 
 const numberFormat = new Intl.NumberFormat(env.PUBLIC_LOCALE, {
   style: "currency",
