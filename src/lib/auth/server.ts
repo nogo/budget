@@ -12,6 +12,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  baseURL: env.PUBLIC_BETTER_AUTH_URL,
   basePath: "/api/auth",
   trustedOrigins: [env.PUBLIC_BETTER_AUTH_URL],
   plugins: [reactStartCookies(), username()],
