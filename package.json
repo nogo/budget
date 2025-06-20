@@ -2,6 +2,9 @@
   "name": "budget",
   "version": "2.0.0",
   "description": "",
+  "keywords": [],
+  "author": "Danilo Kuehn <me@ctl.wtf>",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,14 +12,11 @@
     "build": "vite build",
     "postbuild": "cp ./node_modules/@prisma/client/runtime/query_compiler_bg.sqlite.wasm ./.output/server/node_modules/@prisma/client/runtime/",
     "deploy": "prisma generate && vite build",
-    "start": "node .output/server/index.mjs",
+    "start": "bun run .output/server/index.mjs",
     "db:deploy": "prisma migrate deploy",
     "db:generate": "prisma generate",
-    "db:seed": "NODE_ENV=development prisma db seed"
+    "db:seed": "prisma db seed"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.10.1",
     "@prisma/driver-adapter-utils": "^6.10.1",
