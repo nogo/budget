@@ -5,7 +5,7 @@ import { authQueries } from "~/service/queries";
 import { env } from "../env";
 
 export const authClient = createAuthClient({
-  baseURL: env.VITE_BETTER_AUTH_URL,
+  baseURL: env.PUBLIC_BETTER_AUTH_URL,
   plugins: [usernameClient()],
 });
 

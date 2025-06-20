@@ -1,8 +1,8 @@
 import { env } from "~/lib/env";
 
-const numberFormat = new Intl.NumberFormat(env.VITE_LOCALE, {
+const numberFormat = new Intl.NumberFormat(env.PUBLIC_LOCALE, {
   style: "currency",
-  currency: env.VITE_CURRENCY,
+  currency: env.PUBLIC_CURRENCY,
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });

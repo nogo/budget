@@ -17,32 +17,32 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string(),
   },
 
-  clientPrefix: "VITE_",
+  clientPrefix: "PUBLIC_",
   client: {
-    VITE_LOCALE: z.string().optional().default("de-DE"),
-    VITE_CURRENCY: z.string().optional().default("EUR"),
-    VITE_BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
-    VITE_AUTH_ALLOW_REGISTRATION: z
+    PUBLIC_LOCALE: z.string().optional().default("de-DE"),
+    PUBLIC_CURRENCY: z.string().optional().default("EUR"),
+    PUBLIC_BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
+    PUBLIC_AUTH_ALLOW_REGISTRATION: z
       .string()
       .refine((s) => s === "true" || s === "false")
       .transform((s) => s === "true")
       .optional(),
-    VITE_AUTH_DEFAULT_USER: z.string().optional(),
-    VITE_AUTH_DEFAULT_EMAIL: z.email().optional(),
-    VITE_AUTH_DEFAULT_PASSWORD: z.string().optional(),
+    PUBLIC_AUTH_DEFAULT_USER: z.string().optional(),
+    PUBLIC_AUTH_DEFAULT_EMAIL: z.email().optional(),
+    PUBLIC_AUTH_DEFAULT_PASSWORD: z.string().optional(),
   },
 
   runtimeEnvStrict: {
     NODE_ENV: process.env.NODE_ENV,
     DATABASE_URL: process.env.DATABASE_URL,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
-    VITE_LOCALE: getViteEnv("VITE_LOCALE"),
-    VITE_CURRENCY: getViteEnv("VITE_CURRENCY"),
-    VITE_BETTER_AUTH_URL: getViteEnv("VITE_BETTER_AUTH_URL"),
-    VITE_AUTH_ALLOW_REGISTRATION: getViteEnv("VITE_AUTH_ALLOW_REGISTRATION"),
-    VITE_AUTH_DEFAULT_USER: getViteEnv("VITE_AUTH_DEFAULT_USER"),
-    VITE_AUTH_DEFAULT_EMAIL: getViteEnv("VITE_AUTH_DEFAULT_EMAIL"),
-    VITE_AUTH_DEFAULT_PASSWORD: getViteEnv("VITE_AUTH_DEFAULT_PASSWORD"),
+    PUBLIC_LOCALE: getViteEnv("PUBLIC_LOCALE"),
+    PUBLIC_CURRENCY: getViteEnv("PUBLIC_CURRENCY"),
+    PUBLIC_BETTER_AUTH_URL: getViteEnv("PUBLIC_BETTER_AUTH_URL"),
+    PUBLIC_AUTH_ALLOW_REGISTRATION: getViteEnv("PUBLIC_AUTH_ALLOW_REGISTRATION"),
+    PUBLIC_AUTH_DEFAULT_USER: getViteEnv("PUBLIC_AUTH_DEFAULT_USER"),
+    PUBLIC_AUTH_DEFAULT_EMAIL: getViteEnv("PUBLIC_AUTH_DEFAULT_EMAIL"),
+    PUBLIC_AUTH_DEFAULT_PASSWORD: getViteEnv("PUBLIC_AUTH_DEFAULT_PASSWORD"),
   },
 
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,

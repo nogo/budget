@@ -40,8 +40,8 @@ function Login() {
 
   const form = useForm({
     defaultValues: {
-      username: env.VITE_AUTH_DEFAULT_USER ?? "",
-      password: env.VITE_AUTH_DEFAULT_PASSWORD ?? "",
+      username: env.PUBLIC_AUTH_DEFAULT_USER ?? "",
+      password: env.PUBLIC_AUTH_DEFAULT_PASSWORD ?? "",
     },
     onSubmit: async ({ formApi, value }) => {
       await logInMutation.mutateAsync(value);
@@ -59,6 +59,7 @@ function Login() {
 
         <form
           className="shadow-md rounded-2xl p-6 bg-white grid grid-cols-1 gap-y-4"
+          method="POST"
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
