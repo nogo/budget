@@ -26,8 +26,9 @@ ENV TZ="Europe/Berlin"
 ENV NODE_ENV=production
 
 COPY --chown=bun:bun --from=builder /app/.output ./
+COPY --chown=bun:bun --from=builder /app/.env ./.env
 
 VOLUME ["/data"]
 EXPOSE 4000
 
-CMD ["bun", "run", "server/index.mjs"]
+CMD ["bun", "--env-file=.env", "run", "server/index.mjs"]
