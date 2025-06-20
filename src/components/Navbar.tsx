@@ -1,6 +1,12 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
-import { Calculator, LogOut, NotepadTextDashed, Tag, Wallet } from "lucide-react";
+import {
+  Calculator,
+  LogOut,
+  NotepadTextDashed,
+  Tag,
+  Wallet,
+} from "lucide-react";
 import { authClient } from "~/lib/auth/client";
 import { useTranslation } from "~/locales/translations";
 import { Button } from "./ui/button";
@@ -11,9 +17,11 @@ const Navbar: React.FC = () => {
   const t = useTranslation("Navbar");
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    await queryClient.invalidateQueries();
     router.invalidate();
+    await queryClient.invalidateQueries();
+    await authClient.signOut().then(() => {
+      router.navigate({ to: "/login" });
+    });
   };
 
   return (

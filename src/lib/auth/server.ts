@@ -11,6 +11,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  trustedOrigins: ["http://localhost:3000", env.VITE_BETTER_AUTH_URL],
+  basePath: "/api/auth",
+  trustedOrigins: [env.VITE_BETTER_AUTH_URL],
   plugins: [username()],
 });
