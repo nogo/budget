@@ -21,7 +21,7 @@ export const env = createEnv({
   client: {
     PUBLIC_LOCALE: z.string().optional().default("de-DE"),
     PUBLIC_CURRENCY: z.string().optional().default("EUR"),
-    PUBLIC_BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
+    PUBLIC_BETTER_AUTH_URL: z.url(),
     PUBLIC_AUTH_ALLOW_REGISTRATION: z
       .string()
       .refine((s) => s === "true" || s === "false")
@@ -39,7 +39,9 @@ export const env = createEnv({
     PUBLIC_LOCALE: getViteEnv("PUBLIC_LOCALE"),
     PUBLIC_CURRENCY: getViteEnv("PUBLIC_CURRENCY"),
     PUBLIC_BETTER_AUTH_URL: getViteEnv("PUBLIC_BETTER_AUTH_URL"),
-    PUBLIC_AUTH_ALLOW_REGISTRATION: getViteEnv("PUBLIC_AUTH_ALLOW_REGISTRATION"),
+    PUBLIC_AUTH_ALLOW_REGISTRATION: getViteEnv(
+      "PUBLIC_AUTH_ALLOW_REGISTRATION",
+    ),
     PUBLIC_AUTH_DEFAULT_USER: getViteEnv("PUBLIC_AUTH_DEFAULT_USER"),
     PUBLIC_AUTH_DEFAULT_EMAIL: getViteEnv("PUBLIC_AUTH_DEFAULT_EMAIL"),
     PUBLIC_AUTH_DEFAULT_PASSWORD: getViteEnv("PUBLIC_AUTH_DEFAULT_PASSWORD"),

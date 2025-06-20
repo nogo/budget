@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   envPrefix: "PUBLIC_",
   server: {
-    port: 3000,
+    port: 4000,
   },
   plugins: [
     tsConfigPaths({

@@ -28,6 +28,6 @@ ENV NODE_ENV=production
 COPY --chown=bun:bun --from=builder /app/.output ./
 
 VOLUME ["/data"]
-EXPOSE 3000
+EXPOSE 4000
 
 CMD ["bun", "run", "server/index.mjs"]
