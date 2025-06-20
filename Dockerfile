@@ -24,11 +24,6 @@ WORKDIR /app
 
 ENV TZ="Europe/Berlin"
 ENV NODE_ENV=production
-ENV DATABASE_URL="file:/data/budget.db"
-ENV BETTER_AUTH_SECRET=
-ENV VITE_LOCALE="de-DE"
-ENV VITE_CURRENCY="EUR"
-ENV VITE_BETTER_AUTH_URL=
 
 COPY --chown=bun:bun --from=builder /app/.output ./
 
