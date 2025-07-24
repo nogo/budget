@@ -55,7 +55,7 @@ const TemplateAddForm: React.FC = () => {
         e.stopPropagation();
         form.handleSubmit();
       }}
-      className="grid gap-4"
+      className="space-y-2"
     >
       <form.Field
         name="categoryId"
@@ -114,7 +114,7 @@ const TemplateAddForm: React.FC = () => {
         name="type"
         children={(field) => {
           return (
-            <div className="grid w-full grid-cols-2 place-items-center items-center px-4">
+            <div className="grid grid-cols-2 w-full place-items-center items-center">
               <Label htmlFor="expense" className="flex gap-2">
                 <Input
                   id="expense"
@@ -170,16 +170,6 @@ const TemplateAddForm: React.FC = () => {
       />
       <form.Field
         name="amount"
-        validators={{
-          onBlur: ({ value }) => (value < 0.0 ? t("invalidValue") : undefined),
-          onChange: ({ value }) => {
-            return !value
-              ? t("amountRequired")
-              : value <= 0.0
-              ? t("amountGreaterThanZero")
-              : undefined;
-          },
-        }}
         children={(field) => {
           return (
             <div className="grid w-full gap-1.5">
@@ -196,7 +186,6 @@ const TemplateAddForm: React.FC = () => {
                 onChange={(e) =>
                   field.handleChange(handleAmountString(e.target.value))
                 }
-                required
               />
               {field.state.meta.errors ? (
                 <em className="text-sm text-red-500">
@@ -210,11 +199,11 @@ const TemplateAddForm: React.FC = () => {
       <form.Subscribe
         selector={(state) => [state.canSubmit, state.isSubmitting]}
         children={([canSubmit, isSubmitting]) => (
-          <>
+          <div className="grid w-full">
             <Button type="submit" disabled={!canSubmit}>
               {isSubmitting ? <Spinner /> : <Check className="h-5" />}
             </Button>
-          </>
+          </div>
         )}
       />
     </form>

@@ -81,9 +81,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     amount: number;
     type: "expense" | "income";
   }) {
-    form.setFieldValue("note", note);
+    if (amount > 0.0) form.setFieldValue("amount", amount);
     form.setFieldValue("date", defaultDate(currentMonthYear, day));
-    form.setFieldValue("amount", amount);
+    if (note != "") form.setFieldValue("note", note);
     form.setFieldValue("type", type);
   };
 
@@ -101,6 +101,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         e.stopPropagation();
         form.handleSubmit();
       }}
+      className="space-y-1"
     >
       <form.Field
         name="id"
@@ -208,7 +209,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                 );
               }}
             />
-            <TemplateCloud categoryId={categoryId} onClick={fillForm} />
+            {!transaction && <TemplateCloud categoryId={categoryId} onClick={fillForm} />}
           </>
         )}
       />
@@ -240,7 +241,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         name="type"
         children={(field) => {
           return (
-            <div className="grid w-full grid-cols-2 place-items-center items-center px-4 pt-3">
+            <div className="grid grid-cols-2 w-full  place-items-center items-center">
               <Label htmlFor="expense" className="flex gap-2">
                 <Input
                   id="expense"

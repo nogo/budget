@@ -10,6 +10,7 @@ interface Template {
   amount: number;
   day: number;
   type: "expense" | "income";
+  category: string;
   note: string;
 }
 
@@ -53,7 +54,9 @@ const TemplateListItem: React.FC<TemplateItemProps> = ({
         <Badge variant="outline">
           <Calendar1Icon /> {template.day}.
         </Badge>
-        {template.note != "" && <span>{template.note}</span>}
+        <span>
+          {template.note != "" && <span>{template.note}</span>}
+        </span>
       </span>
       <span className="text-right font-mono">
         {formatCurrency(template.amount)}

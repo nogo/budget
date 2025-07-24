@@ -14,7 +14,9 @@ export type Template = {
   day: number;
 };
 
-function transformToTemplate(item: any): Template {
+function transformToTemplate(item: any): Template | undefined {
+  if (!item) return undefined;
+
   const result: Template = {
     id: item.id,
     amount: item.amount.toNumber(),

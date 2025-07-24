@@ -3,6 +3,8 @@ import { templateQueries } from "~/service/queries";
 import { formatCurrency } from "~/lib/format";
 import { Button } from "../ui/button";
 import { cn } from "~/lib/utils";
+import { Badge } from "../ui/badge";
+import { Calendar1Icon } from "lucide-react";
 
 type Props = {
   categoryId: number;
@@ -22,7 +24,11 @@ function mergeTemplateData(template: Template) {
     return template.note;
   }
 
-  return `(${template.day}.) ${formatCurrency(template.amount)}`;
+  if (template.amount > 0.0) {
+    return `(${template.day}.) ${formatCurrency(template.amount)}`;
+  }
+
+  return `(${template.day}.)`;
 }
 
 const TemplateCloud: React.FC<Props> = ({ categoryId, onClick }) => {

@@ -207,16 +207,6 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
 
       <form.Field
         name="amount"
-        validators={{
-          onBlur: ({ value }) => (value < 0.0 ? t("invalidValue") : undefined),
-          onChange: ({ value }) => {
-            return !value
-              ? t("amountRequired")
-              : value <= 0.0
-                ? t("amountGreaterThanZero")
-                : undefined;
-          },
-        }}
         children={(field) => {
           return (
             <div className="grid w-full gap-1.5">
@@ -233,7 +223,6 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
                 onChange={(e) =>
                   field.handleChange(handleAmountString(e.target.value))
                 }
-                required
               />
               {field.state.meta.errors ? (
                 <em className="text-sm text-red-500">

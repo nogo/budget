@@ -25,11 +25,7 @@ const LocaleContext = createContext<{
 export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [locale, setLocale] = useState<Locale>("en");
-
-  useEffect(() => {
-    setLocale(detectLocale());
-  }, []);
+  const [locale, setLocale] = useState<Locale>(() => detectLocale());
 
   return (
     <LocaleContext.Provider value={{ locale, setLocale }}>
