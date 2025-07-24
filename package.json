@@ -1,6 +1,6 @@
 {
   "name": "budget",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "",
   "keywords": [],
   "author": "Danilo Kuehn <me@ctl.wtf>",
@@ -44,7 +44,7 @@
     "recharts": "2.15.4",
     "tailwind-merge": "^3.3.1",
     "vite": "^7.0.6",
-    "zod": "^4.0.8"
+    "zod": "^4.0.9"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",
