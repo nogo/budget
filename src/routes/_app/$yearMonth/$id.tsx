@@ -10,6 +10,7 @@ export const Route = createFileRoute("/_app/$yearMonth/$id")({
     const currentMonthYear = parseYearMonth(yearMonth);
 
     return {
+      currentMonthYear,
       transactions: await context.queryClient.fetchQuery(
         transactionQueries.list(currentMonthYear),
       ),
@@ -21,9 +22,8 @@ export const Route = createFileRoute("/_app/$yearMonth/$id")({
 });
 
 function YearMonthItemEdit() {
-  const { id, yearMonth } = Route.useParams();
-  const currentMonthYear = parseYearMonth(yearMonth);
-  const { transactions, transaction } = Route.useLoaderData();
+  const { id } = Route.useParams();
+  const { currentMonthYear, transactions, transaction } = Route.useLoaderData();
 
   return (
     <>

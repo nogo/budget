@@ -30,7 +30,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   transaction,
 }) => {
   const yearMonthString = formatYearMonth(currentMonthYear);
-
   const { data: categories } = useSuspenseQuery(categoryQueries.list());
 
   const router = useRouter();
@@ -87,6 +86,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     form.setFieldValue("amount", amount);
     form.setFieldValue("type", type);
   };
+
+  React.useEffect(() => {
+    if (!transaction) {
+      form.setFieldValue("date",
+        defaultDate(currentMonthYear));
+    }
+  }, [currentMonthYear, transaction, form]);
 
   return (
     <form

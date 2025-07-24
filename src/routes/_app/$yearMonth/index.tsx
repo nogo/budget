@@ -9,21 +9,20 @@ export const Route = createFileRoute("/_app/$yearMonth/")({
   loader: async ({ context, params }) => {
     const currentMonthYear = parseYearMonth(params.yearMonth);
 
-    return await context.queryClient.fetchQuery(
-      transactionQueries.list(currentMonthYear),
-    );
+    return {
+      currentMonthYear,
+      transactions: await context.queryClient.fetchQuery(
+        transactionQueries.list(currentMonthYear),
+      )
+    }
   },
 });
 
 function YearMonthComponent() {
-  const { yearMonth } = Route.useParams();
-  const currentMonthYear = parseYearMonth(yearMonth);
-
+  const { currentMonthYear, transactions } = Route.useLoaderData();
   if (!currentMonthYear) {
     return <Navigate from="/$yearMonth" to="/" replace={true} />;
   }
-
-  const transactions = Route.useLoaderData();
 
   return (
     <>
