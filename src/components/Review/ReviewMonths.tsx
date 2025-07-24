@@ -6,7 +6,7 @@ import { useTranslation } from "~/locales/translations";
 import IncomeExpenseChart from "./IncomeExpenseChart";
 import CategoryFilter from "./CategoryFilter";
 import { buttonVariants } from "../ui/button";
-import { ArrowBigLeftDash, ArrowBigRightDash } from "lucide-react";
+import { ArrowBigLeftDash, ArrowBigRightDash, BarChart3, List } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 type YearlyDataRow = {
   month: number;
@@ -59,10 +60,10 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
   const totalTotal = rowsWithTotal.reduce((sum, row) => sum + row.total, 0);
 
   const handleCategoryChange = (newCategoryIds: number[]) => {
-    const searchParams = newCategoryIds.length > 0 
+    const searchParams = newCategoryIds.length > 0
       ? { categories: newCategoryIds.join(',') }
       : {};
-    
+
     navigate({
       to: "/review/$year",
       params: { year: year.toString() },
@@ -74,7 +75,7 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
     const searchParams = categoryIds.length > 0
       ? { categories: categoryIds.join(',') }
       : {};
-    
+
     return {
       to: "/review/$year" as const,
       params: { year: targetYear.toString() },
@@ -86,12 +87,12 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
     const searchParams = categoryIds.length > 0
       ? { categories: categoryIds.join(',') }
       : {};
-    
+
     return {
       to: "/review/$year/$month" as const,
-      params: { 
+      params: {
         year: year.toString(),
-        month: month.toString() 
+        month: month.toString()
       },
       search: searchParams,
     };
@@ -114,7 +115,7 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
           {nextYear} <ArrowBigRightDash />
         </Link>
       </div>
-      
+
       <CategoryFilter
         selectedCategoryIds={categoryIds}
         onCategoryChange={handleCategoryChange}
@@ -137,6 +138,7 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
                 <TableHead className="font-semibold text-right">
                   {t("total")}
                 </TableHead>
+                <TableHead></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -145,11 +147,11 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
                   <TableCell className="text-center">
                     <Link
                       {...buildMonthLink(row.month)}
+                      title="View month review"
                       className={buttonVariants({ variant: "outline" })}
                     >
-                      {row.month}
-                    </Link>
-                  </TableCell>
+                      <BarChart3 className="h-3 w-3 mr-1" />{row.month}
+                    </Link></TableCell>
                   <TableCell className="text-right font-mono">
                     {formatCurrency(row.income)}
                   </TableCell>
@@ -160,6 +162,16 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
                     className={cn(colored(row.total), "text-right font-mono")}
                   >
                     {formatCurrency(row.total)}
+                  </TableCell>
+                  <TableCell className="flex justify-center">
+                    <Link
+                      to="/$yearMonth"
+                      params={{ yearMonth: `${year}-${String(row.month).padStart(2, '0')}` }}
+                      className={buttonVariants({ variant: "outline" })}
+                      title={t("viewTransactions")}
+                    >
+                      <List className="h-3 w-3" />
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
@@ -178,6 +190,7 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
                 >
                   {formatCurrency(totalTotal)}
                 </TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableFooter>
           </Table>

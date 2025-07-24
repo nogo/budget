@@ -74,29 +74,16 @@ export const useRemoveCategoryMutation = () => {
 
 export const reviewQueries = {
   all: ["reviews"],
-  years: () =>
+  years: (categoryIds?: number[]) =>
     queryOptions({
-      queryKey: [...reviewQueries.all, "years"],
-      queryFn: () => reviewYears(),
+      queryKey: [...reviewQueries.all, "years", categoryIds],
+      queryFn: () => reviewYears({ data: { categoryIds } }),
     }),
-  yearsWithCategories: (categoryIds?: number[]) =>
-    queryOptions({
-      queryKey: [...reviewQueries.all, "years", "categories", categoryIds],
-      queryFn: () => reviewYearsWithCategoryFilter({ data: { categoryIds } }),
-    }),
-  year: (year: number) => {
+  year: (year: number, categoryIds?: number[]) => {
     year = year || new Date().getFullYear();
     return queryOptions({
       queryKey: [...reviewQueries.all, year],
-      queryFn: () => reviewMonths({ data: year }),
-      enabled: !!year,
-    });
-  },
-  yearWithCategories: (year: number, categoryIds?: number[]) => {
-    year = year || new Date().getFullYear();
-    return queryOptions({
-      queryKey: [...reviewQueries.all, year, "categories", categoryIds],
-      queryFn: () => reviewMonthsWithCategoryFilter({ data: { year, categoryIds } }),
+      queryFn: () => reviewMonths({ data: { year, categoryIds } }),
       enabled: !!year,
     });
   },

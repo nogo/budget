@@ -9,6 +9,7 @@ import {
   Brush,
 } from "recharts";
 import { useTranslation } from "~/locales/translations";
+import { formatCurrencyWhole } from "~/lib/format";
 import {
   ChartConfig,
   ChartContainer,
@@ -55,15 +56,11 @@ const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
           <ComposedChart accessibilityLayer data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis dataKey={dataX} tickMargin={3} />
-            <YAxis />
-            <Brush
-              dataKey={dataX}
-              height={30}
-              stroke="var(--color-accumulated)"
+            <YAxis 
+              tickFormatter={(value) => formatCurrencyWhole(value)}
             />
             <ChartLegend content={<ChartLegendContent payload={[]} />} />
             <ChartTooltip
-              cursor={false}
               content={<ChartTooltipContent />}
             />
             <Bar dataKey="income" fill="var(--color-income)" radius={4} />

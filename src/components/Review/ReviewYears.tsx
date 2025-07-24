@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { BarChart3 } from "lucide-react";
 
 type YearlyDataRow = {
   year: number;
@@ -62,10 +63,10 @@ const ReviewYears: React.FC<YearlyProps> = ({ data, categoryIds = [] }) => {
   };
 
   const handleCategoryChange = (newCategoryIds: number[]) => {
-    const searchParams = newCategoryIds.length > 0 
+    const searchParams = newCategoryIds.length > 0
       ? { categories: newCategoryIds.join(',') }
       : {};
-    
+
     navigate({
       to: "/review",
       search: searchParams,
@@ -76,7 +77,7 @@ const ReviewYears: React.FC<YearlyProps> = ({ data, categoryIds = [] }) => {
     const searchParams = categoryIds.length > 0
       ? { categories: categoryIds.join(',') }
       : {};
-    
+
     return {
       to: "/review/$year" as const,
       params: { year: year.toString() },
@@ -89,12 +90,12 @@ const ReviewYears: React.FC<YearlyProps> = ({ data, categoryIds = [] }) => {
       <h1 className="text-2xl text-center font-bold mb-4">
         {t("reviewTitle")}
       </h1>
-      
+
       <CategoryFilter
         selectedCategoryIds={categoryIds}
         onCategoryChange={handleCategoryChange}
       />
-      
+
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
         <IncomeExpenseChart data={rowsWithAccumulated} />
         <div className="overflow-x-auto">
@@ -123,6 +124,7 @@ const ReviewYears: React.FC<YearlyProps> = ({ data, categoryIds = [] }) => {
                       {...buildYearLink(row.year)}
                       className={buttonVariants({ variant: "outline" })}
                     >
+                      <BarChart3 className="h-3 w-3 mr-1" />
                       {row.year}
                     </Link>
                   </TableCell>

@@ -12,17 +12,15 @@ export const Route = createFileRoute("/_app/review/")({
   }),
   loader: async ({ context, deps: { categories } }) => {
     const catIds = handleIdStringArray(categories);
-
-    if (catIds && catIds.length > 0) {
-      return await context.queryClient.fetchQuery(reviewQueries.yearsWithCategories(catIds));
-    }
-    return await context.queryClient.fetchQuery(reviewQueries.years());
+    return {
+      data: await context.queryClient.fetchQuery(reviewQueries.years(catIds)),
+      categoryIds: catIds,
+    };
   },
 });
 
 function YearReviewComponent() {
-  const data = Route.useLoaderData();
-  const { categories } = Route.useSearch();
-  
-  return <ReviewYears data={data} categoryIds={handleIdStringArray(categories)} />;
+  const { data, categoryIds } = Route.useLoaderData();
+
+  return <ReviewYears data={data} categoryIds={categoryIds} />;
 }

@@ -8,7 +8,9 @@ export default {
     total: "Total",
     accumulatedTotal: "Accumulated Total",
     selectCategoryPlaceholder: "Select a category to filter...",
-    clearAll: "Clear fitler"
+    clearAll: "Clear fitler",
+    viewReview: "View month review",
+    viewTransactions: "View transactions"
   },
   de: {
     reviewTitle: "Übersicht",
@@ -19,6 +21,8 @@ export default {
     total: "Summe",
     accumulatedTotal: "Kumulierte Summe",
     selectCategoryPlaceholder: "Kategorie auswählen um zu filtern...",
-    clearAll: "Filter löschen"
+    clearAll: "Filter löschen",
+    viewReview: "Zeige monatliche Auswertung",
+    viewTransactions: "Zeige Transaktionen"
   },
 };
