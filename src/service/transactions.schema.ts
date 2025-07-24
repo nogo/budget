@@ -4,11 +4,14 @@ import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 
-export const ListTransactionSchema = z
-  .string()
-  .optional()
-  .catch(() => dayjs().format("YYYY-MM"))
-  .transform((d) => dayjs.utc(d, "YYYY-MM", true));
+export const ListTransactionSchema = z.object({
+  monthYear: z
+    .string()
+    .optional()
+    .catch(() => dayjs().format("YYYY-MM"))
+    .transform((d) => dayjs.utc(d, "YYYY-MM", true)),
+  query: z.string().min(1).optional(),
+});
 
 export const TransactionCreateSchema = z.object({
   id: z.number().optional(),

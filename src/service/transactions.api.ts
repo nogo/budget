@@ -4,6 +4,7 @@ import { ListTransactionSchema, TransactionCreateSchema } from "./transactions.s
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import prisma from "~/lib/prisma";
+import { TransactionWhereInput } from "~/generated/prisma/models";
 
 dayjs.extend(utc);
 
@@ -37,18 +38,33 @@ function transformToTransaction(item: any): Transaction {
 
 export const listTransactions = createServerFn()
   .validator(ListTransactionSchema)
-  .handler(async ({ data }) => {
-    const startDate = data.startOf("month").unix();
-    const endDate = data.endOf("month").unix();
+  .handler(async ({ data: { monthYear, query } }) => {
+
+    const whereConditions: TransactionWhereInput = {};
+    if (monthYear) {
+      const startDate = monthYear.startOf("month").unix();
+      const endDate = monthYear.endOf("month").unix();
+
+      if (!query) {
+        whereConditions.date = {
+          gte: startDate,
+          lte: endDate,
+        };
+      }
+    }
+
+
+    if (query) {
+      whereConditions.AND = query
+        .split(/\s+/)
+        .map(term => {
+          return { note: { contains: term } }
+        })
+    }
 
     return await prisma.transaction
       .findMany({
-        where: {
-          date: {
-            gte: startDate,
-            lte: endDate,
-          },
-        },
+        where: whereConditions,
         orderBy: [
           {
             date: "desc",

@@ -152,13 +152,13 @@ export const useRemoveTemplateMutation = () => {
 
 export const transactionQueries = {
   all: ["transactions"],
-  list: (yearMonth?: YearMonth) => {
+  list: (yearMonth?: YearMonth, query?: string) => {
     yearMonth = yearMonth || yearMonthNow();
     const yearMonthString = formatYearMonth(yearMonth);
 
     return queryOptions({
       queryKey: [...transactionQueries.all, "list"],
-      queryFn: () => listTransactions({ data: yearMonthString }),
+      queryFn: () => listTransactions({ data: { monthYear: yearMonthString } }),
     });
   },
   detail: (transactionId: string) =>

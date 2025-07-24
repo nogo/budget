@@ -7,10 +7,10 @@ A personal finance tracker built with React. It helps you track expenses and inc
 ### Core Functionality
 
 - 📊 Track expenses and income with categorized transactions
-- ✏️ Create, edit, and delete transactions and categories
+- ✏️ Create, edit, search, filter and delete transactions and categories
 - 🕒 View transaction history in a clean, modern interface
 - 🐳 Simple deployment with container support
-- 🌍 Localization
+- 🌍 Localization in English and German
 - 📈 Show yearly and monthly income expense charts to analyze your budget
 - 📈 Generate expense charts by category
 - 🔒 User authentication
