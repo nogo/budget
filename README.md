@@ -17,6 +17,7 @@ A personal finance tracker built with React. It helps you track expenses and inc
 
 ### Future Plans 🚀
 
+- ToDo/Shopping List
 - 📶 Offline-first functionality with PWA support (Coming Soon)
 - 🔄 Export/Import data capabilities (Coming Soon)
 

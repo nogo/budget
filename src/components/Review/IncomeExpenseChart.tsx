@@ -64,7 +64,7 @@ const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
             <ChartLegend content={<ChartLegendContent payload={[]} />} />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator="dot" />}
+              content={<ChartTooltipContent />}
             />
             <Bar dataKey="income" fill="var(--color-income)" radius={4} />
             <Bar dataKey="expense" fill="var(--color-expense)" radius={4} />
@@ -95,7 +95,7 @@ const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
         )}
       </div>
 
-      
+
     </>
   );
 };
