@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Bar,
   XAxis,
@@ -27,6 +27,11 @@ const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
 }) => {
   const t = useTranslation("Review");
   const dataX = "year" in chartData[0] ? "year" : "month";
+  const [showAccumulated, setShowAccumulated] = useState(false);
+
+  const hasMultipleBarsWithValues = chartData.some(item =>
+    (item.income > 0 || item.income < 0) && (item.expense > 0 || item.expense < 0)
+  );
 
   const chartConfig = {
     income: {
@@ -44,34 +49,54 @@ const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
   } satisfies ChartConfig;
 
   return (
-    <div className="w-full my-8 p-3 border border-gray-300 shadow-md">
-      <ChartContainer config={chartConfig}>
-        <ComposedChart accessibilityLayer data={chartData}>
-          <CartesianGrid vertical={false} />
-          <XAxis dataKey={dataX} tickMargin={3} />
-          <YAxis />
-          <Brush
-            dataKey={dataX}
-            height={30}
-            stroke="var(--color-accumulated)"
-          />
-          <ChartLegend content={<ChartLegendContent />} />
-          <ChartTooltip
-            cursor={false}
-            content={<ChartTooltipContent indicator="dot" />}
-          />
-          <Bar dataKey="income" fill="var(--color-income)" radius={4} />
-          <Bar dataKey="expense" fill="var(--color-expense)" radius={4} />
-          <Line
-            dataKey="accumulated"
-            type="monotone"
-            stroke="var(--color-accumulated)"
-            strokeWidth={4}
-            dot={false}
-          />
-        </ComposedChart>
-      </ChartContainer>
-    </div>
+    <>
+      <div className="w-full my-8 p-3 border border-gray-300 shadow-md">
+        <ChartContainer config={chartConfig}>
+          <ComposedChart accessibilityLayer data={chartData}>
+            <CartesianGrid vertical={false} />
+            <XAxis dataKey={dataX} tickMargin={3} />
+            <YAxis />
+            <Brush
+              dataKey={dataX}
+              height={30}
+              stroke="var(--color-accumulated)"
+            />
+            <ChartLegend content={<ChartLegendContent payload={[]} />} />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent indicator="dot" />}
+            />
+            <Bar dataKey="income" fill="var(--color-income)" radius={4} />
+            <Bar dataKey="expense" fill="var(--color-expense)" radius={4} />
+            {hasMultipleBarsWithValues && showAccumulated && (
+              <Line
+                dataKey="accumulated"
+                type="monotone"
+                stroke="var(--color-accumulated)"
+                strokeWidth={4}
+                dot={false}
+              />
+            )}
+          </ComposedChart>
+        </ChartContainer>
+        {hasMultipleBarsWithValues && (
+          <div className="text-right">
+            <input
+              type="checkbox"
+              id="showAccumulated"
+              checked={showAccumulated}
+              onChange={(e) => setShowAccumulated(e.target.checked)}
+              className="mr-2"
+            />
+            <label htmlFor="showAccumulated" className="text-sm">
+              {t("accumulatedTotal")}
+            </label>
+          </div>
+        )}
+      </div>
+
+      
+    </>
   );
 };
 
