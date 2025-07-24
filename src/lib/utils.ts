@@ -35,3 +35,11 @@ export function handleAmountString(value: string) {
   }
 }
 
+export function handleIdStringArray(value: string | undefined): number[] | undefined {
+  return value
+    ? value
+      .split(',')
+      .map((id: string): number => parseInt(id))
+      .filter((id: number): boolean => !isNaN(id))
+    : undefined;
+}

@@ -1,10 +1,10 @@
-import { Link } from "@tanstack/react-router";
-import React from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { formatCurrency } from "~/lib/format";
 import { cn } from "~/lib/utils";
 import IncomeExpenseChart from "./IncomeExpenseChart";
+import CategoryFilter from "./CategoryFilter";
 import { useTranslation } from "~/locales/translations";
-import { Button, buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import {
   Table,
   TableBody,
@@ -24,10 +24,12 @@ type YearlyDataRow = {
 
 type YearlyProps = {
   data: YearlyDataRow[];
+  categoryIds?: number[];
 };
 
-const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
+const ReviewYears: React.FC<YearlyProps> = ({ data, categoryIds = [] }) => {
   const t = useTranslation("Review");
+  const navigate = useNavigate();
 
   const rowsWithTotal = data.map((row) => ({
     ...row,
@@ -59,11 +61,40 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
     return value < 0 ? "text-red-600" : "text-green-600";
   };
 
+  const handleCategoryChange = (newCategoryIds: number[]) => {
+    const searchParams = newCategoryIds.length > 0 
+      ? { categories: newCategoryIds.join(',') }
+      : {};
+    
+    navigate({
+      to: "/review",
+      search: searchParams,
+    });
+  };
+
+  const buildYearLink = (year: number) => {
+    const searchParams = categoryIds.length > 0
+      ? { categories: categoryIds.join(',') }
+      : {};
+    
+    return {
+      to: "/review/$year" as const,
+      params: { year: year.toString() },
+      search: searchParams,
+    };
+  };
+
   return (
     <>
       <h1 className="text-2xl text-center font-bold mb-4">
         {t("reviewTitle")}
       </h1>
+      
+      <CategoryFilter
+        selectedCategoryIds={categoryIds}
+        onCategoryChange={handleCategoryChange}
+      />
+      
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
         <IncomeExpenseChart data={rowsWithAccumulated} />
         <div className="overflow-x-auto">
@@ -89,10 +120,7 @@ const ReviewYears: React.FC<YearlyProps> = ({ data }) => {
                 <TableRow key={idx}>
                   <TableCell className="text-center">
                     <Link
-                      to="/review/$year"
-                      params={{
-                        year: row.year.toString(),
-                      }}
+                      {...buildYearLink(row.year)}
                       className={buttonVariants({ variant: "outline" })}
                     >
                       {row.year}

@@ -85,6 +85,31 @@ view ReviewCategoryMonths {
   @@map("review_category_months")
 }
 
+view ReviewYearsWithCategories {
+  year         Int
+  categoryId   Int     @map("category_id")
+  categoryName String? @map("category_name")
+  income       Decimal
+  expense      Decimal
+  total        Decimal
+
+  @@id([year, categoryId])
+  @@map("review_years_with_categories")
+}
+
+view ReviewMonthsWithCategories {
+  year         Int
+  month        Int
+  categoryId   Int     @map("category_id")
+  categoryName String? @map("category_name")
+  income       Decimal
+  expense      Decimal
+  total        Decimal
+
+  @@id([year, month, categoryId])
+  @@map("review_months_with_categories")
+}
+
 // BetterAuth
 
 model User {

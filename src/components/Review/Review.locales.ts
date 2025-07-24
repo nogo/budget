@@ -7,6 +7,8 @@ export default {
     expense: "Expense",
     total: "Total",
     accumulatedTotal: "Accumulated Total",
+    selectCategoryPlaceholder: "Select a category to filter...",
+    clearAll: "Clear fitler"
   },
   de: {
     reviewTitle: "Übersicht",
@@ -16,5 +18,7 @@ export default {
     expense: "Ausgaben",
     total: "Summe",
     accumulatedTotal: "Kumulierte Summe",
+    selectCategoryPlaceholder: "Kategorie auswählen um zu filtern...",
+    clearAll: "Filter löschen"
   },
 };

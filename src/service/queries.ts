@@ -9,7 +9,7 @@ import {
   listCategories,
   removeCategory,
 } from "./categories.api";
-import { reviewCategoryMonth, reviewMonths, reviewYears } from "./review.api";
+import { reviewCategoryMonth, reviewMonths, reviewYears, reviewYearsWithCategoryFilter, reviewMonthsWithCategoryFilter } from "./review.api";
 import {
   crupTemplate,
   fetchTemplate,
@@ -79,11 +79,24 @@ export const reviewQueries = {
       queryKey: [...reviewQueries.all, "years"],
       queryFn: () => reviewYears(),
     }),
+  yearsWithCategories: (categoryIds?: number[]) =>
+    queryOptions({
+      queryKey: [...reviewQueries.all, "years", "categories", categoryIds],
+      queryFn: () => reviewYearsWithCategoryFilter({ data: { categoryIds } }),
+    }),
   year: (year: number) => {
     year = year || new Date().getFullYear();
     return queryOptions({
       queryKey: [...reviewQueries.all, year],
       queryFn: () => reviewMonths({ data: year }),
+      enabled: !!year,
+    });
+  },
+  yearWithCategories: (year: number, categoryIds?: number[]) => {
+    year = year || new Date().getFullYear();
+    return queryOptions({
+      queryKey: [...reviewQueries.all, year, "categories", categoryIds],
+      queryFn: () => reviewMonthsWithCategoryFilter({ data: { year, categoryIds } }),
       enabled: !!year,
     });
   },

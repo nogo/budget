@@ -1,9 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import React from "react";
 import { formatCurrency } from "~/lib/format";
 import { cn, colored, striped } from "~/lib/utils";
 import { useTranslation } from "~/locales/translations";
 import IncomeExpenseChart from "./IncomeExpenseChart";
+import CategoryFilter from "./CategoryFilter";
 import { buttonVariants } from "../ui/button";
 import { ArrowBigLeftDash, ArrowBigRightDash } from "lucide-react";
 import {
@@ -26,10 +27,12 @@ type YearlyDataRow = {
 type YearlyProps = {
   year: number;
   data: YearlyDataRow[];
+  categoryIds?: number[];
 };
 
-const ReviewMonths: React.FC<YearlyProps> = ({ year, data }) => {
+const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) => {
   const t = useTranslation("Review");
+  const navigate = useNavigate();
 
   const rowsWithTotal = data.map((row) => ({
     ...row,
@@ -55,25 +58,67 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data }) => {
   );
   const totalTotal = rowsWithTotal.reduce((sum, row) => sum + row.total, 0);
 
+  const handleCategoryChange = (newCategoryIds: number[]) => {
+    const searchParams = newCategoryIds.length > 0 
+      ? { categories: newCategoryIds.join(',') }
+      : {};
+    
+    navigate({
+      to: "/review/$year",
+      params: { year: year.toString() },
+      search: searchParams,
+    });
+  };
+
+  const buildYearLink = (targetYear: number) => {
+    const searchParams = categoryIds.length > 0
+      ? { categories: categoryIds.join(',') }
+      : {};
+    
+    return {
+      to: "/review/$year" as const,
+      params: { year: targetYear.toString() },
+      search: searchParams,
+    };
+  };
+
+  const buildMonthLink = (month: number) => {
+    const searchParams = categoryIds.length > 0
+      ? { categories: categoryIds.join(',') }
+      : {};
+    
+    return {
+      to: "/review/$year/$month" as const,
+      params: { 
+        year: year.toString(),
+        month: month.toString() 
+      },
+      search: searchParams,
+    };
+  };
+
   return (
     <>
       <div className="flex justify-between">
         <Link
-          to="/review/$year"
-          params={{ year: String(prevYear) }}
+          {...buildYearLink(prevYear)}
           className={buttonVariants({ variant: "secondary" })}
         >
           <ArrowBigLeftDash /> {prevYear}
         </Link>
         <h1 className="text-2xl text-center font-bold mb-4">{year}</h1>
         <Link
-          to="/review/$year"
-          params={{ year: String(nextYear) }}
+          {...buildYearLink(nextYear)}
           className={buttonVariants({ variant: "secondary" })}
         >
           {nextYear} <ArrowBigRightDash />
         </Link>
       </div>
+      
+      <CategoryFilter
+        selectedCategoryIds={categoryIds}
+        onCategoryChange={handleCategoryChange}
+      />
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
         <IncomeExpenseChart data={rowsWithAccumulated} />
         <div className="overflow-x-auto">
@@ -99,11 +144,7 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data }) => {
                 <TableRow key={idx} className={cn(striped(idx))}>
                   <TableCell className="text-center">
                     <Link
-                      to="/review/$year/$month"
-                      params={{
-                        year: year.toString(),
-                        month: row.month.toString(),
-                      }}
+                      {...buildMonthLink(row.month)}
                       className={buttonVariants({ variant: "outline" })}
                     >
                       {row.month}
