@@ -1,11 +1,19 @@
 services:
   budget-app:
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: Dockerfile
       target: runner
-    env_file:
-      - .env
+      args:
+        VITE_LOCALE: ${VITE_LOCALE:-de-DE}
+        VITE_CURRENCY: ${VITE_CURRENCY:-EUR}
+        VITE_BETTER_AUTH_URL: ${VITE_BETTER_AUTH_URL}
+        VITE_AUTH_ALLOW_REGISTRATION: ${VITE_AUTH_ALLOW_REGISTRATION}
+        VITE_AUTH_DEFAULT_USER: ${VITE_AUTH_DEFAULT_USER}
+        VITE_AUTH_DEFAULT_EMAIL: ${VITE_AUTH_DEFAULT_EMAIL}
+        VITE_AUTH_DEFAULT_PASSWORD: ${VITE_AUTH_DEFAULT_PASSWORD}
     volumes:
       - budget-data:/data
 
@@ -18,7 +26,7 @@ services:
       - .env
     volumes:
       - budget-data:/data
-    command: ["bun", "run", "db:deploy"]
+    command: [ "bun", "run", "db:deploy" ]
 
 volumes:
   budget-data:
