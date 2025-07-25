@@ -33,6 +33,18 @@ export const Route = createRootRouteWithContext<{
         name: "viewport",
         content: "width=device-width, initial-scale=1",
       },
+      {
+        name: "theme-color",
+        content: "#733e0a",
+      },
+      {
+        name: "apple-mobile-web-app-capable",
+        content: "yes",
+      },
+      {
+        name: "apple-mobile-web-app-status-bar-style",
+        content: "default",
+      },
       ...seo({
         title: "Budget",
       }),
@@ -51,7 +63,12 @@ export const Route = createRootRouteWithContext<{
         sizes: "16x16",
         href: "/img/favicon-16x16.png",
       },
-      { rel: "manifest", href: "/site.webmanifest", color: "#733e0a" },
+      {
+        rel: "apple-touch-icon",
+        sizes: "128x128",
+        href: "/img/favicon-128x128.png",
+      },
+      { rel: "manifest", href: "/site.webmanifest" },
       { rel: "icon", href: "/img/favicon.ico" },
     ],
   }),
