@@ -17,7 +17,7 @@ import { JoinSchema } from "~/service/auth.schema";
 
 export const Route = createFileRoute("/(auth)/join")({
   beforeLoad: () => {
-    if (!env.PUBLIC_AUTH_ALLOW_REGISTRATION) {
+    if (!env.VITE_AUTH_ALLOW_REGISTRATION) {
       return redirect({ to: "/" });
     }
   },

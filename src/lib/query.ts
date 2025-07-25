@@ -38,7 +38,7 @@ export function parseAmount(amountStr: string): number | null {
   const cleanAmount = amountStr.replace(/[^\d,.-]/g, '');
   
   // Handle locale-specific decimal delimiter
-  const locale = env.PUBLIC_LOCALE;
+  const locale = env.VITE_LOCALE;
   const isGermanLocale = locale.startsWith('de');
   
   let normalizedAmount = cleanAmount;

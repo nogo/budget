@@ -40,8 +40,8 @@ function Login() {
 
   const form = useForm({
     defaultValues: {
-      username: env.PUBLIC_AUTH_DEFAULT_USER ?? "",
-      password: env.PUBLIC_AUTH_DEFAULT_PASSWORD ?? "",
+      username: env.VITE_AUTH_DEFAULT_USER ?? "",
+      password: env.VITE_AUTH_DEFAULT_PASSWORD ?? "",
     },
     onSubmit: async ({ formApi, value }) => {
       await logInMutation.mutateAsync(value);
