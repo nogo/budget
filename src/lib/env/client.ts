@@ -1,36 +1,30 @@
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod/v4";
 
-const getViteEnv = (key: string) => {
-  return import.meta.env ? import.meta.env[key] : process.env[key];
-};
-
 export const env = createEnv({
-  clientPrefix: "PUBLIC_",
+  clientPrefix: "VITE_",
   client: {
-    PUBLIC_LOCALE: z.string().optional().default("de-DE"),
-    PUBLIC_CURRENCY: z.string().optional().default("EUR"),
-    PUBLIC_BETTER_AUTH_URL: z.url(),
-    PUBLIC_AUTH_ALLOW_REGISTRATION: z
+    VITE_LOCALE: z.string().optional().default("de-DE"),
+    VITE_CURRENCY: z.string().optional().default("EUR"),
+    VITE_BETTER_AUTH_URL: z.url(),
+    VITE_AUTH_ALLOW_REGISTRATION: z
       .string()
       .refine((s) => s === "true" || s === "false")
       .transform((s) => s === "true")
       .optional(),
-    PUBLIC_AUTH_DEFAULT_USER: z.string().optional(),
-    PUBLIC_AUTH_DEFAULT_EMAIL: z.email().optional(),
-    PUBLIC_AUTH_DEFAULT_PASSWORD: z.string().optional(),
+    VITE_AUTH_DEFAULT_USER: z.string().optional(),
+    VITE_AUTH_DEFAULT_EMAIL: z.email().optional(),
+    VITE_AUTH_DEFAULT_PASSWORD: z.string().optional(),
   },
 
   runtimeEnvStrict: {
-    PUBLIC_LOCALE: getViteEnv("PUBLIC_LOCALE"),
-    PUBLIC_CURRENCY: getViteEnv("PUBLIC_CURRENCY"),
-    PUBLIC_BETTER_AUTH_URL: getViteEnv("PUBLIC_BETTER_AUTH_URL"),
-    PUBLIC_AUTH_ALLOW_REGISTRATION: getViteEnv(
-      "PUBLIC_AUTH_ALLOW_REGISTRATION",
-    ),
-    PUBLIC_AUTH_DEFAULT_USER: getViteEnv("PUBLIC_AUTH_DEFAULT_USER"),
-    PUBLIC_AUTH_DEFAULT_EMAIL: getViteEnv("PUBLIC_AUTH_DEFAULT_EMAIL"),
-    PUBLIC_AUTH_DEFAULT_PASSWORD: getViteEnv("PUBLIC_AUTH_DEFAULT_PASSWORD"),
+    VITE_LOCALE: import.meta.env.VITE_LOCALE,
+    VITE_CURRENCY: import.meta.env.VITE_CURRENCY,
+    VITE_BETTER_AUTH_URL: import.meta.env.VITE_BETTER_AUTH_URL,
+    VITE_AUTH_ALLOW_REGISTRATION: import.meta.env.VITE_AUTH_ALLOW_REGISTRATION,
+    VITE_AUTH_DEFAULT_USER: import.meta.env.VITE_AUTH_DEFAULT_USER,
+    VITE_AUTH_DEFAULT_EMAIL: import.meta.env.VITE_AUTH_DEFAULT_EMAIL,
+    VITE_AUTH_DEFAULT_PASSWORD: import.meta.env.VITE_AUTH_DEFAULT_PASSWORD,
   },
 
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,

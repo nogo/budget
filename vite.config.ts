@@ -5,7 +5,6 @@ import tailwindcss from "@tailwindcss/vite";
 import viteReact from '@vitejs/plugin-react'
 
 export default defineConfig({
-  envPrefix: "PUBLIC_",
   server: {
     port: 3000,
   },
