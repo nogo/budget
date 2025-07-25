@@ -7,11 +7,13 @@ import { currentYearMonth, formatYearMonth } from "~/lib/yearmonth";
 export interface MonthlyItemProps {
   selected: boolean;
   transaction: Transaction;
+  searchQuery?: string;
 }
 
 const MonthlyListItem: React.FC<MonthlyItemProps> = ({
   selected,
   transaction,
+  searchQuery
 }) => {
   const yearMonth = currentYearMonth();
   const amountClass =
@@ -22,6 +24,7 @@ const MonthlyListItem: React.FC<MonthlyItemProps> = ({
     <Link
       to="/$yearMonth/$id"
       id={transaction.id.toString()}
+      search={{ q: searchQuery}}
       params={{
         yearMonth: formatYearMonth(yearMonth),
         id: transaction.id.toString(),

@@ -157,8 +157,8 @@ export const transactionQueries = {
     const yearMonthString = formatYearMonth(yearMonth);
 
     return queryOptions({
-      queryKey: [...transactionQueries.all, "list"],
-      queryFn: () => listTransactions({ data: { monthYear: yearMonthString } }),
+      queryKey: [...transactionQueries.all, "list", yearMonthString, query],
+      queryFn: () => listTransactions({ data: { monthYear: yearMonthString, query } }),
     });
   },
   detail: (transactionId: string) =>

@@ -1,25 +1,33 @@
 import { Navigate, createFileRoute } from "@tanstack/react-router";
+import { z } from "zod/v4";
 import { parseYearMonth } from "~/lib/yearmonth";
 import TransactionForm from "~/components/Budget/TransactionForm";
 import MonthlyList from "~/components/Budget/MonthlyList";
 import { transactionQueries } from "~/service/queries";
 
+const searchSchema = z.object({
+  q: z.string().optional(),
+});
+
 export const Route = createFileRoute("/_app/$yearMonth/")({
   component: YearMonthComponent,
-  loader: async ({ context, params }) => {
+  validateSearch: searchSchema,
+  loaderDeps: ({ search: { q } }) => ({ search: q }),
+  loader: async ({ context, params, deps: { search } }) => {
     const currentMonthYear = parseYearMonth(params.yearMonth);
 
     return {
       currentMonthYear,
+      search,
       transactions: await context.queryClient.fetchQuery(
-        transactionQueries.list(currentMonthYear),
+        transactionQueries.list(currentMonthYear, search),
       )
     }
   },
 });
 
 function YearMonthComponent() {
-  const { currentMonthYear, transactions } = Route.useLoaderData();
+  const { currentMonthYear, search, transactions } = Route.useLoaderData();
   if (!currentMonthYear) {
     return <Navigate from="/$yearMonth" to="/" replace={true} />;
   }
@@ -38,6 +46,7 @@ function YearMonthComponent() {
         <MonthlyList
           transactions={transactions}
           currentMonthYear={currentMonthYear}
+          searchQuery={search}
         />
       </div>
     </>

@@ -1,18 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod/v4";
 import { parseYearMonth } from "~/lib/yearmonth";
 import MonthlyList from "~/components/Budget/MonthlyList";
 import TransactionForm from "~/components/Budget/TransactionForm";
 import { transactionQueries } from "~/service/queries";
 
+const searchSchema = z.object({
+  q: z.string().optional(),
+});
+
 export const Route = createFileRoute("/_app/$yearMonth/$id")({
   component: YearMonthItemEdit,
-  loader: async ({ context, params: { id, yearMonth } }) => {
+  validateSearch: searchSchema,
+  loaderDeps: ({ search: { q } }) => ({ search: q }),
+  loader: async ({ context, params: { id, yearMonth }, deps: { search } }) => {
     const currentMonthYear = parseYearMonth(yearMonth);
 
     return {
       currentMonthYear,
+      search,
       transactions: await context.queryClient.fetchQuery(
-        transactionQueries.list(currentMonthYear),
+        transactionQueries.list(currentMonthYear, search),
       ),
       transaction: await context.queryClient.fetchQuery(
         transactionQueries.detail(id),
@@ -23,7 +31,7 @@ export const Route = createFileRoute("/_app/$yearMonth/$id")({
 
 function YearMonthItemEdit() {
   const { id } = Route.useParams();
-  const { currentMonthYear, transactions, transaction } = Route.useLoaderData();
+  const { currentMonthYear, search, transactions, transaction } = Route.useLoaderData();
 
   return (
     <>
@@ -43,6 +51,7 @@ function YearMonthItemEdit() {
           transactions={transactions}
           currentMonthYear={currentMonthYear}
           selectedTransactionId={id}
+          searchQuery={search}
         />
       </div>
     </>

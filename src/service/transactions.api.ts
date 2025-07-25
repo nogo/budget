@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import prisma from "~/lib/prisma";
 import { TransactionWhereInput } from "~/generated/prisma/models";
+import { ParsedSearchQuery, parseSearchQuery } from "~/lib/query";
 
 dayjs.extend(utc);
 
@@ -39,29 +40,28 @@ function transformToTransaction(item: any): Transaction {
 export const listTransactions = createServerFn()
   .validator(ListTransactionSchema)
   .handler(async ({ data: { monthYear, query } }) => {
+    const categoryNames = await prisma.category.findMany({ select: { name: true } }).then(items => items.map(c => c.name));
+    const parsed = parseSearchQuery(query, categoryNames);
 
     const whereConditions: TransactionWhereInput = {};
-    if (monthYear) {
+
+    // Apply month year filter only when no textQuery
+    if (parsed?.textQuery) {
+      whereConditions.AND = parsed.textQuery
+        .split(/\s+/)
+        .map((term: string) => ({
+          note: { contains: term }
+        }));
+    } else if (monthYear) {
       const startDate = monthYear.startOf("month").unix();
       const endDate = monthYear.endOf("month").unix();
-
-      if (!query) {
-        whereConditions.date = {
-          gte: startDate,
-          lte: endDate,
-        };
-      }
+      whereConditions.date = {
+        gte: startDate,
+        lte: endDate,
+      };
     }
 
-
-    if (query) {
-      whereConditions.AND = query
-        .split(/\s+/)
-        .map(term => {
-          return { note: { contains: term } }
-        })
-    }
-
+    // Get transactions from database
     return await prisma.transaction
       .findMany({
         where: whereConditions,
@@ -81,7 +81,21 @@ export const listTransactions = createServerFn()
           },
         },
       })
-      .then((items) => items.map((item) => transformToTransaction(item)));
+      .then(items => items
+        .filter(item => {
+          if (parsed && parsed.categories.length > 0) {
+            return item.category && parsed.categories.includes(item.category.name)
+          }
+          return true;
+        })
+        .filter(item => {
+          if (parsed && parsed.amounts.length > 0) {
+            return parsed.amounts.includes(item.amount.toNumber())
+          }
+          return true;
+        })
+        .map(item => transformToTransaction(item))
+      );
   });
 
 export const findTransactions = createServerFn()

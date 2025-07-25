@@ -10,7 +10,7 @@ export const ListTransactionSchema = z.object({
     .optional()
     .catch(() => dayjs().format("YYYY-MM"))
     .transform((d) => dayjs.utc(d, "YYYY-MM", true)),
-  query: z.string().min(1).optional(),
+  query: z.string().optional(),
 });
 
 export const TransactionCreateSchema = z.object({
