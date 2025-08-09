@@ -59,9 +59,5 @@
     "vite": "^6.3.5",
     "vite-plugin-pwa": "^1.0.2",
     "vite-tsconfig-paths": "^5.1.4"
-  },
-  "prisma": {
-    "schema": "prisma/schema.prisma",
-    "seed": "bun prisma/seed.js"
   }
 }

@@ -54,7 +54,7 @@ model Template {
 }
 
 view ReviewYears {
-  year    Int     @id
+  year    Int
   income  Decimal
   expense Decimal
   total   Decimal
@@ -69,7 +69,6 @@ view ReviewMonths {
   expense Decimal
   total   Decimal
 
-  @@id([year, month])
   @@map("review_months")
 }
 
@@ -81,7 +80,6 @@ view ReviewCategoryMonths {
   expense      Decimal
   total        Decimal
 
-  @@id([year, month, categoryName])
   @@map("review_category_months")
 }
 
@@ -93,7 +91,6 @@ view ReviewYearsWithCategories {
   expense      Decimal
   total        Decimal
 
-  @@id([year, categoryId])
   @@map("review_years_with_categories")
 }
 
@@ -106,7 +103,6 @@ view ReviewMonthsWithCategories {
   expense      Decimal
   total        Decimal
 
-  @@id([year, month, categoryId])
   @@map("review_months_with_categories")
 }
 
