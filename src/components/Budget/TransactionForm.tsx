@@ -4,7 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { formatYearMonth, YearMonth } from "~/lib/yearmonth";
 import { Transaction } from "~/service/transactions.api";
-import { cn, handleAmountString } from "~/lib/utils";
+import { cn, calculateArithmetic } from "~/lib/utils";
 import { Spinner } from "../Loader";
 import { useTranslation } from "~/locales/translations";
 import { Check, Save, Trash2 } from "lucide-react";
@@ -59,6 +59,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       await editMutation.mutateAsync({ data: value });
 
       formApi.reset();
+      
+      // Reset the display field to 0
+      const displayField = document.getElementById("amount-display") as HTMLInputElement;
+      if (displayField) {
+        displayField.value = "0";
+        const resultElement = displayField.parentElement?.querySelector('.calculation-result');
+        if (resultElement) {
+          resultElement.textContent = '';
+        }
+      }
+      
       navigateBack();
     },
   });
@@ -132,31 +143,59 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         }}
         children={(field) => {
           return (
-            <div className="grid w-full gap-1.5">
-              <Label htmlFor={field.name}>{t("amount")}</Label>
-              <Input
-                type="number"
-                min="0"
-                step="0.01"
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onFocus={(e) => e.target.select()}
-                onChange={(e) =>
-                  field.handleChange(handleAmountString(e.target.value))
-                }
-                required
-              />
-              {field.state.meta.errors ? (
-                <em className="text-sm text-red-500">
-                  {field.state.meta.errors.join(", ")}
-                </em>
-              ) : null}
-            </div>
+            <input
+              type="hidden"
+              id={field.name}
+              name={field.name}
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(e.target.valueAsNumber)}
+            />
           );
         }}
       />
+      <div className="grid w-full gap-1.5">
+        <Label htmlFor="amount-display">{t("amount")}</Label>
+        <div className="relative">
+          <Input
+            type="text"
+            inputMode="decimal"
+            pattern="[0-9+\-*\/\(\)\.,]*"
+            id="amount-display"
+            name="amount-display"
+            defaultValue={form.getFieldValue("amount")?.toString() || ""}
+            onBlur={(e) => {
+              const calculated = calculateArithmetic(e.target.value);
+              form.setFieldValue("amount", calculated);
+            }}
+            onFocus={(e) => e.target.select()}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9+\-*/().]/g, '');
+              e.target.value = value;
+              const calculated = calculateArithmetic(value);
+              form.setFieldValue("amount", calculated);
+              
+              const resultElement = e.target.parentElement?.querySelector('.calculation-result');
+              if (resultElement) {
+                resultElement.textContent = value !== calculated.toString() ? `= ${calculated}` : '';
+              }
+            }}
+            required
+          />
+          <div className="calculation-result absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 pointer-events-none"></div>
+        </div>
+        <form.Field
+          name="amount"
+          mode="array"
+          children={(field) => {
+            return field.state.meta.errors ? (
+              <em className="text-sm text-red-500">
+                {field.state.meta.errors.join(", ")}
+              </em>
+            ) : null;
+          }}
+        />
+      </div>
 
       <form.Field
         name="categoryId"
@@ -250,7 +289,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                   value="expense"
                   checked={field.state.value === "expense"}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange("expense")}
+                  onChange={() => field.handleChange("expense")}
                   required
                 />
                 <span className="text-red-600">{t("expense")}</span>
@@ -262,7 +301,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                   value={"income"}
                   checked={field.state.value === "income"}
                   onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange("income")}
+                  onChange={() => field.handleChange("income")}
                   type="radio"
                   required
                 />

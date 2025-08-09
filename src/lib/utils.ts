@@ -35,6 +35,21 @@ export function handleAmountString(value: string) {
   }
 }
 
+export function calculateArithmetic(expression: string): number {
+  try {
+    // Replace German decimal delimiter (comma) with dot for JavaScript evaluation
+    const normalized = expression.replace(/,/g, '.');
+    // Keep only numbers and arithmetic operators
+    const sanitized = normalized.replace(/[^0-9+\-*/.()]/g, '');
+    if (!sanitized) return 0;
+    
+    const result = Function(`"use strict"; return (${sanitized})`)();
+    return typeof result === 'number' && !isNaN(result) && result >= 0 ? result : 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
 export function handleIdStringArray(value: string | undefined): number[] | undefined {
   return value
     ? value
