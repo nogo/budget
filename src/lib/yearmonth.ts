@@ -1,5 +1,5 @@
 import { useParams } from "@tanstack/react-router";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export interface YearMonth {
   year: number;

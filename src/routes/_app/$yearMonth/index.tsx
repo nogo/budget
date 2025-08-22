@@ -1,5 +1,5 @@
 import { Navigate, createFileRoute } from "@tanstack/react-router";
-import { z } from "zod/v4";
+import { z } from "zod";
 import { parseYearMonth } from "~/lib/yearmonth";
 import TransactionForm from "~/components/Budget/TransactionForm";
 import MonthlyList from "~/components/Budget/MonthlyList";

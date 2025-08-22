@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { z } from "zod/v4";
+import { z } from "zod";
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -42,7 +42,7 @@ export function calculateArithmetic(expression: string): number {
     // Keep only numbers and arithmetic operators
     const sanitized = normalized.replace(/[^0-9+\-*/.()]/g, '');
     if (!sanitized) return 0;
-    
+
     const result = Function(`"use strict"; return (${sanitized})`)();
     return typeof result === 'number' && !isNaN(result) && result >= 0 ? result : 0;
   } catch (e) {

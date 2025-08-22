@@ -59,7 +59,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       await editMutation.mutateAsync({ data: value });
 
       formApi.reset();
-      
+
       // Reset the display field to 0
       const displayField = document.getElementById("amount-display") as HTMLInputElement;
       if (displayField) {
@@ -69,7 +69,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           resultElement.textContent = '';
         }
       }
-      
+
       navigateBack();
     },
   });
@@ -159,7 +159,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         <div className="relative">
           <Input
             type="text"
-            inputMode="decimal"
+            inputMode="text"
             pattern="[0-9+\-*\/\(\)\.,]*"
             id="amount-display"
             name="amount-display"
@@ -170,11 +170,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             }}
             onFocus={(e) => e.target.select()}
             onChange={(e) => {
-              const value = e.target.value.replace(/[^0-9+\-*/().]/g, '');
+              const value = e.target.value.replace(/[^0-9+\-*/().,]/g, '');
               e.target.value = value;
               const calculated = calculateArithmetic(value);
               form.setFieldValue("amount", calculated);
-              
+
               const resultElement = e.target.parentElement?.querySelector('.calculation-result');
               if (resultElement) {
                 resultElement.textContent = value !== calculated.toString() ? `= ${calculated}` : '';

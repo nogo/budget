@@ -15,7 +15,7 @@ export default {
     if (!url) {
       throw new Error("DATABASE_URL environment variable is not set");
     }
-    return new PrismaBunSQLite({ url });
+    return new PrismaBunSQLite({ url, shadowDatabaseURL: ":memory:" });
   },
 } satisfies PrismaConfig;
 

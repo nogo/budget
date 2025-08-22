@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const CategoryFilterSchema = z.object({
   categoryId: z.coerce.number().optional(),
