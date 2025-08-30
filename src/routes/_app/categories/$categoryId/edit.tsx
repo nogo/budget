@@ -1,4 +1,4 @@
-import CategoryEditForm from "~/components/Category/CategoryEditForm";
+import CategoryEditForm from "~/components/category/category-edit-form";
 import {
   ErrorComponent,
   ErrorComponentProps,

@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import prisma from "~/lib/prisma";
 import { TransactionWhereInput } from "~/generated/prisma/models";
-import { ParsedSearchQuery, parseSearchQuery } from "~/lib/query";
+import { parseSearchQuery } from "~/lib/query";
 
 dayjs.extend(utc);
 
@@ -123,7 +123,7 @@ export const crupTransaction = createServerFn({ method: "POST" })
             type: transactionData.type,
             categoryId: transactionData.categoryId,
             note: transactionData.note,
-            date: dayjs(transactionData.date).unix(),
+            date: dayjs.utc(transactionData.date).unix(),
           },
         })
         .then((item) => transformToTransaction(item));
@@ -137,7 +137,7 @@ export const crupTransaction = createServerFn({ method: "POST" })
               connect: { id: transactionData.categoryId },
             },
             note: transactionData.note,
-            date: dayjs(transactionData.date).unix(),
+            date: dayjs.utc(transactionData.date).unix(),
           },
           include: {
             category: true,

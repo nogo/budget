@@ -1,8 +1,8 @@
 import { Navigate, createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { parseYearMonth } from "~/lib/yearmonth";
-import TransactionForm from "~/components/Budget/TransactionForm";
-import MonthlyList from "~/components/Budget/MonthlyList";
+import TransactionForm from "~/components/budget/transaction-form";
+import MonthlyList from "~/components/budget/monthly-list";
 import { transactionQueries } from "~/service/queries";
 
 const searchSchema = z.object({

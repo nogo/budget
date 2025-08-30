@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ReviewYears from "~/components/Review/ReviewYears";
+import ReviewYears from "~/components/review/review-years";
 import { handleIdStringArray } from "~/lib/utils";
 import { reviewQueries } from "~/service/queries";
 import { ReviewSearchSchema } from "~/service/review.schema";

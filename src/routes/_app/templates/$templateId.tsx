@@ -6,8 +6,8 @@ import {
 import { NotFound } from "~/components/NotFound";
 import { templateQueries } from "~/service/queries";
 import { useTranslation } from "~/locales/translations";
-import TemplateEditForm from "~/components/templates/TemplateEditForm";
-import TemplateList from "~/components/templates/TemplateList";
+import TemplateEditForm from "~/components/templates/template-edit-form";
+import TemplateList from "~/components/templates/template-list";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_app/templates/$templateId")({

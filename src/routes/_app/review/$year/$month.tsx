@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import ReviewMonth from "~/components/Review/ReviewMonth";
+import ReviewMonth from "~/components/review/review-month";
 import { parseYearMonth } from "~/lib/yearmonth";
 import { reviewQueries } from "~/service/queries";
 

@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { templateQueries } from "~/service/queries";
-import TemplateAddForm from "~/components/templates/TemplateAddForm";
-import TemplateList from "~/components/templates/TemplateList";
+import TemplateAddForm from "~/components/templates/template-add-form";
+import TemplateList from "~/components/templates/template-list";
 
 export const Route = createFileRoute("/_app/templates/")({
   component: RouteComponent,

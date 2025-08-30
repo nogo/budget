@@ -1,5 +1,5 @@
 import { Template } from "~/service/templates.api";
-import TemplateListItem, { TemplateNoItem } from "./TemplateListItem";
+import TemplateListItem, { TemplateNoItem } from "./template-list-item";
 import { NotepadTextDashed } from "lucide-react";
 import { useTranslation } from "~/locales/translations";
 import React from "react";

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import CategoryAddForm from "~/components/Category/CategoryAddForm";
-import CategoryItem from "~/components/Category/CategoryItem";
+import CategoryAddForm from "~/components/category/category-add-form";
+import CategoryItem from "~/components/category/category-item";
 import { useTranslation } from "~/locales/translations";
 import { categoryQueries } from "~/service/queries";
 

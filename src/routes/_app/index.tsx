@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { z } from "zod";
-import MonthlyList from "~/components/Budget/MonthlyList";
-import TransactionForm from "~/components/Budget/TransactionForm";
+import MonthlyList from "~/components/budget/monthly-list";
+import TransactionForm from "~/components/budget/transaction-form";
 import { yearMonthNow } from "~/lib/yearmonth";
 import { transactionQueries } from "~/service/queries";
 
