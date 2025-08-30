@@ -4,21 +4,17 @@ import { auth } from "~/lib/auth/server";
 import { UserMetaSchema } from "./auth.schema";
 import prisma from "~/lib/prisma";
 
-export const getUserSession = createServerFn({ method: "GET" }).handler(
-  async () => {
+export const getUserSession = createServerFn({ method: "GET" })
+  .handler(async () => {
+    return null;
     const request = getWebRequest();
 
     if (!request?.headers) {
       return null;
     }
 
-    const userSession = (await auth.api.getSession({
-      headers: request.headers,
-    })) as { session: {}; user: {} } | null;
-
-    return userSession;
-  },
-);
+    return await auth.api.getSession({ headers: request.headers });
+  });
 
 export const userMiddleware = createMiddleware({ type: "function" }).server(
   async ({ next }) => {
@@ -54,3 +50,4 @@ export const updateUser = createServerFn()
       },
     });
   });
+

@@ -1,4 +1,4 @@
-import type { QueryClient } from "@tanstack/react-query";
+import { queryOptions, type QueryClient } from "@tanstack/react-query";
 import {
   HeadContent,
   Outlet,
@@ -10,19 +10,25 @@ import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
 import { LocaleProvider } from "~/components/Locales";
 import { NotFound } from "~/components/NotFound";
 import { seo } from "~/lib/seo";
+
+import appCss from "../styles/app.css?url";
 import { authQueries } from "~/service/queries";
 
-import appCss from "~/styles/app.css?url";
+interface AppRouterContext {
+  queryClient: QueryClient
+}
 
-export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
-}>()({
+export const Route = createRootRouteWithContext<AppRouterContext>()({
   beforeLoad: async ({ context }) => {
-    const userSession = await context.queryClient.fetchQuery(
-      authQueries.user(),
-    );
+    const userSession = await context.queryClient.ensureQueryData(authQueries.user());
+    const user = userSession?.user || null;
 
-    return { userSession };
+    return {
+      userSession: {
+        user,
+        isAuthenticated: !!user,
+      }
+    };
   },
   head: () => ({
     meta: [

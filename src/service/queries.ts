@@ -9,7 +9,7 @@ import {
   listCategories,
   removeCategory,
 } from "./categories.api";
-import { reviewCategoryMonth, reviewMonths, reviewYears, reviewYearsWithCategoryFilter, reviewMonthsWithCategoryFilter } from "./review.api";
+import { reviewCategoryMonth, reviewMonths, reviewYears } from "./review.api";
 import {
   crupTemplate,
   fetchTemplate,

@@ -19,7 +19,7 @@ import { useTranslation } from "~/locales/translations";
 export const Route = createFileRoute("/(auth)/login")({
   component: Login,
   beforeLoad: async ({ context }) => {
-    if (context.userSession) {
+    if (context.userSession.isAuthenticated) {
       throw redirect({ to: "/" });
     }
   },
