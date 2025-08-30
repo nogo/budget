@@ -16,7 +16,6 @@
     "test": "bun test",
     "deploy": "bunx --bun prisma generate && bunx --bun vite build",
     "clean": "rm -rf .output node_modules/.cache",
-    "postbuild": "cp ./node_modules/@prisma/client/runtime/query_compiler_bg.sqlite.wasm ./.output/server/node_modules/@prisma/client/runtime/",
     "db:deploy": "bunx --bun prisma migrate deploy",
     "db:generate": "bunx --bun prisma generate",
     "db:seed": "bunx --bun prisma db seed"
@@ -29,7 +28,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
-    "@synapsenwerkstatt/prisma-bun-sqlite-adapter": "1.1.0",
+    "@synapsenwerkstatt/prisma-bun-sqlite-adapter": "1.2.1",
     "@t3-oss/env-core": "^0.13.8",
     "@tanstack/react-form": "^1.19.3",
     "@tanstack/react-query": "^5.85.5",
