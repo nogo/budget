@@ -50,7 +50,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     defaultValues: {
       id: transaction?.id ?? -1,
       amount: transaction?.amount ?? 0.0,
-      "amount-display": transaction?.amount.toString() ?? "0",
+      amountDisplay: transaction?.amount.toString() ?? "0",
       categoryId: transaction?.categoryId ?? categories[0]?.id,
       date: transaction?.date ?? defaultDate(currentMonthYear),
       type: transaction?.type ?? "expense",
@@ -103,8 +103,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     type: "expense" | "income";
   }) {
     if (amount > 0.0) {
-      //form.setFieldValue("amount", amount);
-      form.setFieldValue("amount-display", amount.toString());
+      form.setFieldValue("amount", amount);
+      form.setFieldValue("amountDisplay", amount.toString());
     }
     form.setFieldValue("date", defaultDate(currentMonthYear, day));
     if (note != "") form.setFieldValue("note", note);
@@ -113,8 +113,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   React.useEffect(() => {
     if (!transaction) {
-      form.setFieldValue("date",
-        defaultDate(currentMonthYear));
+      form.setFieldValue("date", defaultDate(currentMonthYear));
     }
   }, [currentMonthYear, transaction, form]);
 
@@ -169,9 +168,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       />
 
       <form.Field
-        name="amount-display"
+        name="amountDisplay"
         children={(field) => {
-
+          const calculated = calculateArithmetic(field.state.value);
+          const showResult = field.state.value !== calculated.toString();
+          
           return (
             <div className="grid w-full gap-1.5">
               <Label htmlFor={field.name}>{t("amount")}</Label>
@@ -182,7 +183,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                   pattern="[0-9+\-*\/\(\)\.,]*"
                   id={field.name}
                   name={field.name}
-                  defaultValue={field.state.value}
+                  value={field.state.value}
                   onBlur={(e) => {
                     const calculated = calculateArithmetic(e.target.value);
                     form.setFieldValue("amount", calculated);
@@ -190,18 +191,15 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                   onFocus={(e) => e.target.select()}
                   onChange={(e) => {
                     const value = e.target.value.replace(/[^0-9+\-*/().,]/g, '');
-                    e.target.value = value;
+                    field.handleChange(value);
                     const calculated = calculateArithmetic(value);
                     form.setFieldValue("amount", calculated);
-
-                    const resultElement = e.target.parentElement?.querySelector('.calculation-result');
-                    if (resultElement) {
-                      resultElement.textContent = value !== calculated.toString() ? `= ${calculated}` : '';
-                    }
                   }}
                   required
                 />
-                <div className="calculation-result absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 pointer-events-none"></div>
+                <div className="calculation-result absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 pointer-events-none">
+                  {showResult ? `= ${calculated}` : ''}
+                </div>
               </div>
               <form.Field
                 name="amount"

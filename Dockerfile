@@ -5,7 +5,7 @@ RUN mkdir -p /app && chown bun:bun /app
 USER bun
 WORKDIR /app
 COPY --chown=bun:bun package.json bun.lock ./
-RUN bun install --no-progress --frozen-lockfile
+RUN bun install --no-progress
 
 FROM base AS builder
 RUN mkdir -p /data && chown bun:bun /data && chmod 700 /data
