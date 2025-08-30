@@ -21,7 +21,7 @@ interface CategoryFormProps {
 const CategoryEditForm: React.FC<CategoryFormProps> = ({ category }) => {
   const router = useRouter();
   const crupMutation = useCrupCategoryMutation();
-  const t = useTranslation("Categories");
+  const t = useTranslation("categories");
 
   const form = useForm({
     defaultValues: {

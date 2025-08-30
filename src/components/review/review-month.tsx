@@ -41,7 +41,7 @@ type CategoryMonthProps = {
 };
 
 const ReviewMonth: React.FC<CategoryMonthProps> = ({ date, data }) => {
-  const t = useTranslation("Review");
+  const t = useTranslation("review");
 
   const prev = previousYearMonth(date);
   const next = nextYearMonth(date);

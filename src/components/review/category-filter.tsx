@@ -16,7 +16,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   selectedCategoryIds,
   onCategoryChange,
 }) => {
-  const t = useTranslation("Review");
+  const t = useTranslation("review");
   const { data: categories = [] } = useQuery(categoryQueries.list());
 
   const handleCategorySelect = (categoryIdStr: string) => {

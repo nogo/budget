@@ -26,7 +26,7 @@ type IncomeExpenseChartProps = {
 const IncomeExpenseChart: React.FC<IncomeExpenseChartProps> = ({
   data: chartData,
 }) => {
-  const t = useTranslation("Review");
+  const t = useTranslation("review");
   const dataX = "year" in chartData[0] ? "year" : "month";
   const [showAccumulated, setShowAccumulated] = useState(false);
 

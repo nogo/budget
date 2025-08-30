@@ -29,7 +29,7 @@ type YearlyProps = {
 };
 
 const ReviewYears: React.FC<YearlyProps> = ({ data, categoryIds = [] }) => {
-  const t = useTranslation("Review");
+  const t = useTranslation("review");
   const navigate = useNavigate();
 
   const rowsWithTotal = data.map((row) => ({

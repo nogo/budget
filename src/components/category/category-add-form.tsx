@@ -19,7 +19,7 @@ type Category = {
 const CategoryAddForm: React.FC = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const t = useTranslation("Categories");
+  const t = useTranslation("categories");
 
   const { mutate } = useMutation({
     mutationFn: async (value: Category) => {

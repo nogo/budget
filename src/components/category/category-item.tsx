@@ -15,7 +15,7 @@ interface CategoryItemProps {
 const CategoryItem: React.FC<CategoryItemProps> = ({ category }) => {
   if (!category) return <></>;
 
-  const t = useTranslation("Categories");
+  const t = useTranslation("categories");
 
   return (
     <div className="flex flex-row justify-between border-t border-gray-300 px-4 py-2">

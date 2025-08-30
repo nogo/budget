@@ -17,11 +17,13 @@ const Navbar: React.FC = () => {
   const t = useTranslation("Navbar");
 
   const handleLogout = async () => {
-    router.invalidate();
-    await queryClient.invalidateQueries();
-    await authClient.signOut().then(() => {
-      router.navigate({ to: "/login" });
-    });
+    try {
+      await authClient.signOut()
+      router.invalidate()
+      router.navigate({ to: '/login' })
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
   };
 
   return (

@@ -6,7 +6,6 @@ import prisma from "~/lib/prisma";
 
 export const getUserSession = createServerFn({ method: "GET" })
   .handler(async () => {
-    return null;
     const request = getWebRequest();
 
     if (!request?.headers) {
