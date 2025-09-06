@@ -1,6 +1,6 @@
 {
   "name": "budget",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "description": "A personal finance tracker built with React. It helps you track expenses and income without requiring accounting knowledge. Each transaction is categorized, and the app provides review and reporting capabilities.",
   "keywords": [],
   "author": "Danilo Kuehn <me@ctl.wtf>",

@@ -31,36 +31,36 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="fixed top-0 z-10 w-full bg-yellow-900 text-white shadow-2xl p-2">
-      <div className="flex items-center justify-between gap-8 px-4 sm:px-6">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-2 px-4 sm:px-6">
+        <div className="flex items-center gap-2 min-w-0">
           <Link
             to="/"
             className="shrink-0 flex items-center gap-2 text-2xl font-bold capitalize"
           >
             <Wallet className="h-7" />
-            <span>Budget</span>
+            <span className="hidden sm:inline">Budget</span>
           </Link>
           <AppVersion />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 sm:gap-3">
           <Link
             to="/categories"
-            className="flex items-center gap-1 text-sm p-3 hover:bg-yellow-700"
+            className="flex items-center gap-1 text-sm p-2 sm:p-3 hover:bg-yellow-700"
           >
             <Tag className="h-4" />
             <span className="max-md:hidden">{t("categories")}</span>
           </Link>
           <Link
             to="/templates"
-            className="flex items-center gap-1 text-sm p-3 hover:bg-yellow-700"
+            className="flex items-center gap-1 text-sm p-2 sm:p-3 hover:bg-yellow-700"
           >
             <NotepadTextDashed className="h-4" />
             <span className="max-md:hidden">{t("templates")}</span>
           </Link>
           <Link
             to="/review"
-            className="flex items-center gap-1 text-sm p-3 hover:bg-yellow-700"
+            className="flex items-center gap-1 text-sm p-2 sm:p-3 hover:bg-yellow-700"
           >
             <Calculator className="h-4" />
             <span className="max-md:hidden">{t("review")}</span>
@@ -69,7 +69,7 @@ const Navbar: React.FC = () => {
           <Button
             onClick={handleLogout}
             variant="ghost"
-            className="flex items-center gap-1 text-sm p-3"
+            className="flex items-center gap-1 text-sm p-2 sm:p-3"
           >
             <LogOut className="h-4" />
             <span className="max-md:hidden">{t("logout")}</span>

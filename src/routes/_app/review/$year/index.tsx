@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import ReviewMonths from "~/components/review/review-months";
 import { handleIdStringArray } from "~/lib/utils";
@@ -16,9 +17,9 @@ export const Route = createFileRoute("/_app/review/$year/")({
       : new Date().getFullYear();
 
     const catIds = handleIdStringArray(categories);
+    await context.queryClient.fetchQuery(reviewQueries.year(yearNumber, catIds))
 
     return {
-      data: await context.queryClient.fetchQuery(reviewQueries.year(yearNumber, catIds)),
       categoryIds: catIds,
       yearNumber,
     };
@@ -26,7 +27,8 @@ export const Route = createFileRoute("/_app/review/$year/")({
 });
 
 function RouteComponent() {
-  const { data, categoryIds, yearNumber } = Route.useLoaderData();
+  const { categoryIds, yearNumber } = Route.useLoaderData();
+  const { data } = useSuspenseQuery(reviewQueries.year(yearNumber, categoryIds))
 
   return <ReviewMonths data={data} year={yearNumber} categoryIds={categoryIds} />;
 }

@@ -1,65 +1,76 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Download, X } from 'lucide-react'
 
-// PWA register hook types
-interface PWARegisterOptions {
-  immediate?: boolean
-  onNeedRefresh?: () => void
-  onOfflineReady?: () => void
-  onRegistered?: (registration: ServiceWorkerRegistration | undefined) => void
-  onRegisterError?: (error: any) => void
-}
-
-// This will be available when vite-plugin-pwa is properly configured
-declare module 'virtual:pwa-register/react' {
-  export function useRegisterSW(options?: PWARegisterOptions): {
-    needRefresh: [boolean, (value: boolean) => void]
-    offlineReady: [boolean, (value: boolean) => void]
-    updateServiceWorker: (reloadPage?: boolean) => Promise<void>
-  }
-}
-
-// Import the PWA register hook
-import { useRegisterSW } from 'virtual:pwa-register/react'
-
 export function PWAUpdateNotification() {
   const [showUpdatePrompt, setShowUpdatePrompt] = useState(false)
+  const [offlineReady, setOfflineReady] = useState(false)
+  const [updateServiceWorker, setUpdateServiceWorker] = useState<(() => Promise<void>) | null>(null)
   
-  const {
-    offlineReady: [offlineReady],
-    needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker,
-  } = useRegisterSW({
-    onRegistered(r) {
-      console.log('SW Registered:', r)
-    },
-    onRegisterError(error) {
-      console.log('SW registration error:', error)
-    },
-    onOfflineReady() {
-      console.log('App ready to work offline')
-    },
-    onNeedRefresh() {
-      console.log('New version available')
-      setShowUpdatePrompt(true)
-    },
-  })
+  useEffect(() => {
+    // Check if we're in a secure context
+    const isSecure = typeof window !== 'undefined' && 
+      (window.location.protocol === 'https:' || 
+       window.location.hostname === 'localhost' ||
+       window.location.hostname === '127.0.0.1')
+    
+    if (!isSecure) {
+      console.warn('Service Worker requires HTTPS or localhost. PWA features disabled.')
+      return
+    }
+    
+    // Try to register the service worker directly
+    const initializePWA = async () => {
+      try {
+        // Register service worker directly if available
+        if ('serviceWorker' in navigator) {
+          try {
+            const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            console.log('SW registered:', registration)
+            
+            registration.addEventListener('updatefound', () => {
+              const newWorker = registration.installing
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('New version available')
+                    setShowUpdatePrompt(true)
+                    setUpdateServiceWorker(() => async () => {
+                      newWorker.postMessage({ type: 'SKIP_WAITING' })
+                      window.location.reload()
+                    })
+                  }
+                })
+              }
+            })
+            
+          } catch (error) {
+            console.error('SW registration failed:', error)
+          }
+        }
+      } catch (error) {
+        // PWA plugin not available or other error
+        console.log('PWA features not available:', error)
+      }
+    }
+    
+    initializePWA()
+  }, [])
 
-  const handleUpdate = () => {
-    updateServiceWorker(true)
+  const handleUpdate = async () => {
+    if (updateServiceWorker) {
+      await updateServiceWorker()
+    }
     setShowUpdatePrompt(false)
-    setNeedRefresh(false)
   }
 
   const handleDismiss = () => {
     setShowUpdatePrompt(false)
-    setNeedRefresh(false)
   }
 
   // Show update notification when needed
-  if (showUpdatePrompt && needRefresh) {
+  if (showUpdatePrompt) {
     return (
       <div className="fixed bottom-4 right-4 z-50 max-w-sm">
         <Card className="border-primary">

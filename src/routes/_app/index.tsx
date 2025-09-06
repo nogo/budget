@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router"
 import { z } from "zod";
 import MonthlyList from "~/components/budget/monthly-list";
@@ -15,19 +16,18 @@ export const Route = createFileRoute("/_app/")({
   loaderDeps: ({ search: { q } }) => ({ search: q }),
   loader: async ({ context, deps: { search } }) => {
     const currentMonthYear = yearMonthNow();
-
+    await context.queryClient.ensureQueryData(transactionQueries.list(currentMonthYear, search));
+    
     return {
       currentMonthYear,
-      search,
-      transactions: await context.queryClient.fetchQuery(
-        transactionQueries.list(currentMonthYear, search),
-      )
+      search
     }
   },
 });
 
 function YearMonthComponent() {
-  const { currentMonthYear, search, transactions } = Route.useLoaderData();
+  const { currentMonthYear, search } = Route.useLoaderData();
+  const { data: transactions } = useSuspenseQuery(transactionQueries.list(currentMonthYear, search))
 
   return (
     <>

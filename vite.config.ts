@@ -25,6 +25,11 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: process.env.NODE_ENV === 'development',
+        type: 'module'
+      },
+      disable: process.env.NODE_ENV === 'development' && process.env.PWA_DISABLED === 'true',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         runtimeCaching: [

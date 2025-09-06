@@ -5,7 +5,6 @@ import {
 } from "@tanstack/react-router";
 import { NotFound } from "~/components/layout/not-found";
 import { templateQueries } from "~/service/queries";
-import { useTranslation } from "~/locales/translations";
 import TemplateEditForm from "~/components/templates/template-edit-form";
 import TemplateList from "~/components/templates/template-list";
 import { useSuspenseQuery } from "@tanstack/react-query";

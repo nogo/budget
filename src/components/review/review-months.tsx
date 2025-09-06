@@ -16,7 +16,6 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 type YearlyDataRow = {
   month: number;
@@ -65,7 +64,7 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
       : {};
 
     navigate({
-      to: "/review/$year",
+      to: "/review/$year" as const,
       params: { year: year.toString() },
       search: searchParams,
     });
@@ -78,12 +77,14 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
 
     return {
       to: "/review/$year" as const,
-      params: { year: targetYear.toString() },
+      params: { year: targetYear },
       search: searchParams,
     };
   };
 
   const buildMonthLink = (month: number) => {
+    if (!month) return {}
+
     const searchParams = categoryIds.length > 0
       ? { categories: categoryIds.join(',') }
       : {};
@@ -91,8 +92,8 @@ const ReviewMonths: React.FC<YearlyProps> = ({ year, data, categoryIds = [] }) =
     return {
       to: "/review/$year/$month" as const,
       params: {
-        year: year.toString(),
-        month: month.toString()
+        year: year,
+        month: month
       },
       search: searchParams,
     };
