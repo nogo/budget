@@ -1,9 +1,8 @@
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "@tanstack/react-router";
-import { Spinner } from "../Loader";
 import { useCrupCategoryMutation } from "~/service/queries";
 import { useTranslation } from "~/locales/translations";
-import { Edit2 } from "lucide-react";
+import { Edit2, LoaderCircle } from "lucide-react";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
@@ -119,7 +118,7 @@ const CategoryEditForm: React.FC<CategoryFormProps> = ({ category }) => {
               {t("cancel")}
             </Button>
             <Button type="submit" disabled={!canSubmit}>
-              {isSubmitting ? <Spinner /> : <Edit2 />}
+              {isSubmitting ? <LoaderCircle /> : <Edit2 />}
             </Button>
           </div>
         )}

@@ -6,6 +6,8 @@ import {
   useRouter,
 } from '@tanstack/react-router'
 import type { ErrorComponentProps } from '@tanstack/react-router'
+import { RefreshCw, Home, ArrowLeft } from 'lucide-react'
+import { Button } from '../ui/button'
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
   const router = useRouter()
@@ -18,34 +20,43 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 
   return (
     <div className="min-w-0 flex-1 p-4 flex flex-col items-center justify-center gap-6">
+      <div className="text-center space-y-2">
+        <h1 className="text-2xl font-semibold">Something went wrong</h1>
+        <div className="text-muted-foreground">
+          <p>An unexpected error occurred. Please try again.</p>
+        </div>
+      </div>
       <ErrorComponent error={error} />
-      <div className="flex gap-2 items-center flex-wrap">
-        <button
+      <div className="flex items-center gap-3 flex-wrap">
+        <Button
           onClick={() => {
             router.invalidate()
           }}
-          className={`px-2 py-1 bg-gray-600 dark:bg-gray-700 rounded text-white uppercase font-extrabold`}
+          variant="outline"
+          className="flex items-center gap-2"
         >
+          <RefreshCw className="h-4" />
           Try Again
-        </button>
+        </Button>
         {isRoot ? (
-          <Link
-            to="/"
-            className={`px-2 py-1 bg-gray-600 dark:bg-gray-700 rounded text-white uppercase font-extrabold`}
-          >
-            Home
+          <Link to="/">
+            <Button className="flex items-center gap-2">
+              <Home className="h-4" />
+              Home
+            </Button>
           </Link>
         ) : (
-          <Link
-            to="/"
-            className={`px-2 py-1 bg-gray-600 dark:bg-gray-700 rounded text-white uppercase font-extrabold`}
+          <Button
             onClick={(e) => {
               e.preventDefault()
               window.history.back()
             }}
+            variant="secondary"
+            className="flex items-center gap-2"
           >
+            <ArrowLeft className="h-4" />
             Go Back
-          </Link>
+          </Button>
         )}
       </div>
     </div>

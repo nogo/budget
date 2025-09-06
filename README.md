@@ -15,12 +15,13 @@ A personal finance tracker built with React. It helps you track expenses and inc
 - 📈 Show yearly and monthly income expense charts to analyze your budget
 - 📈 Generate expense charts by category
 - 🔒 User authentication
+- 📶 Progressive Web App (PWA) with offline support and auto-updates
+- 🔄 App version display and update notifications
 
 ### Future Plans 🚀
 
-- ToDo/Shopping List
-- 📶 Offline-first functionality with PWA support (Coming Soon)
 - 🔄 Export/Import data capabilities (Coming Soon)
+- ToDo/Shopping List
 
 ## Screenshots 📸
 
@@ -36,17 +37,20 @@ Here are some screenshots of the app in action:
 
 ## Technology Stack 🛠️
 
-- ⚛️ React
-- 🧰 TanStack [Start](https://tanstack.com/start/latest), [Query](https://tanstack.com/query/latest) and [Form](https://tanstack.com/form/latest)
-- 🎨 Tailwind CSS
-- 🗄️ SQLite
-- 📦 pnpm
+- ⚛️ React 19
+- 🧰 TanStack [Start](https://tanstack.com/start/latest), [Query](https://tanstack.com/query/latest), [Router](https://tanstack.com/router/latest) and [Form](https://tanstack.com/form/latest)
+- 🎨 Tailwind CSS 4
+- 🗄️ SQLite with Prisma ORM
+- 🔐 Better Auth for authentication  
+- 📦 Bun runtime and package manager
+- 🎯 TypeScript
+- ⚡ Vite for build tooling
 
 ## Installation & Setup ⚙️
 
 ### Prerequisites
 
-- 🖥️ Node.js (>=23.0) and pnpm installed
+- 🖥️ Bun (>=1.0) installed
 
 ### Steps
 
@@ -66,13 +70,13 @@ cp .env.example .env
 3. Install dependencies:
 
 ```bash
-pnpm install
+bun install
 ```
 
 4. Start the development server:
 
 ```bash
-pnpm run dev
+bun run dev
 ```
 
 ## Docker Usage 🐳
@@ -96,6 +100,24 @@ docker compose up budget-app
 ```
 
 The app will be available at [http://localhost:3000](http://localhost:3000).
+
+## Progressive Web App Features 📱
+
+### Installation
+- Install the app on your device through your browser
+- Works offline once installed
+- Automatic background updates when connected
+
+### App Version & Updates
+- Version number displayed in the navigation bar
+- Automatic update notifications when new versions are available  
+- One-click update installation with user confirmation
+- Seamless updates without losing your data
+
+### Offline Support
+- Caches essential app resources for offline use
+- API requests cached for 5 minutes for better performance
+- Fonts and static assets cached for optimal loading
 
 ## Glossary 📚
 

@@ -1,4 +1,4 @@
-import { queryOptions, type QueryClient } from "@tanstack/react-query";
+import { type QueryClient } from "@tanstack/react-query";
 import {
   HeadContent,
   Outlet,
@@ -6,9 +6,10 @@ import {
   createRootRouteWithContext,
 } from "@tanstack/react-router";
 import * as React from "react";
-import { DefaultCatchBoundary } from "~/components/DefaultCatchBoundary";
+import { DefaultCatchBoundary } from "~/components/layout/default-catch-boundary";
 import { LocaleProvider } from "~/components/Locales";
-import { NotFound } from "~/components/NotFound";
+import { NotFound } from "~/components/layout/not-found";
+import { PWAUpdateNotification } from "~/components/layout/pwa-update-notification";
 import { seo } from "~/lib/seo";
 
 import appCss from "../styles/app.css?url";
@@ -20,14 +21,12 @@ interface AppRouterContext {
 
 export const Route = createRootRouteWithContext<AppRouterContext>()({
   beforeLoad: async ({ context }) => {
-    const userSession = await context.queryClient.ensureQueryData(authQueries.user());
+    const userSession = await context.queryClient.fetchQuery(authQueries.user());
     const user = userSession?.user || null;
 
     return {
-      userSession: {
-        user,
-        isAuthenticated: !!user,
-      }
+      isAuthenticated: !!user,
+      userSession: userSession,
     };
   },
   head: () => ({
@@ -108,6 +107,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <PWAUpdateNotification />
         <Scripts />
       </body>
     </html>

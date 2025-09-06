@@ -4,13 +4,19 @@ import {
   ErrorComponentProps,
   createFileRoute,
 } from "@tanstack/react-router";
-import { NotFound } from "~/components/NotFound";
+import { NotFound } from "~/components/layout/not-found";
 import { categoryQueries } from "~/service/queries";
 import { useTranslation } from "~/locales/translations";
 
 export const Route = createFileRoute("/_app/categories/$categoryId/edit")({
   component: RouteComponent,
   loader: async ({ params: { categoryId }, context }) => {
+    // Validate categoryId parameter before using it
+    const numericId = Number(categoryId);
+    if (isNaN(numericId) || numericId <= 0) {
+      throw new Error(`Invalid category ID: ${categoryId}`);
+    }
+
     const data = await context.queryClient.ensureQueryData(
       categoryQueries.detail(categoryId),
     );

@@ -3,7 +3,7 @@ import {
   ErrorComponentProps,
   createFileRoute,
 } from "@tanstack/react-router";
-import { NotFound } from "~/components/NotFound";
+import { NotFound } from "~/components/layout/not-found";
 import { templateQueries } from "~/service/queries";
 import { useTranslation } from "~/locales/translations";
 import TemplateEditForm from "~/components/templates/template-edit-form";
@@ -13,6 +13,12 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 export const Route = createFileRoute("/_app/templates/$templateId")({
   component: RouteComponent,
   loader: async ({ params: { templateId }, context }) => {
+    // Validate templateId parameter before using it
+    const numericId = Number(templateId);
+    if (isNaN(numericId) || numericId <= 0) {
+      throw new Error(`Invalid template ID: ${templateId}`);
+    }
+
     return Promise.all([
       await context.queryClient.ensureQueryData(templateQueries.list()),
       await context.queryClient.ensureQueryData(

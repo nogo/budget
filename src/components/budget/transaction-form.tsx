@@ -5,9 +5,8 @@ import { useRouter } from "@tanstack/react-router";
 import { formatYearMonth, YearMonth } from "~/lib/yearmonth";
 import { Transaction } from "~/service/transactions.api";
 import { cn, calculateArithmetic } from "~/lib/utils";
-import { Spinner } from "../Loader";
 import { useTranslation } from "~/locales/translations";
-import { Check, Save, Trash2 } from "lucide-react";
+import { Check, LoaderCircle, Save, Trash2 } from "lucide-react";
 import {
   categoryQueries,
   useCrupTemplateMutation,
@@ -381,7 +380,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             )}
 
             <Button type="submit" disabled={!canSubmit}>
-              {isSubmitting ? <Spinner /> : <Check />}
+              {isSubmitting ? <LoaderCircle /> : <Check />}
             </Button>
           </div>
         )}

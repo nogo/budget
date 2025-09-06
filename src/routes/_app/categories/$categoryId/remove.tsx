@@ -1,5 +1,5 @@
 import { useRouter, createFileRoute } from "@tanstack/react-router";
-import { NotFound } from "~/components/NotFound";
+import { NotFound } from "~/components/layout/not-found";
 import { Button } from "~/components/ui/button";
 import { useTranslation } from "~/locales/translations";
 import { categoryQueries, useRemoveCategoryMutation } from "~/service/queries";
@@ -7,6 +7,12 @@ import { categoryQueries, useRemoveCategoryMutation } from "~/service/queries";
 export const Route = createFileRoute("/_app/categories/$categoryId/remove")({
   component: RouteComponent,
   loader: async ({ params: { categoryId }, context }) => {
+    // Validate categoryId parameter before using it
+    const numericId = Number(categoryId);
+    if (isNaN(numericId) || numericId <= 0) {
+      throw new Error(`Invalid category ID: ${categoryId}`);
+    }
+
     return await context.queryClient.fetchQuery(
       categoryQueries.detail(categoryId),
     );

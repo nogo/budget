@@ -12,7 +12,19 @@ export const getUserSession = createServerFn({ method: "GET" })
       return null;
     }
 
-    return await auth.api.getSession({ headers: request.headers });
+    try {
+      const session = await auth.api.getSession({ headers: request.headers });
+      
+      // Sanitize any Date objects that might cause serialization issues
+      if (session && typeof session === 'object') {
+        return JSON.parse(JSON.stringify(session));
+      }
+      
+      return session;
+    } catch (error) {
+      console.error('Error getting user session:', error);
+      return null;
+    }
   });
 
 export const userMiddleware = createMiddleware({ type: "function" }).server(

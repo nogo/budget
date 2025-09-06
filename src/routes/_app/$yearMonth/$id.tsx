@@ -15,6 +15,12 @@ export const Route = createFileRoute("/_app/$yearMonth/$id")({
   loaderDeps: ({ search: { q } }) => ({ search: q }),
   loader: async ({ context, params: { id, yearMonth }, deps: { search } }) => {
     const currentMonthYear = parseYearMonth(yearMonth);
+    
+    // Validate ID parameter before using it
+    const numericId = Number(id);
+    if (isNaN(numericId) || numericId <= 0) {
+      throw new Error(`Invalid transaction ID: ${id}`);
+    }
 
     return {
       currentMonthYear,

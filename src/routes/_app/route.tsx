@@ -1,16 +1,17 @@
-import Navbar from "~/components/Navbar";
+
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import Navbar from "~/components/layout/navbar";
 
 export const Route = createFileRoute("/_app")({
-  component: RouteComponent,
   beforeLoad: async ({ context }) => {
-    if (!context.userSession) {
+    if (!context.isAuthenticated) {
       throw redirect({ to: "/login" });
     }
   },
+  component: AppRouteComponent,
 });
 
-function RouteComponent() {
+function AppRouteComponent() {
   return (
     <div className="relative">
       <Navbar />

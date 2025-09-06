@@ -26,7 +26,6 @@ export const Route = createFileRoute("/_app/")({
   },
 });
 
-
 function YearMonthComponent() {
   const { currentMonthYear, search, transactions } = Route.useLoaderData();
 

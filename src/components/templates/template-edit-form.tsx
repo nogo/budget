@@ -1,13 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "@tanstack/react-router";
-import { Spinner } from "../Loader";
 import {
   categoryQueries,
   useCrupTemplateMutation,
   useRemoveTemplateMutation,
 } from "~/service/queries";
 import { useTranslation } from "~/locales/translations";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, LoaderCircle, Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -252,7 +251,7 @@ const TemplateEditForm: React.FC<TemplateFormProps> = ({ template }) => {
             </Button>
 
             <Button type="submit" disabled={!canSubmit}>
-              {isSubmitting ? <Spinner /> : <Edit2 />}
+              {isSubmitting ? <LoaderCircle /> : <Edit2 />}
             </Button>
           </div>
         )}

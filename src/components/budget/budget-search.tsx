@@ -1,9 +1,8 @@
 import { useForm } from "@tanstack/react-form";
-import { ArrowRight, Search, X } from "lucide-react";
+import { ArrowRight, LoaderCircle, Search, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { useTranslation } from "~/locales/translations";
 import { useNavigate } from "@tanstack/react-router";
-import { Spinner } from "../Loader";
 
 interface SearchFormProps {
   query?: string
@@ -75,7 +74,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ query }) => {
           children={([canSubmit, isSubmitting]) => (
             <Button variant="ghost" type="submit" disabled={!canSubmit}
               className="text-gray-400 hover:text-gray-600 text-lg leading-none">
-              {isSubmitting ? <Spinner /> : <ArrowRight />}
+              {isSubmitting ? <LoaderCircle /> : <ArrowRight />}
             </Button>
           )}
         />

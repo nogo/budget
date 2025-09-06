@@ -2,9 +2,8 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { crupCategory } from "~/service/categories.api";
-import { Spinner } from "../Loader";
 import { useTranslation } from "~/locales/translations";
-import { Check } from "lucide-react";
+import { Check, LoaderCircle } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Checkbox } from "../ui/checkbox";
@@ -116,7 +115,7 @@ const CategoryAddForm: React.FC = () => {
           children={([canSubmit, isSubmitting]) => (
             <>
               <Button type="submit" disabled={!canSubmit}>
-                {isSubmitting ? <Spinner /> : <Check className="h-5" />}
+                {isSubmitting ? <LoaderCircle /> : <Check className="h-5" />}
               </Button>
             </>
           )}

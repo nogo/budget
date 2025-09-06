@@ -1,8 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "@tanstack/react-router";
-import { Spinner } from "../Loader";
 import { useTranslation } from "~/locales/translations";
-import { Check } from "lucide-react";
+import { Check, LoaderCircle } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
@@ -201,7 +200,7 @@ const TemplateAddForm: React.FC = () => {
         children={([canSubmit, isSubmitting]) => (
           <div className="grid w-full">
             <Button type="submit" disabled={!canSubmit}>
-              {isSubmitting ? <Spinner /> : <Check className="h-5" />}
+              {isSubmitting ? <LoaderCircle /> : <Check className="h-5" />}
             </Button>
           </div>
         )}

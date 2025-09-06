@@ -66,10 +66,14 @@ export function nextYearMonth(value: YearMonth): YearMonth {
 }
 
 export function formatYearMonth(value: YearMonth): string {
-  if (value) {
+  if (value && value.year && value.month) {
     return `${value.year}-${value.month.toString().padStart(2, "0")}`;
   }
-  return "";
+  // Return current year-month instead of empty string
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+  return `${year}-${month.toString().padStart(2, "0")}`;
 }
 
 export function formatDate(value: Date) {

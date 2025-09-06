@@ -9,7 +9,12 @@ export const ListTransactionSchema = z.object({
     .string()
     .optional()
     .catch(() => dayjs().format("YYYY-MM"))
-    .transform((d) => dayjs(d, "YYYY-MM", true)),
+    .transform((d) => {
+      if (!d) return dayjs();
+      const parsed = dayjs(d, "YYYY-MM", true);
+      // If parsing fails, return current month instead of invalid date
+      return parsed.isValid() ? parsed : dayjs();
+    }),
   query: z.string().optional(),
 });
 

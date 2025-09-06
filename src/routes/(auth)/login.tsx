@@ -3,40 +3,33 @@ import {
   Link,
   redirect,
   useNavigate,
+  useRouter,
 } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
-import { Wallet } from "lucide-react";
+import { LoaderCircle, Wallet } from "lucide-react";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { authClient } from "~/lib/auth/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { env } from "~/lib/env/client";
-import { LogInSchema } from "~/service/auth.schema";
 import { AllowRegistration } from "~/components/auth/allow-registration";
 import { useTranslation } from "~/locales/translations";
+import { FieldInfo } from "~/components/layout/field-info";
 
 export const Route = createFileRoute("/(auth)/login")({
-  component: Login,
+  component: LoginComponent,
   beforeLoad: async ({ context }) => {
-    if (context.userSession.isAuthenticated) {
+    if (context.isAuthenticated) {
       throw redirect({ to: "/" });
     }
   },
 });
 
-function Login() {
-  const navigate = useNavigate();
+function LoginComponent() {
+  const router = useRouter()
   const queryClient = useQueryClient();
   const t = useTranslation("auth");
-
-  const logInMutation = useMutation({
-    mutationFn: logIn,
-    onSuccess: (response) => {
-      queryClient.resetQueries();
-      navigate({ to: "/" });
-    },
-  });
 
   const form = useForm({
     defaultValues: {
@@ -44,8 +37,24 @@ function Login() {
       password: env.VITE_AUTH_DEFAULT_PASSWORD ?? "",
     },
     onSubmit: async ({ formApi, value }) => {
-      await logInMutation.mutateAsync(value);
-      formApi.reset();
+      const { error, data: response } = await authClient.signIn.username({
+        username: value.username,
+        password: value.password,
+      });
+
+      if (error) {
+        return {
+          fields: {
+            password: error.message
+          },
+        }
+      } else {
+        formApi.reset();
+        queryClient.resetQueries();
+        router.invalidate();
+        router.navigate({ to: "/" });
+      }
+
     },
   });
 
@@ -80,6 +89,7 @@ function Login() {
                     onChange={(e) => field.handleChange(e.target.value)}
                     required
                   />
+                  <FieldInfo field={field} />
                 </div>
               );
             }}
@@ -100,10 +110,20 @@ function Login() {
                     onChange={(e) => field.handleChange(e.target.value)}
                     required
                   />
+                  <FieldInfo field={field} />
                 </div>
               );
             }}
           />
+
+          {/* Error Display */}
+          {form.state.errors && form.state.errors.length > 0 && (
+            <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+              <div className="text-sm text-red-800 font-medium">
+                {form.state.errors.join(', ')}
+              </div>
+            </div>
+          )}
 
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
@@ -113,7 +133,7 @@ function Login() {
                 disabled={!canSubmit}
                 className="w-full md bg-yellow-800"
               >
-                {isSubmitting ? "..." : t("login")}
+                {isSubmitting ? <LoaderCircle /> : t("login")}
               </Button>
             )}
           />
@@ -129,16 +149,3 @@ function Login() {
     </main>
   );
 }
-
-const logIn = async (data: LogInSchema) => {
-  const { error, data: response } = await authClient.signIn.username({
-    username: data.username,
-    password: data.password,
-  });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return response;
-};
