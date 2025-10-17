@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_app/review/$year/$month")({
     const monthNumber = parseInt(params.month)
       ? parseInt(params.month)
       : new Date().getMonth() + 1;
-
+    
     return await context.queryClient.ensureQueryData(
       reviewQueries.month(yearNumber, monthNumber),
     );

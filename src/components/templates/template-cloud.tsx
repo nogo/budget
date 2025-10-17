@@ -3,8 +3,6 @@ import { templateQueries } from "~/service/queries";
 import { formatCurrency } from "~/lib/format";
 import { Button } from "../ui/button";
 import { cn } from "~/lib/utils";
-import { Badge } from "../ui/badge";
-import { Calendar1Icon } from "lucide-react";
 
 type Props = {
   categoryId: number;

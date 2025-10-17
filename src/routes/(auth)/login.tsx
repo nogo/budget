@@ -2,12 +2,10 @@ import {
   createFileRoute,
   Link,
   redirect,
-  useNavigate,
   useRouter,
 } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
-import { LoaderCircle, Wallet } from "lucide-react";
-import { Label } from "~/components/ui/label";
+import { Wallet } from "lucide-react";
 import { Input } from "~/components/ui/input";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { authClient } from "~/lib/auth/client";
@@ -15,7 +13,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { env } from "~/lib/env/client";
 import { AllowRegistration } from "~/components/auth/allow-registration";
 import { useTranslation } from "~/locales/translations";
-import { FieldInfo } from "~/components/layout/field-info";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSet,
+} from "~/components/ui/field";
+import { Spinner } from "~/components/ui/spinner";
 
 export const Route = createFileRoute("/(auth)/login")({
   component: LoginComponent,
@@ -27,7 +32,7 @@ export const Route = createFileRoute("/(auth)/login")({
 });
 
 function LoginComponent() {
-  const router = useRouter()
+  const router = useRouter();
   const queryClient = useQueryClient();
   const t = useTranslation("auth");
 
@@ -37,7 +42,7 @@ function LoginComponent() {
       password: env.VITE_AUTH_DEFAULT_PASSWORD ?? "",
     },
     onSubmit: async ({ formApi, value }) => {
-      const { error, data: response } = await authClient.signIn.username({
+      const { error } = await authClient.signIn.username({
         username: value.username,
         password: value.password,
       });
@@ -45,16 +50,15 @@ function LoginComponent() {
       if (error) {
         return {
           fields: {
-            password: error.message
+            password: error.message,
           },
-        }
+        };
       } else {
         formApi.reset();
         queryClient.resetQueries();
         router.invalidate();
         router.navigate({ to: "/" });
       }
-
     },
   });
 
@@ -75,68 +79,90 @@ function LoginComponent() {
             form.handleSubmit();
           }}
         >
-          <form.Field
-            name="username"
-            children={(field) => {
-              return (
-                <div className="grid gap-1.5">
-                  <Label htmlFor={field.name}>{t("username")}</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    required
-                  />
-                  <FieldInfo field={field} />
-                </div>
-              );
-            }}
-          />
+          <FieldGroup>
+            <FieldSet>
+              <form.Field
+                name="username"
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
 
-          <form.Field
-            name="password"
-            children={(field) => {
-              return (
-                <div className="grid gap-1.5">
-                  <Label htmlFor={field.name}>{t("password")}</Label>
-                  <Input
-                    type="password"
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    required
-                  />
-                  <FieldInfo field={field} />
-                </div>
-              );
-            }}
-          />
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>
+                        {t("username")}
+                      </FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                        required
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  );
+                }}
+              />
 
-          {/* Error Display */}
-          {form.state.errors && form.state.errors.length > 0 && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-              <div className="text-sm text-red-800 font-medium">
-                {form.state.errors.join(', ')}
+              <form.Field
+                name="password"
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
+
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>
+                        {t("password")}
+                      </FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                        type="password"
+                        required
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  );
+                }}
+              />
+            </FieldSet>
+
+            {/* Error Display */}
+            {form.state.errors && form.state.errors.length > 0 && (
+              <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+                <div className="text-sm text-red-800 font-medium">
+                  {form.state.errors.join(", ")}
+                </div>
               </div>
-            </div>
-          )}
-
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
-              <Button
-                type="submit"
-                disabled={!canSubmit}
-                className="w-full md bg-yellow-800"
-              >
-                {isSubmitting ? <LoaderCircle /> : t("login")}
-              </Button>
             )}
-          />
+
+            <Field orientation="horizontal">
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                children={([canSubmit, isSubmitting]) => (
+                  <Button
+                    type="submit"
+                    disabled={!canSubmit || isSubmitting}
+                    className="w-full"
+                  >
+                    {isSubmitting ? <Spinner /> : t("login")}
+                  </Button>
+                )}
+              />
+            </Field>
+          </FieldGroup>
         </form>
         <AllowRegistration>
           <div className="p-4 text-center">

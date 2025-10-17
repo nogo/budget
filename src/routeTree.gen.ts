@@ -8,8 +8,6 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createServerRootRoute } from '@tanstack/react-start/server'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteRouteImport } from './routes/_app/route'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
@@ -21,6 +19,7 @@ import { Route as AppTemplatesIndexRouteImport } from './routes/_app/templates/i
 import { Route as AppReviewIndexRouteImport } from './routes/_app/review/index'
 import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
 import { Route as AppYearMonthIndexRouteImport } from './routes/_app/$yearMonth/index'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AppTemplatesTemplateIdRouteImport } from './routes/_app/templates/$templateId'
 import { Route as AppYearMonthIdRouteImport } from './routes/_app/$yearMonth/$id'
 import { Route as AppReviewYearIndexRouteImport } from './routes/_app/review/$year/index'
@@ -28,9 +27,6 @@ import { Route as AppReviewYearMonthRouteImport } from './routes/_app/review/$ye
 import { Route as AppCategoriesCategoryIdRemoveRouteImport } from './routes/_app/categories/$categoryId/remove'
 import { Route as AppCategoriesCategoryIdMergeRouteImport } from './routes/_app/categories/$categoryId/merge'
 import { Route as AppCategoriesCategoryIdEditRouteImport } from './routes/_app/categories/$categoryId/edit'
-import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.$'
-
-const rootServerRouteImport = createServerRootRoute()
 
 const AppRouteRoute = AppRouteRouteImport.update({
   id: '/_app',
@@ -81,6 +77,11 @@ const AppYearMonthIndexRoute = AppYearMonthIndexRouteImport.update({
   path: '/$yearMonth/',
   getParentRoute: () => AppRouteRoute,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppTemplatesTemplateIdRoute = AppTemplatesTemplateIdRouteImport.update({
   id: '/templates/$templateId',
   path: '/templates/$templateId',
@@ -119,11 +120,6 @@ const AppCategoriesCategoryIdEditRoute =
     path: '/$categoryId/edit',
     getParentRoute: () => AppCategoriesRouteRoute,
   } as any)
-const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootServerRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/categories': typeof AppCategoriesRouteRouteWithChildren
@@ -133,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/templates/$templateId': typeof AppTemplatesTemplateIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
   '/categories/': typeof AppCategoriesIndexRoute
   '/review/': typeof AppReviewIndexRoute
@@ -149,6 +146,7 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/templates/$templateId': typeof AppTemplatesTemplateIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/$yearMonth': typeof AppYearMonthIndexRoute
   '/categories': typeof AppCategoriesIndexRoute
   '/review': typeof AppReviewIndexRoute
@@ -169,6 +167,7 @@ export interface FileRoutesById {
   '/_app/': typeof AppIndexRoute
   '/_app/$yearMonth/$id': typeof AppYearMonthIdRoute
   '/_app/templates/$templateId': typeof AppTemplatesTemplateIdRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/_app/$yearMonth/': typeof AppYearMonthIndexRoute
   '/_app/categories/': typeof AppCategoriesIndexRoute
   '/_app/review/': typeof AppReviewIndexRoute
@@ -189,6 +188,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$yearMonth/$id'
     | '/templates/$templateId'
+    | '/api/auth/$'
     | '/$yearMonth'
     | '/categories/'
     | '/review/'
@@ -205,6 +205,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$yearMonth/$id'
     | '/templates/$templateId'
+    | '/api/auth/$'
     | '/$yearMonth'
     | '/categories'
     | '/review'
@@ -224,6 +225,7 @@ export interface FileRouteTypes {
     | '/_app/'
     | '/_app/$yearMonth/$id'
     | '/_app/templates/$templateId'
+    | '/api/auth/$'
     | '/_app/$yearMonth/'
     | '/_app/categories/'
     | '/_app/review/'
@@ -239,27 +241,7 @@ export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   authJoinRoute: typeof authJoinRoute
   authLoginRoute: typeof authLoginRoute
-}
-export interface FileServerRoutesByFullPath {
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesByTo {
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesById {
-  __root__: typeof rootServerRouteImport
-  '/api/auth/$': typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRouteTypes {
-  fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/auth/$'
-  fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/auth/$'
-  id: '__root__' | '/api/auth/$'
-  fileServerRoutesById: FileServerRoutesById
-}
-export interface RootServerRouteChildren {
-  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -334,6 +316,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppYearMonthIndexRouteImport
       parentRoute: typeof AppRouteRoute
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_app/templates/$templateId': {
       id: '/_app/templates/$templateId'
       path: '/templates/$templateId'
@@ -382,17 +371,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/categories/$categoryId/edit'
       preLoaderRoute: typeof AppCategoriesCategoryIdEditRouteImport
       parentRoute: typeof AppCategoriesRouteRoute
-    }
-  }
-}
-declare module '@tanstack/react-start/server' {
-  interface ServerFileRoutesByPath {
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
-      parentRoute: typeof rootServerRouteImport
     }
   }
 }
@@ -458,13 +436,17 @@ const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   authJoinRoute: authJoinRoute,
   authLoginRoute: authLoginRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-const rootServerRouteChildren: RootServerRouteChildren = {
-  ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
 }
-export const serverRouteTree = rootServerRouteImport
-  ._addFileChildren(rootServerRouteChildren)
-  ._addFileTypes<FileServerRouteTypes>()

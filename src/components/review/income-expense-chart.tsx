@@ -5,8 +5,7 @@ import {
   YAxis,
   Line,
   CartesianGrid,
-  ComposedChart,
-  Brush,
+  ComposedChart
 } from "recharts";
 import { useTranslation } from "~/locales/translations";
 import { formatCurrencyWhole } from "~/lib/format";

@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
 import MonthlyListItem from "./monthly-list-item";
 import {
   formatYearMonth,
@@ -9,12 +8,13 @@ import {
 import { Transaction } from "~/service/transactions.api";
 import dayjs from "dayjs";
 import { formatCurrency } from "~/lib/format";
-import { ChevronLeft, ChevronRight, Search, X, ArrowRight } from "lucide-react";
-import { Link, useNavigate, useSearch, useRouterState } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "../ui/button";
 import { cn, colored } from "~/lib/utils";
 import { useTranslation } from "~/locales/translations";
 import SearchForm from "./budget-search";
+import React from "react";
 
 interface MonthlyListProps {
   transactions: Array<Transaction>;

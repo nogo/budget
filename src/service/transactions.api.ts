@@ -1,11 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { IdSchema } from "./schema";
-import { ListTransactionSchema, TransactionCreateSchema } from "./transactions.schema";
+import {
+  ListTransactionSchema,
+  TransactionCreateSchema,
+} from "./transactions.schema";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import prisma from "~/lib/prisma";
-import { TransactionWhereInput } from "~/generated/prisma/models";
+import { eq, and, gte, lte, like, desc, SQL } from "drizzle-orm";
+import db from "~/lib/db";
+import { transactions, categories } from "~/db/schema";
 import { parseSearchQuery } from "~/lib/query";
+import { userRequiredMiddleware } from "~/lib/auth/middleware";
 
 dayjs.extend(utc);
 
@@ -22,139 +27,129 @@ export type Transaction = {
 function transformToTransaction(item: any): Transaction {
   const result: Transaction = {
     id: item.id,
-    amount: item.amount.toNumber(),
+    amount: item.amount,
     type: item.type,
     categoryId: item.categoryId,
-    category: undefined,
+    category: item.category?.name,
     note: item.note,
     date: dayjs.unix(item.date).toDate(),
   };
-
-  if (item.category) {
-    result["category"] = item.category.name;
-  }
 
   return result;
 }
 
 export const listTransactions = createServerFn()
-  .validator(ListTransactionSchema)
+  .middleware([userRequiredMiddleware])
+  .inputValidator(ListTransactionSchema)
   .handler(async ({ data: { monthYear, query } }) => {
-    const categoryNames = await prisma.category.findMany({ select: { name: true } }).then(items => items.map(c => c.name));
+    const categoryNames = await db
+      .select({ name: categories.name })
+      .from(categories)
+      .then((items) => items.map((c) => c.name));
     const parsed = parseSearchQuery(query, categoryNames);
 
-    const whereConditions: TransactionWhereInput = {};
+    const whereConditions: SQL[] = [];
 
     // Apply month year filter only when no textQuery
     if (parsed?.textQuery) {
-      whereConditions.AND = parsed.textQuery
-        .split(/\s+/)
-        .map((term: string) => ({
-          note: { contains: term }
-        }));
+      const terms = parsed.textQuery.split(/\s+/);
+      terms.forEach((term: string) => {
+        whereConditions.push(like(transactions.note, `%${term}%`));
+      });
     } else if (monthYear) {
       const startDate = monthYear.startOf("month").unix();
       const endDate = monthYear.endOf("month").unix();
-      whereConditions.date = {
-        gte: startDate,
-        lte: endDate,
-      };
+      whereConditions.push(gte(transactions.date, startDate));
+      whereConditions.push(lte(transactions.date, endDate));
     }
 
     // Get transactions from database
-    return await prisma.transaction
-      .findMany({
-        where: whereConditions,
-        orderBy: [
-          {
-            date: "desc",
-          },
-          {
-            id: "desc",
-          },
-        ],
-        include: {
-          category: {
-            select: {
-              name: true,
-            },
-          },
+    const items = await db
+      .select({
+        id: transactions.id,
+        amount: transactions.amount,
+        type: transactions.type,
+        categoryId: transactions.categoryId,
+        date: transactions.date,
+        note: transactions.note,
+        category: {
+          name: categories.name,
         },
       })
-      .then(items => items
-        .filter(item => {
-          if (parsed && parsed.categories.length > 0) {
-            return item.category && parsed.categories.includes(item.category.name)
-          }
-          return true;
-        })
-        .filter(item => {
-          if (parsed && parsed.amounts.length > 0) {
-            return parsed.amounts.includes(item.amount.toNumber())
-          }
-          return true;
-        })
-        .map(item => transformToTransaction(item))
-      );
+      .from(transactions)
+      .leftJoin(categories, eq(transactions.categoryId, categories.id))
+      .where(whereConditions.length > 0 ? and(...whereConditions) : undefined)
+      .orderBy(desc(transactions.date), desc(transactions.id));
+
+    return items
+      .filter((item) => {
+        if (parsed && parsed.categories.length > 0) {
+          return (
+            item.category && parsed.categories.includes(item.category.name)
+          );
+        }
+        return true;
+      })
+      .filter((item) => {
+        if (parsed && parsed.amounts.length > 0) {
+          return parsed.amounts.includes(item.amount);
+        }
+        return true;
+      })
+      .map((item) => transformToTransaction(item));
   });
 
 export const findTransactions = createServerFn()
-  .validator(IdSchema)
+  .middleware([userRequiredMiddleware])
+  .inputValidator(IdSchema)
   .handler(async ({ data }) => {
-    return await prisma.transaction
-      .findFirst({
-        where: {
-          id: data.id,
-        },
-      })
-      .then((item) => transformToTransaction(item));
+    const result = await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.id, data.id))
+      .limit(1);
+    return transformToTransaction(result[0]);
   });
 
 export const crupTransaction = createServerFn({ method: "POST" })
-  .validator(TransactionCreateSchema)
+  .middleware([userRequiredMiddleware])
+  .inputValidator(TransactionCreateSchema)
   .handler(async ({ data: transactionData }) => {
     if (transactionData.id && transactionData.id > 0) {
-      return await prisma.transaction
-        .update({
-          where: { id: transactionData.id },
-          data: {
-            id: transactionData.id,
-            amount: transactionData.amount,
-            type: transactionData.type,
-            categoryId: transactionData.categoryId,
-            note: transactionData.note,
-            date: dayjs.utc(transactionData.date).unix(),
-          },
+      const result = await db
+        .update(transactions)
+        .set({
+          amount: transactionData.amount,
+          type: transactionData.type,
+          categoryId: transactionData.categoryId,
+          note: transactionData.note,
+          date: dayjs.utc(transactionData.date).unix(),
         })
-        .then((item) => transformToTransaction(item));
+        .where(eq(transactions.id, transactionData.id))
+        .returning();
+      return transformToTransaction(result[0]);
     } else {
-      return await prisma.transaction
-        .create({
-          data: {
-            amount: transactionData.amount,
-            type: transactionData.type,
-            category: {
-              connect: { id: transactionData.categoryId },
-            },
-            note: transactionData.note,
-            date: dayjs.utc(transactionData.date).unix(),
-          },
-          include: {
-            category: true,
-          },
+      const result = await db
+        .insert(transactions)
+        .values({
+          amount: transactionData.amount,
+          type: transactionData.type,
+          categoryId: transactionData.categoryId,
+          note: transactionData.note,
+          date: dayjs.utc(transactionData.date).unix(),
         })
-        .then((item) => transformToTransaction(item));
+        .returning();
+      return transformToTransaction(result[0]);
     }
   });
 
 export const removeTransaction = createServerFn({ method: "POST" })
-  .validator(IdSchema)
+  .middleware([userRequiredMiddleware])
+  .inputValidator(IdSchema)
   .handler(async ({ data }) => {
-    return await prisma.transaction
-      .delete({
-        where: {
-          id: data.id,
-        },
-      })
-      .then((item) => transformToTransaction(item));
+    const result = await db
+      .delete(transactions)
+      .where(eq(transactions.id, data.id))
+      .returning();
+    return transformToTransaction(result[0]);
   });

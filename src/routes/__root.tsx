@@ -1,33 +1,37 @@
-import { type QueryClient } from "@tanstack/react-query";
 import {
   HeadContent,
   Outlet,
   Scripts,
   createRootRouteWithContext,
 } from "@tanstack/react-router";
-import * as React from "react";
-import { DefaultCatchBoundary } from "~/components/layout/default-catch-boundary";
-import { LocaleProvider } from "~/components/Locales";
-import { NotFound } from "~/components/layout/not-found";
-import { PWAUpdateNotification } from "~/components/layout/pwa-update-notification";
-import { seo } from "~/lib/seo";
 
 import appCss from "../styles/app.css?url";
-import { authQueries } from "~/service/queries";
 
-interface AppRouterContext {
-  queryClient: QueryClient
-}
+import { NotFound } from "~/components/layout/not-found";
+import { DefaultCatchBoundary } from "~/components/layout/default-catch-boundary";
+import { LocaleProvider } from "~/components/Locales";
+import { PWAUpdateNotification } from "~/components/layout/pwa-update-notification";
+import { seo } from "~/lib/seo";
+import { authQueryOptions } from "~/lib/auth/client";
+import { AppRouterContext } from "~/lib/types";
 
 export const Route = createRootRouteWithContext<AppRouterContext>()({
   beforeLoad: async ({ context }) => {
-    const userSession = await context.queryClient.fetchQuery(authQueries.user());
-    const user = userSession?.user || null;
+    try {
+      const userSession = await context.queryClient.fetchQuery(authQueryOptions());
+      const user = userSession?.user || null;
 
-    return {
-      isAuthenticated: !!user,
-      userSession: userSession,
-    };
+      return {
+        isAuthenticated: !!user,
+        userSession: userSession,
+      };
+    } catch (error) {
+      console.error("[Root] Failed to load auth session:", error);
+      return {
+        isAuthenticated: false,
+        userSession: null,
+      };
+    }
   },
   head: () => ({
     meta: [

@@ -1,8 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { IdSchema } from "./schema";
 import { CategoryFilterSchema, TemplateSchema } from "./templates.schema";
-import { userRequiredMiddleware } from "./auth.api";
-import prisma from "~/lib/prisma";
+import { eq, asc } from "drizzle-orm";
+import db from "~/lib/db";
+import { templates, categories } from "~/db/schema";
+import { userRequiredMiddleware } from "~/lib/auth/middleware";
 
 export type Template = {
   id: number;
@@ -19,113 +21,97 @@ function transformToTemplate(item: any): Template | undefined {
 
   const result: Template = {
     id: item.id,
-    amount: item.amount.toNumber(),
+    amount: item.amount,
     type: item.type,
     categoryId: item.categoryId,
-    category: undefined,
+    category: item.category?.name,
     note: item.note,
     day: item.day,
   };
-
-  if (item.category) {
-    result["category"] = item.category.name;
-  }
 
   return result;
 }
 
 export const listTemplates = createServerFn()
-  .validator(CategoryFilterSchema)
   .middleware([userRequiredMiddleware])
+  .inputValidator(CategoryFilterSchema)
   .handler(async ({ data }) => {
-    if (data.categoryId) {
-      return await prisma.template
-        .findMany({
-          where: {
-            categoryId: data.categoryId,
-          },
-          include: {
-            category: {
-              select: { name: true },
-            },
-          },
-          orderBy: {
-            day: "asc",
-          },
-        })
-        .then((items) => items.map((item) => transformToTemplate(item)));
-    }
-
-    return await prisma.template
-      .findMany({
-        include: {
-          category: {
-            select: { name: true },
-          },
-        },
-        orderBy: {
-          day: "asc",
+    const query = db
+      .select({
+        id: templates.id,
+        amount: templates.amount,
+        type: templates.type,
+        categoryId: templates.categoryId,
+        note: templates.note,
+        day: templates.day,
+        category: {
+          name: categories.name,
         },
       })
-      .then((items) => items.map((item) => transformToTemplate(item)));
+      .from(templates)
+      .leftJoin(categories, eq(templates.categoryId, categories.id))
+      .orderBy(asc(templates.day));
+
+    if (data.categoryId) {
+      const items = await query.where(eq(templates.categoryId, data.categoryId));
+      return items.map((item) => transformToTemplate(item));
+    }
+
+    const items = await query;
+    return items.map((item) => transformToTemplate(item));
   });
 
 export const fetchTemplate = createServerFn()
-  .validator(IdSchema)
   .middleware([userRequiredMiddleware])
+  .inputValidator(IdSchema)
   .handler(async ({ data }) => {
-    return await prisma.template
-      .findFirst({ where: { id: data.id } })
-      .then((item) => transformToTemplate(item));
+    const result = await db
+      .select()
+      .from(templates)
+      .where(eq(templates.id, data.id))
+      .limit(1);
+    return transformToTemplate(result[0]);
   });
 
 export const crupTemplate = createServerFn({ method: "POST" })
-  .validator(TemplateSchema)
   .middleware([userRequiredMiddleware])
+  .inputValidator(TemplateSchema)
   .handler(async ({ data: templateData }) => {
     if (templateData.id && templateData.id > 0) {
-      return await prisma.template
-        .update({
-          where: { id: templateData.id },
-          data: {
-            id: templateData.id,
-            amount: templateData.amount,
-            type: templateData.type,
-            categoryId: templateData.categoryId,
-            note: templateData.note,
-            day: templateData.day,
-          },
+      const result = await db
+        .update(templates)
+        .set({
+          amount: templateData.amount,
+          type: templateData.type,
+          categoryId: templateData.categoryId,
+          note: templateData.note,
+          day: templateData.day,
         })
-        .then((item) => transformToTemplate(item));
+        .where(eq(templates.id, templateData.id))
+        .returning();
+      return transformToTemplate(result[0]);
     } else {
-      return await prisma.template
-        .create({
-          data: {
-            amount: templateData.amount,
-            type: templateData.type,
-            category: {
-              connect: { id: templateData.categoryId },
-            },
-            note: templateData.note,
-            day: templateData.day,
-          },
-          include: {
-            category: true,
-          },
+      const result = await db
+        .insert(templates)
+        .values({
+          amount: templateData.amount,
+          type: templateData.type,
+          categoryId: templateData.categoryId,
+          note: templateData.note,
+          day: templateData.day,
         })
-        .then((item) => transformToTemplate(item));
+        .returning();
+      return transformToTemplate(result[0]);
     }
   });
 
 export const removeTemplate = createServerFn({ method: "POST" })
-  .validator(IdSchema)
   .middleware([userRequiredMiddleware])
+  .inputValidator(IdSchema)
   .handler(async ({ data }) => {
-    return await prisma.template
-      .delete({
-        where: {
-          id: data.id,
-        },
-      })
-      .then((item) => transformToTemplate(item));
+    const result = await db
+      .delete(templates)
+      .where(eq(templates.id, data.id))
+      .returning();
+    return transformToTemplate(result[0]);
   });

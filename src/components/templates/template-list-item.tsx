@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Calendar1Icon, Pencil, Trash2 } from "lucide-react";
+import { Calendar1Icon } from "lucide-react";
 import { formatCurrency } from "~/lib/format";
 import { cn } from "~/lib/utils";
 import { useTranslation } from "~/locales/translations";

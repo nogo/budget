@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import ReviewYears from "~/components/review/review-years";
 import { handleIdStringArray } from "~/lib/utils";
 import { reviewQueries } from "~/service/queries";
