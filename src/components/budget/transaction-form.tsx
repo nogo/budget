@@ -344,6 +344,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             {transaction && (
               <>
                 <Button
+                  type="button"
                   variant="destructive"
                   disabled={!canSubmit}
                   onClick={(e) => {
@@ -358,6 +359,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
                   <span className="sr-only">{t("delete")}</span>
                 </Button>
                 <Button
+                  type="button"
                   variant="secondary"
                   disabled={!canSubmit}
                   onClick={(e) => {

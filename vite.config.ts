@@ -4,7 +4,7 @@ import viteReact from '@vitejs/plugin-react'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
 import { nitroV2Plugin } from "@tanstack/nitro-v2-vite-plugin";
-import { VitePWA } from 'vite-plugin-pwa'
+import { pwaPlugin } from './vite-pwa-nitro-plugin'
 
 // Read version from package.json
 import { readFileSync } from 'fs';
@@ -20,7 +20,7 @@ export default defineConfig({
   plugins: [
     nitroV2Plugin({
       compatibilityDate: 'latest',
-      preset: 'bun'  
+      preset: 'bun'
     }),
     // this is the plugin that enables path aliases
     viteTsConfigPaths({
@@ -29,5 +29,6 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart(),
     viteReact(),
+    pwaPlugin(), // Custom PWA plugin for TanStack Start RC compatibility
   ],
 });

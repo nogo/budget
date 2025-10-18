@@ -77,7 +77,7 @@ export const Route = createRootRouteWithContext<AppRouterContext>()({
         sizes: "128x128",
         href: "/img/favicon-128x128.png",
       },
-      { rel: "manifest", href: "/site.webmanifest" },
+      { rel: "manifest", href: "/manifest.json" },
       { rel: "icon", href: "/img/favicon.ico" },
     ],
   }),
