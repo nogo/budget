@@ -18,15 +18,16 @@ services:
       - budget-data:/data
 
   budget-migrate:
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: Dockerfile
-      target: builder
-    env_file:
-      - .env
+      target: migrate
     volumes:
       - budget-data:/data
-    command: [ "bun", "run", "db:deploy" ]
+    profiles:
+      - migrate
 
 volumes:
   budget-data:

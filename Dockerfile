@@ -32,8 +32,24 @@ ENV VITE_AUTH_DEFAULT_USER=$VITE_AUTH_DEFAULT_USER
 ENV VITE_AUTH_DEFAULT_EMAIL=$VITE_AUTH_DEFAULT_EMAIL
 ENV VITE_AUTH_DEFAULT_PASSWORD=$VITE_AUTH_DEFAULT_PASSWORD
 
-RUN bunx --bun prisma generate
 RUN bunx --bun vite build --mode production
+
+CMD ["bun", "dev"]
+
+FROM base AS migrate
+RUN mkdir -p /data && chown bun:bun /data
+USER bun
+WORKDIR /app
+
+ENV NODE_ENV=development
+
+COPY --chown=bun:bun package.json bun.lock ./
+RUN bun install --no-progress
+COPY --chown=bun:bun drizzle.config.ts ./
+COPY --chown=bun:bun src/lib/database ./src/lib/database
+COPY --chown=bun:bun src/lib/env ./src/lib/env
+
+CMD ["bun", "run", "db:deploy"]
 
 FROM oven/bun:1-alpine AS runner
 RUN mkdir -p /data && chown bun:bun /data
