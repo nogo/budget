@@ -7,7 +7,8 @@ import { icon } from './icons.js';
 import { money } from './format.js';
 import { amountOf, notAmount } from './calc.js';
 import * as api from './api.js';
-import { loadTemplates } from './data.js';
+import { loadCategories, loadTemplates } from './data.js';
+import { screen } from './screens.js';
 import { go } from './nav.js';
 import { Arm } from './arm.js';
 
@@ -20,6 +21,10 @@ class TemplatesView extends AurilElement {
   }
 }
 customElements.define('templates-view', TemplatesView);
+screen('templates', 'templates-view', () => {
+  loadCategories();
+  loadTemplates();
+});
 
 class TemplateForm extends AurilElement {
   #draft = null; // { categoryId, note, type, day, amount } as shown

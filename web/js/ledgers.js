@@ -5,6 +5,7 @@ import { store } from './state.js';
 import { t } from './i18n.js';
 import { icon } from './icons.js';
 import { chooseLedger, refresh } from './data.js';
+import { screen } from './screens.js';
 import { go } from './nav.js';
 
 class LedgerChoice extends AurilElement {
@@ -32,3 +33,4 @@ class LedgerChoice extends AurilElement {
   }
 }
 customElements.define('ledger-choice', LedgerChoice);
+screen('ledgers', 'ledger-choice');

@@ -3,6 +3,7 @@
 // screen moved on is dropped.
 import { store } from './state.js';
 import * as api from './api.js';
+import { loadScreen } from './screens.js';
 
 const latest = {}; // slice -> number of the newest request, to drop stale answers
 
@@ -65,29 +66,12 @@ export function loadReview() {
   return load('review', fetcher, (rows, error) => ({ review: { key, rows: rows ?? [], error } }));
 }
 
-// refresh loads everything the shown screen needs.
+// refresh loads everything the shown screen needs; each screen says what
+// that is when it registers (screens.js).
 export function refresh() {
   const { session, ledger, route } = store.state;
   if (!session || !ledger) return;
-  switch (route.name) {
-    case 'month':
-      loadCategories();
-      loadTemplates();
-      loadTransactions();
-      if (route.id) loadTransaction();
-      break;
-    case 'templates':
-      loadCategories();
-      loadTemplates();
-      break;
-    case 'categories':
-      loadCategories();
-      break;
-    case 'review':
-      loadCategories();
-      loadReview();
-      break;
-  }
+  loadScreen(route.name);
 }
 
 // chooseLedger switches to another ledger and drops the data of the last.

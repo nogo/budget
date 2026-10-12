@@ -6,7 +6,8 @@ import { t } from './i18n.js';
 import { icon } from './icons.js';
 import { money, date } from './format.js';
 import { shiftYm } from './calendar.js';
-import { transactionsKey } from './data.js';
+import { transactionsKey, loadCategories, loadTemplates, loadTransactions, loadTransaction } from './data.js';
+import { screen } from './screens.js';
 import { go, withQuery } from './nav.js';
 import { discard } from './outbox.js';
 import { Arm } from './arm.js';
@@ -21,6 +22,12 @@ class MonthView extends AurilElement {
   }
 }
 customElements.define('month-view', MonthView);
+screen('month', 'month-view', () => {
+  loadCategories();
+  loadTemplates();
+  loadTransactions();
+  if (store.state.route.id) loadTransaction();
+});
 
 // shownEntries is what the list shows: the server's transactions plus the
 // entries of this month still in the outbox, waiting or refused, newest day

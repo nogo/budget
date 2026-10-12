@@ -7,7 +7,8 @@ import { t } from './i18n.js';
 import { icon } from './icons.js';
 import { money } from './format.js';
 import { pad } from './calendar.js';
-import { reviewRows } from './data.js';
+import { reviewRows, loadCategories, loadReview } from './data.js';
+import { screen } from './screens.js';
 import { go } from './nav.js';
 import './chart.js';
 
@@ -21,6 +22,10 @@ class ReviewView extends AurilElement {
   }
 }
 customElements.define('review-view', ReviewView);
+screen('review', 'review-view', () => {
+  loadCategories();
+  loadReview();
+});
 
 const cq = (route) => (route.categories?.length ? `?categories=${route.categories.join(',')}` : '');
 

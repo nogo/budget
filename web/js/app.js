@@ -8,6 +8,7 @@ import { refresh, loadTransactions } from './data.js';
 import { startRouter } from './nav.js';
 import { loadSession } from './session.js';
 import { registerServiceWorker } from './update.js';
+import { screenTag } from './screens.js';
 import './topbar.js';
 import './login.js';
 import './ledgers.js';
@@ -16,12 +17,10 @@ import './templates.js';
 import './categories.js';
 import './review.js';
 
-const screens = { month: 'month-view', templates: 'templates-view', categories: 'categories-view', review: 'review-view' };
-
 function screenFor(s) {
   if (!s.session) return s.booting ? '' : 'login-screen';
-  if (!s.ledger || s.route.name === 'ledgers') return 'ledger-choice';
-  return screens[s.route.name];
+  if (!s.ledger) return screenTag('ledgers');
+  return screenTag(s.route.name);
 }
 
 const root = document.getElementById('app');

@@ -7,6 +7,7 @@ import { t } from './i18n.js';
 import { icon } from './icons.js';
 import * as api from './api.js';
 import { loadCategories } from './data.js';
+import { screen } from './screens.js';
 import { go } from './nav.js';
 import { Arm } from './arm.js';
 
@@ -135,3 +136,4 @@ class CategoriesView extends AurilElement {
   }
 }
 customElements.define('categories-view', CategoriesView);
+screen('categories', 'categories-view', loadCategories);
