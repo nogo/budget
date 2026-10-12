@@ -190,7 +190,7 @@ func TestServeFixture(t *testing.T) {
 	a.Register(mux)
 	srv.Register(mux)
 	fmt.Fprintf(os.Stdout, "budget: %s\n", base)
-	t.Fatal(http.Serve(ln, mux))
+	t.Fatal(http.Serve(ln, Headers(mux)))
 }
 
 func envOr(name, def string) string {

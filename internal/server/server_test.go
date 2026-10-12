@@ -410,3 +410,22 @@ func TestHealthzNeedsNoSession(t *testing.T) {
 	w := ts.do("", "GET", "/healthz", "")
 	wantStatus(t, w, http.StatusOK)
 }
+
+func TestHeadersOnEveryResponse(t *testing.T) {
+	h := Headers(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, httptest.NewRequest("GET", "/", nil))
+	if got := w.Header().Get("Content-Security-Policy"); !strings.Contains(got, "frame-ancestors 'none'") || !strings.Contains(got, "script-src 'self'") {
+		t.Fatalf("csp: %q", got)
+	}
+	if w.Header().Get("X-Frame-Options") != "DENY" || w.Header().Get("Strict-Transport-Security") != "" {
+		t.Fatalf("headers over http: %v", w.Header())
+	}
+	r := httptest.NewRequest("GET", "/", nil)
+	r.Header.Set("X-Forwarded-Proto", "https")
+	w = httptest.NewRecorder()
+	h.ServeHTTP(w, r)
+	if w.Header().Get("Strict-Transport-Security") == "" {
+		t.Fatal("no HSTS behind an https proxy")
+	}
+}

@@ -158,7 +158,7 @@ func serve(ctx context.Context, getenv func(string) string, logOut io.Writer) er
 	srv.Register(mux)
 	hs := &http.Server{
 		Addr:              c.addr,
-		Handler:           mux,
+		Handler:           server.Headers(mux),
 		ReadHeaderTimeout: 10 * time.Second,
 		ReadTimeout:       30 * time.Second,
 		WriteTimeout:      30 * time.Second,
