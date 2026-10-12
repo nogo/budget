@@ -1,5 +1,9 @@
 [tools]
 go = "1.27.2"
+# Measurement only (CODING_STANDARDS.md, Measure); never imported.
+"go:github.com/uudashr/gocognit/cmd/gocognit" = "1.2.1"
+"go:github.com/mibk/dupl" = "1.1.0"
+"go:github.com/go-gremlins/gremlins/cmd/gremlins" = "0.6.0"
 
 [env]
 BINARY = "bin/budget"
@@ -70,3 +74,64 @@ done
 exit $failed
 """
 
+[tasks.measure]
+description = "Leading design metrics for MEASURE_DIRS (default GO_DIRS), in a diffable key/value form"
+run = """
+set -e
+cd "${MEASURE_ROOT:-.}"
+DIRS="${MEASURE_DIRS:-$GO_DIRS}"
+C=$(mktemp)
+gocognit -ignore '_test.go$' $DIRS > "$C" || true
+echo "complexity.sum $(awk '{s+=$1} END {print s+0}' "$C")"
+echo "complexity.over15 $(awk '$1>15' "$C" | wc -l | tr -d ' ')"
+sort -rn "$C" | head -5 | awk '{print "complexity.top " $1 " " $3 " " $4}'
+rm -f "$C"
+echo "duplication.clones $(dupl -t 50 $DIRS | sed -n 's/Found total \\([0-9]*\\).*/\\1/p')"
+for d in $DIRS; do
+  for p in $(go list ./$d/... 2>/dev/null); do
+    exported=$(go doc -all "$p" 2>/dev/null | grep -cE '^(func|type|const|var) ' || true)
+    {% raw %}files=$(go list -f '{{range .GoFiles}}{{$.Dir}}/{{.}} {{end}}' "$p"){% endraw %}
+    lines=$(cat $files | grep -cvE '^[[:space:]]*($|//)' || true)
+    echo "interface.${p#github.com/nogo/budget/} exported=$exported lines=$lines"
+  done
+done
+"""
+
+[tasks."measure:diff"]
+description = "measure at MEASURE_REF (default HEAD) against the working tree"
+run = """
+set -e
+REF="${MEASURE_REF:-HEAD}"
+TMP=$(mktemp -d)
+trap 'git worktree remove --force "$TMP"' EXIT
+git worktree add --quiet --detach "$TMP" "$REF"
+KEYS='^(complexity|duplication|interface)\\.'
+MEASURE_ROOT="$TMP" mise run measure 2>/dev/null | grep -E "$KEYS" > "$TMP.before"
+mise run measure 2>/dev/null | grep -E "$KEYS" > "$TMP.after"
+diff "$TMP.before" "$TMP.after" && echo "no change against $REF" || true
+rm -f "$TMP.before" "$TMP.after"
+"""
+
+[tasks."measure:mutation"]
+description = "Mutation score for MEASURE_PKG (default ./...); surviving mutants are missing assertions"
+# A cached test run makes gremlins' baseline near zero, so every mutant times out.
+run = 'GOFLAGS=-count=1 gremlins unleash "${MEASURE_PKG:-./...}"'
+
+[tasks."measure:flaky"]
+description = "Run the suite MEASURE_COUNT times (default 10), shuffled, with the race detector"
+run = 'go test -race -shuffle=on -count="${MEASURE_COUNT:-10}" ./...'
+
+[tasks."measure:history"]
+description = "Hotspots and change coupling since MEASURE_SINCE (default 3.months), tests excluded"
+run = """
+SINCE="${MEASURE_SINCE:-3.months}"
+echo "== hotspots: commits per file"
+git log --since="$SINCE" --name-only --format= -- '*.go' '*.js' ':!*_test.go' ':!web/auril/*' \
+  | grep . | sort | uniq -c | sort -rn | head -10
+echo "== change coupling: commits changing both files"
+git log --since="$SINCE" --name-only --format='format:@@' -- '*.go' '*.js' ':!*_test.go' ':!web/auril/*' \
+  | awk '/^@@$/ {n=split(c, f, " "); for (i=1;i<=n;i++) for (j=i+1;j<=n;j++) print (f[i]<f[j] ? f[i]" "f[j] : f[j]" "f[i]); c=""; next}
+         NF {c=c" "$0}
+         END {n=split(c, f, " "); for (i=1;i<=n;i++) for (j=i+1;j<=n;j++) print (f[i]<f[j] ? f[i]" "f[j] : f[j]" "f[i])}' \
+  | sort | uniq -c | sort -rn | head -10
+"""

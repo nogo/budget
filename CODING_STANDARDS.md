@@ -9,6 +9,18 @@ Base: [Effective Go](https://go.dev/doc/effective_go), [Go Code Review Comments]
 `mise run check` (vet, gofmt, tidy, `go test -race`) must pass before a change is done.
 UI changes also run `mise run test:browser`.
 
+## Measure
+
+What the numbers mean and how far to trust them: the `software-design` skill's MEASURE.md. The tools are pinned in `mise.toml`.
+
+- `mise run measure` — complexity, duplication, interface size per package. `MEASURE_DIRS=internal/ledger` narrows it.
+- `MEASURE_REF=<commit> mise run measure:diff` — the same, before against after. A refactor reports this.
+- `MEASURE_PKG=./internal/ledger mise run measure:mutation` — mutation score; about a minute per package.
+- `mise run measure:flaky` — the suite 10 times, shuffled, with `-race`.
+- `mise run measure:history` — hotspots and change coupling, once there are months of history.
+
+Five functions are over cognitive complexity 15 today (`mise run measure`); a change doesn't add one unless its comment says why. JavaScript has no complexity tool (no npm); use `measure:history` and review.
+
 ## Go
 
 ### Structure
