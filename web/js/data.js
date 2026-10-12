@@ -54,6 +54,21 @@ export function loadTransaction() {
   return load('transaction', () => api.transaction(ledger, route.id), (v, error) => ({ transaction: v ?? { id: Number(route.id), error } }));
 }
 
+// gridKey names the heatmap the route shows: a year, or all years.
+export const gridKey = (s = store.state) => `${s.ledger}|${s.route.year ?? ''}`;
+
+// loadGrid fetches the category sums of the route's year and of the year
+// before (for the comparison boxes), or of every year on /review.
+export function loadGrid() {
+  const s = store.state;
+  const { ledger, route } = s;
+  const key = gridKey(s);
+  const fetcher = route.year
+    ? () => Promise.all([api.reviewGrid(ledger, route.year), api.reviewGrid(ledger, route.year - 1)])
+    : () => api.reviewGrid(ledger).then((cells) => [cells, null]);
+  return load('grid', fetcher, (v, error) => ({ grid: { key, cells: v?.[0] ?? [], previous: v?.[1] ?? null, error } }));
+}
+
 export function loadReview() {
   const s = store.state;
   const { ledger, route } = s;
@@ -76,5 +91,5 @@ export function refresh() {
 
 // chooseLedger switches to another ledger and drops the data of the last.
 export function chooseLedger(id) {
-  store.set({ ledger: id, categories: null, templates: null, transactions: null, transaction: null, review: null });
+  store.set({ ledger: id, categories: null, templates: null, transactions: null, transaction: null, review: null, grid: null });
 }

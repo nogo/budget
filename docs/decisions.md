@@ -53,3 +53,7 @@ A release is a git tag `vX.Y.Z` on `main`; the rewrite starts at `v3.0.0`. riven
 ## 2026-10-12 — Strict security headers
 
 Every response carries a Content Security Policy that allows only the app's own files and forbids framing, plus `X-Frame-Options: DENY`, `nosniff`, a same-origin referrer and HSTS behind HTTPS. The interface uses no inline script or style, so the policy needs no exceptions.
+
+## 2026-10-13 — The review keeps its bar chart and gains a frame around it
+
+A spike compared three rethinks on the real data (a single page with headline numbers and an in-out chart, today's pages with better charts, and a money-flow chart with a category heatmap). The family chose the familiar one: the bar chart with "Kumulierte Summe" stays as it is. Around it: a navigation for all years, a year or a month; the category filter; four boxes (income, expense, saved, savings rate) against the same period a year earlier, counting only the months so far in the running year; the heatmap of categories over months or years from the bold option, below the chart; the table folded. The filter sums its categories in the chart, the table, the boxes and the heatmap. A month shows its expenses as sorted bars and has no filter. The in-out and money-flow charts were dropped: the salary, booked as income in "Haushalt", dwarfed every other category on a shared scale.

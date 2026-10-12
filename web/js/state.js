@@ -17,6 +17,7 @@ export const store = new Store({
   transactions: null, // { key, items, error } for the month list or search the route shows
   transaction: null, // the transaction in the form for /YYYY-MM/{id}
   review: null, // { key, rows, error } for the review page the route shows
+  grid: null, // { key, cells, previous, error }: category sums per month of the route's year (per year on /review), and of the year before
   updateReady: false, // a new service worker waits for "update now"
 }, { persist: ['session', 'lang', 'ledger'], key: 'budget', version: 1 });
 

@@ -24,6 +24,7 @@ var messages = map[string]map[string]string{
 		"invalid.name":           "Der Name darf nicht leer sein und höchstens 500 Zeichen haben.",
 		"invalid.key":            "Der Eintragsschlüssel ist ungültig.",
 		"invalid.month":          "Der Monat ist ungültig.",
+		"invalid.year":           "Das Jahr ist ungültig.",
 		"invalid":                "Eine Eingabe ist ungültig.",
 	},
 	"en": {
@@ -47,6 +48,7 @@ var messages = map[string]map[string]string{
 		"invalid.name":           "The name must not be empty and may have at most 500 characters.",
 		"invalid.key":            "The entry key is not valid.",
 		"invalid.month":          "The month is not valid.",
+		"invalid.year":           "The year is not valid.",
 		"invalid":                "An input is not valid.",
 	},
 }

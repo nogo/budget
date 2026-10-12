@@ -90,3 +90,4 @@ export const deleteTemplate = (ledger, id) => request('DELETE', `${ledgerPath(le
 export const reviewYears = (ledger, cats) => request('GET', `${ledgerPath(ledger)}/review/years${query({ categories: ids(cats) })}`);
 export const reviewYear = (ledger, year, cats) => request('GET', `${ledgerPath(ledger)}/review/${year}${query({ categories: ids(cats) })}`);
 export const reviewMonth = (ledger, year, month) => request('GET', `${ledgerPath(ledger)}/review/${year}/${month}`);
+export const reviewGrid = (ledger, year) => request('GET', `${ledgerPath(ledger)}/review/categories${query({ year })}`);

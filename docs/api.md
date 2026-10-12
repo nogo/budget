@@ -138,6 +138,7 @@ All under `/api/ledgers/{ledger}`.
 | `GET /review/years?categories=1,2` | | `[{year, income, expense}]`, oldest year first |
 | `GET /review/{year}?categories=1,2` | | `[{month, income, expense}]`, months with data only, January first |
 | `GET /review/{year}/{month}` | | `[{categoryId, category, income, expense}]` by category id, categories with data only |
+| `GET /review/categories?year=YYYY` | | `[{period, categoryId, category, income, expense}]`: per category and month (1–12) of the year, or per category and year without `year`; by period, then category id; cells with data only. The heatmap and the four boxes. |
 
 ```
 Transaction = {id, amount, type, categoryId, category, date, note}

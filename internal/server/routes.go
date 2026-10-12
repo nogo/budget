@@ -267,3 +267,23 @@ func (s *Server) reviewCategories(w http.ResponseWriter, r *http.Request, l *led
 	}
 	writeJSON(w, http.StatusOK, cs)
 }
+
+// reviewGrid answers the heatmap cells: per category and month of ?year=,
+// or per category and year without it.
+func (s *Server) reviewGrid(w http.ResponseWriter, r *http.Request, l *ledger.Ledger) {
+	year := 0
+	if v := r.URL.Query().Get("year"); v != "" {
+		y, err := strconv.Atoi(v)
+		if err != nil || y < 1970 || y > 9999 {
+			s.fail(w, http.StatusBadRequest, "invalid.year", "year")
+			return
+		}
+		year = y
+	}
+	cells, err := l.ReviewGrid(r.Context(), year)
+	if err != nil {
+		s.failErr(w, r, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, cells)
+}

@@ -117,3 +117,43 @@ GROUP BY t.category_id ORDER BY t.category_id`, from.Unix(), from.AddDate(0, 1, 
 	}
 	return out, rows.Err()
 }
+
+// CategoryPeriod is income and expense of one category in one period:
+// a month (1 to 12) of a year, or a year.
+type CategoryPeriod struct {
+	Period     int     `json:"period"`
+	CategoryID int64   `json:"categoryId"`
+	Category   string  `json:"category"`
+	Income     float64 `json:"income"`
+	Expense    float64 `json:"expense"`
+}
+
+// ReviewGrid returns income and expense per category and month of year, or
+// per category and year when year is 0: the cells of the review heatmap.
+// Ordered by period, then category id; cells with data only.
+func (l *Ledger) ReviewGrid(ctx context.Context, year int) ([]CategoryPeriod, error) {
+	period, where, args := "strftime('%Y', t.date, 'unixepoch')", "1", []any{}
+	if year != 0 {
+		from := time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC)
+		period, where, args = "strftime('%m', t.date, 'unixepoch')", "t.date >= ? AND t.date < ?", []any{from.Unix(), from.AddDate(1, 0, 0).Unix()}
+	}
+	rows, err := l.read.QueryContext(ctx, `
+SELECT CAST(`+period+` AS INTEGER) AS period, t.category_id, c.name,`+sums+`
+FROM transactions t JOIN categories c ON c.id = t.category_id
+WHERE `+where+`
+GROUP BY period, t.category_id ORDER BY period, t.category_id`, args...)
+	if err != nil {
+		return nil, fmt.Errorf("ledger: review grid: %w", err)
+	}
+	defer rows.Close()
+	out := []CategoryPeriod{}
+	for rows.Next() {
+		var s CategoryPeriod
+		if err := rows.Scan(&s.Period, &s.CategoryID, &s.Category, &s.Income, &s.Expense); err != nil {
+			return nil, fmt.Errorf("ledger: review grid: %w", err)
+		}
+		s.Income, s.Expense = cents(s.Income), cents(s.Expense)
+		out = append(out, s)
+	}
+	return out, rows.Err()
+}

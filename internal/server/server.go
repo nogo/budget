@@ -83,6 +83,7 @@ func (s *Server) Register(mux *http.ServeMux) {
 	mux.HandleFunc("DELETE "+p+"/templates/{id}", s.withLedger(s.deleteTemplate))
 
 	mux.HandleFunc("GET "+p+"/review/years", s.withLedger(s.reviewYears))
+	mux.HandleFunc("GET "+p+"/review/categories", s.withLedger(s.reviewGrid))
 	mux.HandleFunc("GET "+p+"/review/{year}", s.withLedger(s.reviewMonths))
 	mux.HandleFunc("GET "+p+"/review/{year}/{month}", s.withLedger(s.reviewCategories))
 

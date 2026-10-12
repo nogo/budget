@@ -526,3 +526,31 @@ func TestReviewGroupsByCalendarDay(t *testing.T) {
 		t.Errorf("empty month = %#v, want []", empty)
 	}
 }
+
+func TestReviewGridByMonthAndByYear(t *testing.T) {
+	l := newLedger(t)
+	ctx := context.Background()
+	a := mustCategory(t, l, "A").ID
+	b := mustCategory(t, l, "B").ID
+	mustTx(t, l, a, "2025-12-31", 1.111, Expense, "")
+	mustTx(t, l, a, "2026-01-01", 10, Expense, "")
+	mustTx(t, l, a, "2026-01-31", 0.2, Expense, "")
+	mustTx(t, l, b, "2026-01-15", 100, Income, "")
+	mustTx(t, l, b, "2026-03-01", 5, Expense, "")
+
+	months, err := l.ReviewGrid(ctx, 2026)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if want := []CategoryPeriod{{1, a, "A", 0, 10.2}, {1, b, "B", 100, 0}, {3, b, "B", 0, 5}}; !reflect.DeepEqual(months, want) {
+		t.Errorf("2026 = %+v, want %+v", months, want)
+	}
+	years, _ := l.ReviewGrid(ctx, 0)
+	if want := []CategoryPeriod{{2025, a, "A", 0, 1.11}, {2026, a, "A", 0, 10.2}, {2026, b, "B", 100, 5}}; !reflect.DeepEqual(years, want) {
+		t.Errorf("years = %+v, want %+v", years, want)
+	}
+	empty, _ := l.ReviewGrid(ctx, 2020)
+	if empty == nil || len(empty) != 0 {
+		t.Errorf("empty year = %#v, want []", empty)
+	}
+}

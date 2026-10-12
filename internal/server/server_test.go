@@ -290,6 +290,17 @@ func TestReviewRoutes(t *testing.T) {
 	if len(cats) != 6 || cats[0].CategoryID != 1 || cats[5].Income != 2620 {
 		t.Errorf("categories %+v", cats)
 	}
+	w = ts.do("jane", "GET", hh+"/review/categories?year=2026", "")
+	wantStatus(t, w, http.StatusOK)
+	grid := decodeBody[[]ledger.CategoryPeriod](t, w)
+	if len(grid) == 0 || grid[0].Period < 1 || grid[len(grid)-1].Period > 12 {
+		t.Errorf("grid of 2026 %+v", grid)
+	}
+	w = ts.do("jane", "GET", hh+"/review/categories", "")
+	if got := decodeBody[[]ledger.CategoryPeriod](t, w); len(got) == 0 || got[0].Period != 2024 {
+		t.Errorf("grid by year %+v", got)
+	}
+	wantStatus(t, ts.do("jane", "GET", hh+"/review/categories?year=x", ""), http.StatusBadRequest)
 	wantStatus(t, ts.do("jane", "GET", hh+"/review/2026/13", ""), http.StatusNotFound)
 	wantStatus(t, ts.do("jane", "GET", hh+"/review/abc", ""), http.StatusNotFound)
 }

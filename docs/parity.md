@@ -77,12 +77,16 @@ Taken from the code at version 2.4.0. Items marked *changed* deliberately differ
 
 ## Review
 
-- [ ] Address `/review`: one row per year, oldest first. Columns: year (button to that year), income, expense, total (red or green). Footer row with the sums.
-- [ ] Bar chart beside the table: income and expense per year. Checkbox "accumulated total" adds a running-total line; the checkbox appears only when there is data to accumulate.
-- [ ] Category filter above: dropdown to add categories, chips with a remove button, "clear all". The filter stays in the address and carries over to the year pages.
-- [ ] Address `/review/YYYY`: same layout per month of that year, previous and next year buttons. Each month row has a button to the month review and a button to the month's transaction list.
-- [ ] Address `/review/YYYY/M`: one row per category with income, expense, total, footer with sums. Previous and next month buttons. *changed:* no pie chart; the table stands alone until the chart redesign.
-- [ ] *changed:* months are counted by calendar day, so entries on the 1st land in the right month (see the date fix).
+*changed (3.1):* one page for all years, a year or a month (`docs/decisions.md`, 2026-10-13). Addresses stay `/review`, `/review/YYYY`, `/review/YYYY/M`.
+
+- [ ] Navigation: "Alle Jahre | Jahr | Monat", and ‹ › to the year or month before and after.
+- [ ] Category filter (not on a month): dropdown to add categories, chips with a remove button, "clear all"; it stays in the address, carries over to the year pages, and sums its categories in the boxes, the chart, the heatmap and the table.
+- [ ] Four boxes: Einnahmen, Ausgaben, Gespart, Sparquote; for a year or month the change against the same period a year earlier (the running year only up to the current month).
+- [ ] All years and a year: the bar chart of income and expense per year or month as before, with the checkbox "Kumulierte Summe"; year labels thin out when they don't fit.
+- [ ] A month: its expenses per category as bars, largest first; a bar opens the month list searched by its category.
+- [ ] Heatmap below the chart: categories × months of the year (× years for all years), each row on its own scale, a red frame on a value over 1.5 times the row's usual one; a month shows its year with the open month outlined; a cell opens the month list searched by its category (a year opens that year).
+- [ ] Table, folded until opened: years oldest first, months January first, or categories by id; income, expense, total (red or green), footer of sums; each year and month row links to its review, each month also to its transactions. It stays open while the page updates.
+- [ ] Months are counted by calendar day, so entries on the 1st land in the right month.
 
 ## Installed app (PWA)
 
