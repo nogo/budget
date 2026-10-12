@@ -246,3 +246,47 @@ func TestBerlinDay(t *testing.T) {
 		}
 	}
 }
+
+// The old app never switched foreign keys on, so deleting a category left
+// its transactions and templates pointing at nothing. The import must keep
+// them and recreate the category.
+func TestImportRestoresDeletedCategories(t *testing.T) {
+	dir := t.TempDir()
+	oldPath := filepath.Join(dir, "old.sqlite")
+	rows := append([]oldRow{}, oldRows...)
+	rows = append(rows, oldRow{91, 9.5, "expense", 9, utc("2026-06-01 00:00"), "2026-06-01"})
+	writeOld(t, oldPath, rows)
+	db, err := sql.Open("sqlite3", "file:"+oldPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`INSERT INTO templates (id, amount, type, category_id, day, note) VALUES (8, 3, 'expense', 8, 5, '')`); err != nil {
+		t.Fatal(err)
+	}
+	db.Close()
+
+	newPath := filepath.Join(dir, "new.sqlite")
+	c, err := Import(context.Background(), oldPath, newPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if c.Restored != 2 || c.Transactions != len(rows) || c.Templates != 3 {
+		t.Fatalf("counts: %+v", c)
+	}
+	l, err := ledger.Open(newPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer l.Close()
+	tx, err := l.Transaction(context.Background(), 91)
+	if err != nil || tx.Category != "Unbekannt 9" {
+		t.Fatalf("transaction 91: %+v %v", tx, err)
+	}
+	cats, err := l.Categories(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := cats[len(cats)-1]; got.ID != 9 || got.Name != "Unbekannt 9" {
+		t.Fatalf("last category: %+v", got)
+	}
+}

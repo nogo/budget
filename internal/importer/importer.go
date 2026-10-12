@@ -19,9 +19,12 @@ import (
 	"github.com/nogo/budget/internal/ledger"
 )
 
-// Counts says how many rows the import carried over.
+// Counts says how many rows the import carried over. Restored counts the
+// categories it had to recreate: the old app never enforced foreign keys,
+// so a deleted category could leave transactions pointing at nothing.
 type Counts struct {
 	Categories, Transactions, Templates int
+	Restored                            int
 }
 
 // ErrMismatch marks an import whose written file disagrees with the old one.
@@ -181,6 +184,13 @@ func copyRows(ctx context.Context, old *sql.DB, path string, berlin *time.Locati
 		if err := copyTable(ctx, old, tx, s.query, s.insert, s.count, s.row); err != nil {
 			return c, fmt.Errorf("importer: %s: %w", s.table, err)
 		}
+		if s.table == "categories" {
+			n, err := restoreCategories(ctx, old, tx)
+			if err != nil {
+				return c, err
+			}
+			c.Restored = n
+		}
 	}
 	// Carry the AUTOINCREMENT counters over, so a deleted old id is never reused.
 	if err := copySequence(ctx, old, tx); err != nil {
@@ -190,6 +200,39 @@ func copyRows(ctx context.Context, old *sql.DB, path string, berlin *time.Locati
 		return c, fmt.Errorf("importer: commit: %w", err)
 	}
 	return c, nil
+}
+
+// restoreCategories recreates every category id that transactions or
+// templates still use but the old file no longer has, named "Unbekannt <id>"
+// so the family can find and rename it. Nothing is dropped.
+func restoreCategories(ctx context.Context, old *sql.DB, tx *sql.Tx) (int, error) {
+	rows, err := old.QueryContext(ctx, `
+		SELECT category_id FROM transactions WHERE category_id NOT IN (SELECT id FROM categories)
+		UNION
+		SELECT category_id FROM templates WHERE category_id NOT IN (SELECT id FROM categories)
+		ORDER BY 1`)
+	if err != nil {
+		return 0, fmt.Errorf("importer: missing categories: %w", err)
+	}
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			rows.Close()
+			return 0, fmt.Errorf("importer: missing categories: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return 0, fmt.Errorf("importer: missing categories: %w", err)
+	}
+	for _, id := range ids {
+		if _, err := tx.ExecContext(ctx, `INSERT INTO categories (id, name, has_notes) VALUES (?, ?, 1)`, id, fmt.Sprintf("Unbekannt %d", id)); err != nil {
+			return 0, fmt.Errorf("importer: restore category %d: %w", id, err)
+		}
+	}
+	return len(ids), nil
 }
 
 func copyTable(ctx context.Context, old *sql.DB, tx *sql.Tx, query, insert string, count *int, row func(func(...any) error) ([]any, error)) error {
@@ -324,8 +367,12 @@ FROM transactions GROUP BY 1, 2`)
 		if err := db.QueryRowContext(ctx, `SELECT count(*) FROM `+table).Scan(&newN); err != nil {
 			return fmt.Errorf("importer: verify: %w", err)
 		}
-		if oldN != n || newN != n {
-			return fmt.Errorf("%w: %s: old %d, new %d, copied %d", ErrMismatch, table, oldN, newN, n)
+		extra := 0
+		if table == "categories" {
+			extra = c.Restored
+		}
+		if oldN != n || newN != n+extra {
+			return fmt.Errorf("%w: %s: old %d, new %d, copied %d, restored %d", ErrMismatch, table, oldN, newN, n, extra)
 		}
 	}
 	return nil

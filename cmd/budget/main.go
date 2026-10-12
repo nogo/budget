@@ -61,6 +61,9 @@ func run(ctx context.Context, args []string, getenv func(string) string, stdout,
 		if err == nil {
 			fmt.Fprintf(stdout, "imported %d categories, %d transactions, %d templates into %s\n",
 				c.Categories, c.Transactions, c.Templates, rest[1])
+			if c.Restored > 0 {
+				fmt.Fprintf(stdout, "restored %d deleted categories still in use, named \"Unbekannt <id>\"; rename them in the app\n", c.Restored)
+			}
 		}
 	case cmd == "new" && len(rest) == 1:
 		err = ledger.Create(rest[0])
