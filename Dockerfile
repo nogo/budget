@@ -6,9 +6,10 @@ RUN --mount=type=cache,target=/go/pkg/mod go mod download
 COPY cmd ./cmd
 COPY internal ./internal
 COPY web ./web
+# The release tag (v3.0.0); the deployment passes it, git is not in the image.
 ARG VERSION=dev
 RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=1 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o /out/budget ./cmd/budget
+    CGO_ENABLED=1 go build -trimpath -ldflags "-s -w -X main.version=${VERSION#v}" -o /out/budget ./cmd/budget
 RUN mkdir -p /out/data
 
 # Run: distroless with glibc and CA certificates. User 1000 is the owner of

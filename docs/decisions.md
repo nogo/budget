@@ -45,3 +45,11 @@ The instance sets German or English for the text and for the format of numbers, 
 ## 2026-10-12 — The interface stays the same, with few deliberate changes
 
 The family is used to the interface; `docs/parity.md` lists every behaviour and is the final test. Deliberate changes: every delete takes two taps on the same button; category merge is dropped (it was never built); the month pie chart is dropped until the charts are redesigned; charts are drawn as plain SVG without a library.
+
+## 2026-10-12 — Production deploys only release tags
+
+A release is a git tag `vX.Y.Z` on `main`; the rewrite starts at `v3.0.0`. rivendell pins the stack to one tag and passes the same tag as the `VERSION` build argument, because herald fetches a tag into an existing clone without a local tag ref, so `git describe` in the build cannot see it. A version file was rejected: the tag is the single source.
+
+## 2026-10-12 — Strict security headers
+
+Every response carries a Content Security Policy that allows only the app's own files and forbids framing, plus `X-Frame-Options: DENY`, `nosniff`, a same-origin referrer and HSTS behind HTTPS. The interface uses no inline script or style, so the policy needs no exceptions.

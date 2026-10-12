@@ -10,7 +10,7 @@ CGO_ENABLED = "1"
 description = "Build the binary"
 sources = ["**/*.go", "go.mod", "web/**", "mise.toml"]
 outputs = ["bin/budget"]
-run = 'go build -ldflags "-X main.version=$(git describe --tags --always --dirty 2>/dev/null || echo dev)" -o "$BINARY" ./cmd/budget'
+run = 'V=$(git describe --tags --always --dirty 2>/dev/null || echo dev); go build -ldflags "-X main.version=${V#v}" -o "$BINARY" ./cmd/budget'
 
 [tasks.dev]
 description = "Run the server on data/ with the development login (no OIDC)"
@@ -69,3 +69,4 @@ for f in internal/server/testdata/browser-*.sh; do
 done
 exit $failed
 """
+

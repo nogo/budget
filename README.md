@@ -64,6 +64,13 @@ docker compose up -d --build
 
 Ledger files and `access.json` live in the `/data` volume; the container runs as user 1000. Back up while the server runs with `docker compose exec budget budget backup /data/backup`; a plain file copy can miss recent writes in WAL mode.
 
+## Release
+
+Production runs a tagged release, never a branch tip.
+
+1. On a checked `main` (`mise run check`, `mise run test:browser`): `git tag -a v3.1.0 -m v3.1.0 && git push origin main v3.1.0`.
+2. In rivendell's `config.yml`, set the budget stack's `tag:` and its `VERSION` build argument to the new tag, push, then `herald deploy budget`.
+
 ## License
 
 MIT
