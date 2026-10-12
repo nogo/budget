@@ -95,4 +95,4 @@ rows="JSON.stringify([...document.querySelectorAll('month-list .row')].map((r) =
 # listed: the month list shows the route's month, not the last one while
 # the new one loads.
 listed="!document.querySelector('month-list [aria-busy=true]')"
-days="JSON.stringify([...document.querySelectorAll('month-list h2.day')].map((h) => h.textContent))"
+days="JSON.stringify([...document.querySelectorAll('month-list .day')].map((h) => h.textContent))"

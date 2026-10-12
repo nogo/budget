@@ -7,7 +7,7 @@
 export BUDGET_FIXTURE_ACCOUNT=john
 source "$(dirname "$0")/lib-browser.sh"
 table="JSON.stringify([...document.querySelectorAll('review-table tbody tr, review-table tfoot tr')].map((r) => [...r.cells].map((c) => c.innerText.replace(/\\s+/g, ' ').trim()).filter(Boolean).join('|')))"
-heads="JSON.stringify([...document.querySelectorAll('review-table thead th')].map((c) => c.textContent.trim()).filter(Boolean))"
+heads="JSON.stringify([...document.querySelectorAll('review-table thead th')].map((c) => c.textContent.replace(/ \\(.\\)$/, '').trim()).filter(Boolean))"
 y1=$((year - 1)); y2=$((year - 2))
 m=$((10#$(date +%m))); pm=$((10#$(date -d "$prev-01" +%m)))
 
@@ -15,7 +15,7 @@ login
 await 'the month has loaded' "document.querySelectorAll('month-list .row').length === 20"
 ab click '.bar-end a[href="/review"]' >/dev/null
 await 'the top bar opens /review' "location.pathname === '/review' && document.querySelectorAll('review-table tbody tr').length === 3" "document.body.innerText.slice(0, 400)"
-check 'titled' "$(text 'review-head h1') === 'Übersicht'"
+check 'the top bar titles it' "$(text '.page-title') === 'Auswertung'"
 check 'columns: year, income, expense, total' "$heads === JSON.stringify(['Jahr', 'Einnahmen', 'Ausgaben', 'Summe'])" "$heads"
 if [ "$prev" \< "$year" ]; then this="2.620,00 €|438,20 €|2.181,80 €"; else this="5.240,00 €|876,40 €|4.363,60 €"; fi
 check 'one row per year, oldest first, with a footer of sums' "$table === JSON.stringify(['$y2|2.380,00 €|191,15 €|2.188,85 €', '$y1|2.380,00 €|191,15 €|2.188,85 €', '$year|$this', 'Summe|' + ($table.includes('5.240,00') ? '10.000,00 €|1.258,70 €|8.741,30 €' : '7.380,00 €|820,50 €|6.559,50 €')])" "$table"
@@ -46,13 +46,13 @@ ab click '#filter-clear' >/dev/null
 await '"Filter löschen" clears it' "location.pathname === '/review/$y1' && location.search === '' && document.querySelectorAll('.chip').length === 0" "location.href"
 
 goto "/review/$year"
-await 'a year page' "$(text 'review-head h1') === '$year' && document.querySelectorAll('review-table tbody tr').length >= 1"
+await 'a year page' "$(text 'review-head h2') === '$year' && document.querySelectorAll('review-table tbody tr').length >= 1"
 check 'columns: month, income, expense, total' "$heads.startsWith(JSON.stringify(['Monat', 'Einnahmen', 'Ausgaben', 'Summe']).slice(0, -1))" "$heads"
 check 'previous and next year buttons' "document.querySelector('#review-prev').getAttribute('href') === '/review/$y1' && $(text '#review-prev') === '$y1' && $(text '#review-next') === '$((year + 1))'"
 check 'each month links to its review and its list' "document.querySelector('#review-month-$m a').getAttribute('href') === '/review/$year/$m' && document.querySelector('#review-month-$m a[href=\"/$ym\"]') !== null" "document.querySelector('#review-month-$m')?.innerHTML"
 check 'the month row sums' "$table.includes('\"$m|2.620,00 €|438,20 €|2.181,80 €\"')" "$table"
 ab click '#review-prev' >/dev/null
-await 'previous year' "location.pathname === '/review/$y1' && $(text 'review-head h1') === '$y1'"
+await 'previous year' "location.pathname === '/review/$y1' && $(text 'review-head h2') === '$y1'"
 goto "/review/$year"
 await 'back to this year' "!!document.querySelector('#review-month-$m')"
 ab click "#review-month-$m a[href=\"/$ym\"]" >/dev/null
@@ -61,11 +61,11 @@ await "the list button opens the month's transactions" "location.pathname === '/
 goto "/review/$year"
 await 'year again' "!!document.querySelector('#review-month-$m')"
 ab click "#review-month-$m a" >/dev/null
-await 'the month button opens the month review' "location.pathname === '/review/$year/$m' && $(text 'review-head h1') === '$ym'" "location.pathname"
+await 'the month button opens the month review' "location.pathname === '/review/$year/$m' && $(text 'review-head h2') === '$ym'" "location.pathname"
 await 'one row per category with sums' "$heads === JSON.stringify(['Kategorie', 'Einnahmen', 'Ausgaben', 'Summe']) && $table === JSON.stringify(['Bäcker|0,00 €|15,40 €|-15,40 €', 'Lebensmittel|0,00 €|267,51 €|-267,51 €', 'Mittag|0,00 €|29,80 €|-29,80 €', 'Unterhaltung|0,00 €|52,99 €|-52,99 €', 'Fahrtkosten|0,00 €|72,50 €|-72,50 €', 'Gehalt|2.620,00 €|0,00 €|2.620,00 €', 'Summe|2.620,00 €|438,20 €|2.181,80 €'])" "[$heads, $table]"
 check 'negative totals red' "document.querySelector('#review-cat-1 td:nth-child(4)').classList.contains('expense')"
 check 'no chart and no filter on a month' "document.querySelector('review-chart').childElementCount === 0 && document.querySelector('category-filter').childElementCount === 0"
 check 'previous and next month buttons' "$(text '#review-prev') === '$prev' && $(text '#review-next') === '$next'"
 ab click '#review-prev' >/dev/null
-await 'the previous month review' "location.pathname === '/review/$(date -d "$prev-01" +%Y)/$pm' && $(text 'review-head h1') === '$prev'" "location.pathname"
+await 'the previous month review' "location.pathname === '/review/$(date -d "$prev-01" +%Y)/$pm' && $(text 'review-head h2') === '$prev'" "location.pathname"
 exit $failed

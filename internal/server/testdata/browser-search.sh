@@ -5,7 +5,7 @@
 # a transaction, and the clear button removes it.
 export BUDGET_FIXTURE_ACCOUNT=john
 source "$(dirname "$0")/lib-browser.sh"
-months="JSON.stringify([...new Set([...document.querySelectorAll('month-list h2.day')].map((h) => h.textContent.slice(3)))].sort())"
+months="JSON.stringify([...new Set([...document.querySelectorAll('month-list .day')].map((h) => h.textContent.slice(3)))].sort())"
 mm() { echo "$1" | awk -F- '{ print $2"."$1 }'; }
 search() {
 	ab fill '#q' "$1" >/dev/null

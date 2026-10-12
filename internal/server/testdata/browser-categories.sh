@@ -13,7 +13,8 @@ await 'the month has loaded' "document.querySelectorAll('month-list .row').lengt
 ab click '.bar-end a[href="/categories"]' >/dev/null
 await 'the top bar opens /categories' "location.pathname === '/categories' && document.querySelectorAll('.cat-row').length === 6" "document.body.innerText"
 check 'rows by creation, with the notes hint' "$names === JSON.stringify(['Bäcker', 'Lebensmittel', 'Mittag', 'Unterhaltung mit Notizen', 'Fahrtkosten mit Notizen', 'Gehalt'])" "$names"
-check 'the add row: name, has notes, save' "document.querySelector('#cat-name').placeholder === 'Neue Kategorie hinzufügen...' && document.querySelector('#cat-notes').type === 'checkbox' && $(text '#cat-add label.check') === 'mit Notizen' && !!document.querySelector('#cat-save')"
+check 'the add row: name, has notes, save' "$(text 'label[for=cat-name]') === 'Neue Kategorie' && document.querySelector('#cat-notes').type === 'checkbox' && $(text '#cat-add label.check') === 'mit Notizen' && !!document.querySelector('#cat-save')"
+check 'the installed version shows under the list' "$(text '.app-version') === 'Budget vfixture'" "$(text '.app-version')"
 check 'each row has an edit link and a delete button' "[...document.querySelectorAll('.cat-row')].every((r) => r.querySelector('a[href^=\"/categories/\"]') && r.querySelector('button[data-arm]'))"
 check 'no merge icon' "document.querySelectorAll('.cat-row a, .cat-row button').length === 12"
 
@@ -28,7 +29,7 @@ ab fill '#cat-name' '' >/dev/null
 
 id=$(value "$(row Haustier).id.slice(4)")
 ab click "#cat-$id a" >/dev/null
-await 'edit opens its page' "location.pathname === '/categories/$id' && $(text 'categories-view h1') === 'Kategorie bearbeiten' && document.querySelector('#edit-name').value === 'Haustier' && document.querySelector('#edit-notes').checked" "document.querySelector('categories-view').innerText"
+await 'edit opens its page' "location.pathname === '/categories/$id' && $(text '.page-title') === 'Kategorie bearbeiten' && document.querySelector('#cat-$id').classList.contains('selected') && document.querySelector('#edit-name').value === 'Haustier' && document.querySelector('#edit-notes').checked" "document.querySelector('categories-view').innerText"
 check 'with back and save' "$(text '#edit-cancel') === 'Zurück' && !!document.querySelector('#edit-save')"
 ab click '#edit-cancel' >/dev/null
 await 'back returns to the list unchanged' "location.pathname === '/categories' && JSON.parse($names).at(-1) === 'Haustier mit Notizen'"

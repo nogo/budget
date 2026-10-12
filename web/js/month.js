@@ -4,7 +4,7 @@ import { AurilElement, html } from '../auril/index.js';
 import { store } from './state.js';
 import { t } from './i18n.js';
 import { icon } from './icons.js';
-import { money, date } from './format.js';
+import { money, date, monthName } from './format.js';
 import { shiftYm } from './calendar.js';
 import { transactionsKey, loadCategories, loadTemplates, loadTransactions, loadTransaction } from './data.js';
 import { screen } from './screens.js';
@@ -22,11 +22,14 @@ class MonthView extends AurilElement {
   }
 }
 customElements.define('month-view', MonthView);
-screen('month', 'month-view', () => {
-  loadCategories();
-  loadTemplates();
-  loadTransactions();
-  if (store.state.route.id) loadTransaction();
+screen('month', 'month-view', {
+  load: () => {
+    loadCategories();
+    loadTemplates();
+    loadTransactions();
+    if (store.state.route.id) loadTransaction();
+  },
+  title: (s) => monthName(s.route.ym),
 });
 
 // shownEntries is what the list shows: the server's transactions plus the
@@ -119,11 +122,11 @@ class MonthList extends AurilElement {
         </form>
         ${q && shown && !shown.stale && html`<p class="result-count" role="status">${count} ${count === 1 ? t('transaction') : t('transactions')}</p>`}
       </div>
-      <h1 class="month-title">${ym}</h1>
+      <h2 class="month-title">${ym}</h2>
       ${!shown && html`<p class="empty">${t('loading')}</p>`}
       ${shown?.error && html`<p class="empty">${s.online ? t('loadFailed') : t('offlineList')}</p>`}
       ${shown && !shown.error && count === 0 && html`<p class="empty">${t('noEntries')}</p>`}
-      ${days.map((d) => html`<h2 class="day" id="day-${d.date}">${date(d.date)}</h2>${d.items.map(row)}`)}
+      ${days.map((d) => html`<h3 class="day" id="day-${d.date}">${date(d.date)}</h3>${d.items.map(row)}`)}
     </div>`;
   }
 }

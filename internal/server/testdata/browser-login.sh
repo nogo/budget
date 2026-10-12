@@ -13,11 +13,11 @@ check 'no top bar without a session' "document.querySelector('top-bar').childEle
 
 ab click '.login-button' >/dev/null
 await 'after login an account with two ledgers chooses one' "JSON.stringify([...document.querySelectorAll('.ledger-choice')].map((b) => b.textContent.trim())) === '[\"Haushalt\",\"Kid\"]'" "document.body.innerText"
-check 'the choice is titled' "$(text 'ledger-choice h1') === 'Kassenbuch wählen'"
+check 'the top bar titles the choice' "$(text '.page-title') === 'Kassenbuch wählen' && document.querySelectorAll('h1').length === 1"
 ab click '#ledger-household' >/dev/null
 await 'choosing Haushalt opens its current month' "location.pathname === '/' && $(text '.month-title') === '$ym' && document.querySelectorAll('month-list .row').length === 20" "[location.pathname, document.body.innerText.slice(0, 300)]"
 check 'the top bar names the ledger and links to the choice' "$(text '.ledger-switch .ledger-name') === 'Haushalt' && document.querySelector('.ledger-switch').getAttribute('href') === '/ledgers'"
-check 'the top bar shows the version' "$(text '.version') === 'vfixture'"
+check 'the top bar titles the month' "$(text '.page-title') === new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date('$ym-01T00:00:00Z')) && document.title.endsWith(' – Budget')" "$(text '.page-title')"
 check 'the top bar links categories, templates, review and has logout' "JSON.stringify([...document.querySelectorAll('.bar-end .bar-link')].map((a) => a.textContent.trim())) === '[\"Kategorien\",\"Vorlagen\",\"Auswertung\",\"Abmelden\"]'" "document.querySelector('.bar-end').innerText"
 
 ab click '.ledger-switch' >/dev/null

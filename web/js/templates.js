@@ -21,9 +21,12 @@ class TemplatesView extends AurilElement {
   }
 }
 customElements.define('templates-view', TemplatesView);
-screen('templates', 'templates-view', () => {
-  loadCategories();
-  loadTemplates();
+screen('templates', 'templates-view', {
+  load: () => {
+    loadCategories();
+    loadTemplates();
+  },
+  title: () => t('templates'),
 });
 
 class TemplateForm extends AurilElement {
@@ -182,7 +185,6 @@ class TemplateList extends AurilElement {
         <span class="amount">${money(tp.amount)}</span></a>`;
     };
     return html`<div class="card list-card">
-      <h1 class="card-title">${icon('template')}${t('templates')}</h1>
       ${s.templates === null && html`<p class="empty">${t('loading')}</p>`}
       ${s.templates?.length === 0 && html`<p class="empty">${t('noTemplate')}</p>`}
       ${groups.map((g) => html`<h2 class="day">${g.name}</h2>${g.items.map(row)}`)}

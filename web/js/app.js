@@ -8,7 +8,7 @@ import { refresh, loadTransactions } from './data.js';
 import { startRouter } from './nav.js';
 import { loadSession } from './session.js';
 import { registerServiceWorker } from './update.js';
-import { screenTag } from './screens.js';
+import { screenTag, screenTitle } from './screens.js';
 import './topbar.js';
 import './login.js';
 import './ledgers.js';
@@ -27,6 +27,8 @@ const root = document.getElementById('app');
 let shown = null;
 function show(s) {
   document.documentElement.lang = s.lang;
+  const title = s.session ? screenTitle(s.ledger ? s.route.name : 'ledgers', s) : '';
+  document.title = title ? `${title} – Budget` : 'Budget';
   const tag = screenFor(s);
   if (tag === shown) return;
   shown = tag;

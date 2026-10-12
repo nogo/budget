@@ -5,7 +5,7 @@ import { AurilElement, html } from '../auril/index.js';
 import { store } from './state.js';
 import { t } from './i18n.js';
 import { icon } from './icons.js';
-import { money } from './format.js';
+import { moneyParts, currencySign, monthName } from './format.js';
 import { pad } from './calendar.js';
 import { reviewRows, loadCategories, loadReview } from './data.js';
 import { screen } from './screens.js';
@@ -22,9 +22,12 @@ class ReviewView extends AurilElement {
   }
 }
 customElements.define('review-view', ReviewView);
-screen('review', 'review-view', () => {
-  loadCategories();
-  loadReview();
+screen('review', 'review-view', {
+  load: () => {
+    loadCategories();
+    loadReview();
+  },
+  title: ({ route: r }) => (r.month ? `${t('review')} ${monthName(`${r.year}-${pad(r.month)}`)}` : r.year ? `${t('review')} ${r.year}` : t('review')),
 });
 
 const cq = (route) => (route.categories?.length ? `?categories=${route.categories.join(',')}` : '');
@@ -36,7 +39,7 @@ class ReviewHead extends AurilElement {
 
   render() {
     const r = store.state.route;
-    if (!r.year) return html`<h1 class="review-title">${t('reviewTitle')}</h1>`;
+    if (!r.year) return '';
     let prev, next, title;
     if (r.month) {
       const p = r.month === 1 ? [r.year - 1, 12] : [r.year, r.month - 1];
@@ -51,7 +54,7 @@ class ReviewHead extends AurilElement {
     }
     return html`<div class="review-nav">
       <a class="button secondary" id="review-prev" href="${prev.href}">${icon('arrowLeftDash')}${prev.label}</a>
-      <h1 class="review-title">${title}</h1>
+      <h2 class="review-title">${title}</h2>
       <a class="button secondary" id="review-next" href="${next.href}">${next.label}${icon('arrowRightDash')}</a>
     </div>`;
   }
@@ -109,7 +112,8 @@ class ReviewTable extends AurilElement {
     const rows = data.rows;
     const sum = (k) => Math.round(rows.reduce((acc, x) => acc + x[k], 0) * 100) / 100;
     const totals = { income: sum('income'), expense: sum('expense'), total: sum('total') };
-    const cells = (x) => html`<td class="num">${money(x.income)}</td><td class="num">${money(x.expense)}</td><td class="num ${x.total < 0 ? 'expense' : 'income'}">${money(x.total)}</td>`;
+    const amount = (n) => moneyParts(n).map((p) => (p.currency ? html`<span class="cur">${p.text}</span>` : p.text));
+    const cells = (x) => html`<td class="num">${amount(x.income)}</td><td class="num">${amount(x.expense)}</td><td class="num ${x.total < 0 ? 'expense' : 'income'}">${amount(x.total)}</td>`;
     let head, body;
     if (r.month) {
       head = t('category');
@@ -117,20 +121,21 @@ class ReviewTable extends AurilElement {
     } else if (r.year) {
       head = t('month');
       body = rows.map((x) => html`<tr id="review-month-${x.month}">
-        <td><a class="button outline small" href="/review/${r.year}/${x.month}${cq(r)}" aria-label="${t('viewReview', `${r.year}-${pad(x.month)}`)}">${icon('chart')}${x.month}</a></td>
+        <td><a class="button outline small" href="/review/${r.year}/${x.month}${cq(r)}" aria-label="${t('viewReview', `${r.year}-${pad(x.month)}`)}"><span class="cell-icon">${icon('chart')}</span>${x.month}</a></td>
         ${cells(x)}
         <td><a class="button outline small icon-only" href="/${r.year}-${pad(x.month)}" aria-label="${t('viewTransactions', `${r.year}-${pad(x.month)}`)}">${icon('list')}</a></td>
       </tr>`);
     } else {
       head = t('year');
-      body = rows.map((x) => html`<tr id="review-year-${x.year}"><td><a class="button outline small" href="/review/${x.year}${cq(r)}">${icon('chart')}${x.year}</a></td>${cells(x)}</tr>`);
+      body = rows.map((x) => html`<tr id="review-year-${x.year}"><td><a class="button outline small" href="/review/${x.year}${cq(r)}"><span class="cell-icon">${icon('chart')}</span>${x.year}</a></td>${cells(x)}</tr>`);
     }
     const extra = r.year && !r.month;
-    return html`<div class="table-wrap" tabindex="0"><table class="review-table ${r.year && !r.month ? 'striped' : ''}">
-      <thead><tr><th class="first">${head}</th><th class="num">${t('incomes')}</th><th class="num">${t('expenses')}</th><th class="num">${t('total')}</th>${extra && html`<th><span class="visually-hidden">${t('viewTransactions', '')}</span></th>`}</tr></thead>
+    const unit = html`<span class="cur-head"> (${currencySign()})</span>`;
+    return html`<div class="card table-card"><div class="table-wrap" tabindex="0"><table class="review-table ${r.year && !r.month ? 'striped' : ''}">
+      <thead><tr><th class="first">${head}</th><th class="num">${t('incomes')}${unit}</th><th class="num">${t('expenses')}${unit}</th><th class="num">${t('total')}${unit}</th>${extra && html`<th><span class="visually-hidden">${t('viewTransactions', '')}</span></th>`}</tr></thead>
       <tbody>${body}</tbody>
       <tfoot><tr><th class="first" scope="row">${t('total')}</th>${cells(totals)}${extra && html`<td></td>`}</tr></tfoot>
-    </table>${rows.length === 0 && html`<p class="empty">${t('noData')}</p>`}</div>`;
+    </table>${rows.length === 0 && html`<p class="empty">${t('noData')}</p>`}</div></div>`;
   }
 }
 customElements.define('review-table', ReviewTable);

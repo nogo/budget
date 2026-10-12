@@ -6,7 +6,8 @@ Taken from the code at version 2.4.0. Items marked *changed* deliberately differ
 
 ## Everywhere
 
-- [ ] Top bar, dark brown (`#733e0a`), fixed at the top: wallet icon and "Budget" (word hidden on small screens), app version in small text.
+- [ ] Top bar, dark brown (`#733e0a`), fixed at the top: wallet icon and "Budget" (word hidden on small screens). *changed (3.1):* the page title follows the logo on every size ("Oktober 2026", "Vorlagen", "Auswertung 2026"); the version moved under the category list.
+- [ ] *changed (3.1):* every page has the same frame: a form card left (on top on phones) beside a list card; titles that repeated the top bar are gone.
 - [ ] Top bar links: Categories (tag icon), Templates (template icon), Review (calculator icon), Logout. Icons only on phones, icon and text from tablet width up.
 - [ ] *changed:* one language per instance, German or English, set by the operator. No browser detection.
 - [ ] Numbers, amounts and dates follow the instance language and currency: `1.234,50 €` and `15.10.2026` in German, `€1,234.50` and `10/15/2026` in English. Amounts always show two decimals; chart axes show whole amounts.
@@ -68,9 +69,9 @@ Taken from the code at version 2.4.0. Items marked *changed* deliberately differ
 
 ## Categories
 
-- [ ] Address `/categories`. One list with an add row on top: name field, "has notes" checkbox, save button.
+- [ ] Address `/categories`. *changed (3.1):* like templates, a form card beside the list: name field, "has notes" checkbox, save button.
 - [ ] Each row: name, "with notes" hint, edit and delete icons. *changed:* no merge icon.
-- [ ] Edit page: name, "has notes" checkbox, cancel and save.
+- [ ] Tapping a row edits it in the form card (name, "has notes" checkbox, cancel and save); the row stays highlighted.
 - [ ] *changed:* the delete icon in the row deletes with two taps. No separate delete page.
 - [ ] *changed:* deleting a category that still has transactions or templates is refused with a message. The old app does not check this.
 
@@ -87,7 +88,8 @@ Taken from the code at version 2.4.0. Items marked *changed* deliberately differ
 
 - [ ] Installable on Android from the browser, opens without browser chrome, brown theme colour, wallet icon.
 - [ ] App shell loads without a connection.
-- [ ] When a new version is ready, a notice offers "update now" or "later". No automatic reload.
+- [ ] When a new version is ready, a notice offers "update now" or "later". No automatic reload; "update now" reloads into the new version.
+- [ ] *changed (3.1):* on phones the review table fits the screen: the currency is named once in the column heads.
 
 ## Known defects of the old app, not to copy
 

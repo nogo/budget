@@ -80,6 +80,10 @@ class ReviewChart extends AurilElement {
     const band = plotW / rows.length;
     const bar = Math.max(2, Math.min(band * 0.3, 40));
     const cx = (i) => left + band * (i + 0.5);
+    // Label every nth column when the names don't fit their band (12 years
+    // on a phone); 7px per character as for the value axis.
+    const nameWidth = Math.max(...rows.map((r) => String(r[xKey]).length)) * 7 + 6;
+    const every = Math.max(1, Math.ceil(nameWidth / band));
     const parts = [];
     for (const v of ticks) {
       parts.push(`<line class="grid" x1="${left}" x2="${W - PAD.right}" y1="${y(v)}" y2="${y(v)}"/>`);
@@ -94,7 +98,7 @@ class ReviewChart extends AurilElement {
       const name = r[xKey];
       parts.push(rect(cx(i) - bar - 1, r.income, 'bar-income', `${name}: ${t('incomes')} ${money(r.income)}`));
       parts.push(rect(cx(i) + 1, r.expense, 'bar-expense', `${name}: ${t('expenses')} ${money(r.expense)}`));
-      parts.push(`<text class="tick" x="${cx(i)}" y="${HEIGHT - 8}" text-anchor="middle">${esc(name)}</text>`);
+      if ((rows.length - 1 - i) % every === 0) parts.push(`<text class="tick" x="${cx(i)}" y="${HEIGHT - 8}" text-anchor="middle">${esc(name)}</text>`);
     });
     parts.push(`<line class="axis" x1="${left}" x2="${W - PAD.right}" y1="${y(0)}" y2="${y(0)}"/>`);
     if (acc) {

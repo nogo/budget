@@ -23,7 +23,6 @@ class LedgerChoice extends AurilElement {
     const ledgers = s.session?.ledgers ?? [];
     return html`<main class="page narrow">
       <section class="card">
-        <h1 class="card-title">${t('chooseLedger')}</h1>
         ${ledgers.length === 0 && html`<p class="empty">${t('noLedger')}</p>`}
         <ul class="ledger-list">
           ${ledgers.map((l) => html`<li><button type="button" id="ledger-${l.id}" class="ledger-choice" data-ledger="${l.id}" ${l.id === s.ledger ? html`aria-current="true"` : ''}>${icon('book')}<span>${l.name}</span></button></li>`)}
@@ -33,4 +32,4 @@ class LedgerChoice extends AurilElement {
   }
 }
 customElements.define('ledger-choice', LedgerChoice);
-screen('ledgers', 'ledger-choice');
+screen('ledgers', 'ledger-choice', { title: () => t('chooseLedger') });

@@ -1,6 +1,7 @@
-// Categories (/categories, /categories/{id}): one list with an add row on
-// top; each row edits on its own page and deletes with two taps. A
-// category still in use is refused, and the row says why.
+// Categories (/categories, /categories/{id}): the form beside the list, as
+// on the other pages: it adds a category, or edits the one whose row was
+// tapped. A row deletes with two taps; a category still in use is refused,
+// and the row says why. The installed version shows under the list.
 import { AurilElement, html } from '../auril/index.js';
 import { store } from './state.js';
 import { t } from './i18n.js';
@@ -88,52 +89,61 @@ class CategoriesView extends AurilElement {
     const s = store.state;
     const id = s.route.id;
     if (!id) this.#edit = null;
-    if (id) {
-      const cat = s.categories?.find((c) => c.id === Number(id));
-      if (cat && this.#edit?.id !== cat.id) {
-        this.#edit = { id: cat.id, name: cat.name, hasNotes: cat.hasNotes };
-        delete this.#errors.edit;
-      }
-      return html`<main class="page"><section class="card">
-        <h1 class="card-title">${t('editCategory')}</h1>
-        ${!this.#edit && html`<p class="empty">${s.categories ? t('notFound') : t('loading')}</p>`}
-        ${this.#edit && html`<form id="cat-edit" class="form edit-form">
-          <div class="field">
-            <label for="edit-name">${t('name')}</label>
-            <input id="edit-name" value="${this.#edit.name}" required autocomplete="off" ${this.#errors.edit ? html`aria-invalid="true" aria-describedby="edit-error"` : ''}>
-            ${this.#errors.edit && html`<p class="error" id="edit-error" role="alert">${this.#errors.edit}</p>`}
-          </div>
-          <label class="check"><input type="checkbox" id="edit-notes" ${this.#edit.hasNotes ? 'checked' : ''}>${t('hasNotesLabel')}</label>
-          <div class="actions">
-            <a class="button secondary" href="/categories" id="edit-cancel">${t('cancel')}</a>
-            <button type="submit" class="button primary" id="edit-save" aria-label="${t('save')}">${this.#saving ? icon('spinner', 'spin') : icon('pencil')}</button>
-          </div>
-        </form>`}
-      </section></main>`;
+    const cat = id && s.categories?.find((c) => c.id === Number(id));
+    if (cat && this.#edit?.id !== cat.id) {
+      this.#edit = { id: cat.id, name: cat.name, hasNotes: cat.hasNotes };
+      delete this.#errors.edit;
     }
+    const spin = (i) => (this.#saving ? icon('spinner', 'spin') : icon(i));
+    const addForm = html`<form id="cat-add" class="form">
+      <div class="field">
+        <label for="cat-name">${t('newCategory')}</label>
+        <input id="cat-name" value="${this.#add.name}" required autocomplete="off" ${this.#errors.add ? html`aria-invalid="true" aria-describedby="add-error"` : ''}>
+        ${this.#errors.add && html`<p class="error" id="add-error" role="alert">${this.#errors.add}</p>`}
+      </div>
+      <label class="check"><input type="checkbox" id="cat-notes" ${this.#add.hasNotes ? 'checked' : ''}>${t('hasNotesLabel')}</label>
+      <div class="actions single"><button type="submit" class="button primary wide" id="cat-save" aria-label="${t('save')}">${spin('check')}</button></div>
+    </form>`;
+    const editForm = !this.#edit
+      ? html`<p class="empty">${s.categories ? t('notFound') : t('loading')}</p>`
+      : html`<form id="cat-edit" class="form">
+        <div class="field">
+          <label for="edit-name">${t('name')}</label>
+          <input id="edit-name" value="${this.#edit.name}" required autocomplete="off" ${this.#errors.edit ? html`aria-invalid="true" aria-describedby="edit-error"` : ''}>
+          ${this.#errors.edit && html`<p class="error" id="edit-error" role="alert">${this.#errors.edit}</p>`}
+        </div>
+        <label class="check"><input type="checkbox" id="edit-notes" ${this.#edit.hasNotes ? 'checked' : ''}>${t('hasNotesLabel')}</label>
+        <div class="actions">
+          <a class="button secondary" href="/categories" id="edit-cancel">${t('cancel')}</a>
+          <button type="submit" class="button primary" id="edit-save" aria-label="${t('save')}">${spin('pencil')}</button>
+        </div>
+      </form>`;
     const row = (c) => {
       const key = `cat-delete-${c.id}`;
-      return html`<li class="cat-row" id="cat-${c.id}">
-        <span class="cat-name">${c.name}${c.hasNotes && html` <span class="hint">${t('withNotes')}</span>`}</span>
-        <span class="cat-actions">
-          <a class="button ghost icon-only" href="/categories/${c.id}" aria-label="${t('edit', c.name)}">${icon('pencil')}</a>
-          ${this.#arm.button(key, t('deleteNamed', c.name), 'ghost-danger')}
-        </span>
+      const selected = String(c.id) === id;
+      return html`<li class="cat-row ${selected ? 'selected' : ''}" id="cat-${c.id}">
+        <a class="cat-link" href="/categories/${c.id}" aria-label="${t('edit', c.name)}" ${selected ? html`aria-current="true"` : ''}>
+          <span class="cat-name">${c.name}${c.hasNotes && html` <span class="hint">${t('withNotes')}</span>`}</span>
+          ${icon('pencil')}
+        </a>
+        ${this.#arm.button(key, t('deleteNamed', c.name), 'ghost-danger')}
         ${this.#errors[key] && html`<p class="error row-error" role="alert">${this.#errors[key]}</p>`}
       </li>`;
     };
-    return html`<main class="page"><section class="card">
-      <h1 class="card-title">${t('categories')}</h1>
-      <form id="cat-add" class="cat-add">
-        <input id="cat-name" value="${this.#add.name}" placeholder="${t('addCategoryPlaceholder')}" aria-label="${t('newCategory')}" required autocomplete="off">
-        <label class="check"><input type="checkbox" id="cat-notes" ${this.#add.hasNotes ? 'checked' : ''}>${t('hasNotesLabel')}</label>
-        <button type="submit" class="button primary" id="cat-save" aria-label="${t('save')}">${this.#saving ? icon('spinner', 'spin') : icon('check')}</button>
-        ${this.#errors.add && html`<p class="error row-error" role="alert">${this.#errors.add}</p>`}
-      </form>
-      ${!s.categories && html`<p class="empty">${t('loading')}</p>`}
-      <ul class="cat-list">${(s.categories ?? []).map(row)}</ul>
-    </section></main>`;
+    return html`<main class="page split">
+      <aside class="form-col"><div class="card form-card">${id ? editForm : addForm}</div></aside>
+      <section class="list-col">
+        <div class="card list-card">
+          ${!s.categories && html`<p class="empty">${t('loading')}</p>`}
+          <ul class="cat-list">${(s.categories ?? []).map(row)}</ul>
+        </div>
+        <p class="app-version">Budget v${s.session?.version ?? ''}</p>
+      </section>
+    </main>`;
   }
 }
 customElements.define('categories-view', CategoriesView);
-screen('categories', 'categories-view', loadCategories);
+screen('categories', 'categories-view', {
+  load: loadCategories,
+  title: (s) => (s.route.id ? t('editCategory') : t('categories')),
+});
