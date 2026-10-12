@@ -1,67 +1,24 @@
-FROM oven/bun:1-alpine AS base
+# Build: Go with cgo for github.com/mattn/go-sqlite3.
+FROM golang:1.27.2-bookworm AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN --mount=type=cache,target=/go/pkg/mod go mod download
+COPY cmd ./cmd
+COPY internal ./internal
+COPY web ./web
+ARG VERSION=dev
+RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
+    CGO_ENABLED=1 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o /out/budget ./cmd/budget
+RUN mkdir -p /out/data
 
-FROM base AS deps
-RUN mkdir -p /app && chown bun:bun /app
-USER bun
-WORKDIR /app
-COPY --chown=bun:bun package.json bun.lock ./
-RUN bun install --no-progress
-
-FROM base AS builder
-RUN mkdir -p /data && chown bun:bun /data && chmod 700 /data
-USER bun
-WORKDIR /app
-COPY --chown=bun:bun --from=deps /app/node_modules ./node_modules
-COPY --chown=bun:bun . .
-
-# Define build args for environment variables
-ARG VITE_LOCALE
-ARG VITE_CURRENCY
-ARG VITE_BETTER_AUTH_URL
-ARG VITE_AUTH_ALLOW_REGISTRATION
-ARG VITE_AUTH_DEFAULT_USER
-ARG VITE_AUTH_DEFAULT_EMAIL
-ARG VITE_AUTH_DEFAULT_PASSWORD
-
-# Set environment variables for build
-ENV VITE_LOCALE=$VITE_LOCALE
-ENV VITE_CURRENCY=$VITE_CURRENCY
-ENV VITE_BETTER_AUTH_URL=$VITE_BETTER_AUTH_URL
-ENV VITE_AUTH_ALLOW_REGISTRATION=$VITE_AUTH_ALLOW_REGISTRATION
-ENV VITE_AUTH_DEFAULT_USER=$VITE_AUTH_DEFAULT_USER
-ENV VITE_AUTH_DEFAULT_EMAIL=$VITE_AUTH_DEFAULT_EMAIL
-ENV VITE_AUTH_DEFAULT_PASSWORD=$VITE_AUTH_DEFAULT_PASSWORD
-
-RUN bunx --bun vite build --mode production
-
-CMD ["bun", "dev"]
-
-FROM base AS migrate
-RUN mkdir -p /data && chown bun:bun /data
-USER bun
-WORKDIR /app
-
-ENV NODE_ENV=development
-
-COPY --chown=bun:bun package.json bun.lock ./
-RUN bun install --no-progress
-COPY --chown=bun:bun drizzle.config.ts ./
-COPY --chown=bun:bun src/lib/database ./src/lib/database
-COPY --chown=bun:bun src/lib/env ./src/lib/env
-
-CMD ["bun", "run", "db:deploy"]
-
-FROM oven/bun:1-alpine AS runner
-RUN mkdir -p /data && chown bun:bun /data
-USER bun
-WORKDIR /app
-
-ENV TZ="Europe/Berlin"
-ENV NODE_ENV=production
-
-COPY --chown=bun:bun --from=builder /app/.output ./
-
+# Run: distroless with glibc and CA certificates, as the nonroot user.
+FROM gcr.io/distroless/base-debian12
+COPY --from=build /out/budget /usr/local/bin/budget
+COPY --from=build --chown=65532:65532 /out/data /data
+USER 65532:65532
+ENV BUDGET_DATA=/data \
+    BUDGET_ADDR=:4000
 VOLUME ["/data"]
 EXPOSE 4000
-
-CMD ["bun", "run", "server/index.mjs"]
+ENTRYPOINT ["/usr/local/bin/budget"]
+CMD ["serve"]

@@ -1,39 +1,5 @@
-node_modules
-package-lock.json
-yarn.lock
-
 .DS_Store
-.cache
 .env
-.env*.local
-.vercel
-.output
-.nitro
-.vinxi
-/dist
-
-/build/
-/api/
-/server/build
-/public/build
-.vinxi
-# Sentry Config File
-.env.sentry-build-plugin
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-
+/bin/
+/data/
 *.sqlite*
-
-# production
-/build
-src/generated
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-.tanstack

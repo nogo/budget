@@ -1,129 +1,69 @@
 # Budget
 
-A personal finance tracker built with React. It helps you track expenses and income without requiring accounting knowledge. Each transaction is categorized, and the app provides review and reporting capabilities.
+A self-hosted budget app for a family. It tracks expenses and income by category, without accounting knowledge. Each ledger is its own SQLite file; people sign in with their existing OpenID Connect login and open the ledgers they are allowed to.
 
-## Features ✨
+| Month | Categories |
+| --- | --- |
+| ![Month](./screenshots/home.png) | ![Categories](./screenshots/categories.png) |
 
-### Core Functionality
-
-- 📊 Track expenses and income with categorized transactions
-- ✏️ Create, edit, search, filter and delete transactions
-- ✏️ Create, edit and delete categories and templates
-- 🕒 View transaction history in a clean, modern interface
-- 🐳 Simple deployment with container support
-- 🌍 Localization in English and German
-- 📈 Show yearly and monthly income expense charts to analyze your budget
-- 📈 Generate expense charts by category
-- 🔒 User authentication
-- 📶 Progressive Web App (PWA) with offline support and auto-updates
-- 🔄 App version display and update notifications
-
-### Future Plans 🚀
-
-- 🔄 Export/Import data capabilities (Coming Soon)
-- ToDo/Shopping List
-
-## Screenshots 📸
-
-Here are some screenshots of the app in action:
-
-| Home                            | Categories                                     |
-| ------------------------------- | ---------------------------------------------- |
-| ![Home](./screenshots/home.png) | ![Category list](./screenshots/categories.png) |
-
-| Review yearly                              | monthly                                      |
-| ------------------------------------------ | -------------------------------------------- |
+| Review yearly | Review monthly |
+| --- | --- |
 | ![Yearly](./screenshots/review_yearly.png) | ![Monthly](./screenshots/review_monthly.png) |
 
-## Technology Stack 🛠️
+## Features
 
-- ⚛️ React 19
-- 🧰 TanStack [Start](https://tanstack.com/start/latest), [Query](https://tanstack.com/query/latest), [Router](https://tanstack.com/router/latest) and [Form](https://tanstack.com/form/latest)
-- 🎨 Tailwind CSS 4
-- 🗄️ SQLite with Prisma ORM
-- 🔐 Better Auth for authentication  
-- 📦 Bun runtime and package manager
-- 🎯 TypeScript
-- ⚡ Vite for build tooling
+- Enter transactions fast: arithmetic in the amount field (`12+4,50`), templates for recurring payments, a note only for categories that need one.
+- Search the month or all months: words in the note, `#category`, `=amount`.
+- Review income and expense by year and month, filtered by category, with an accumulated total.
+- Several ledgers per instance; an access file says which account may open which ledger.
+- Sign-in by OpenID Connect (e.g. Nextcloud); the app stores no passwords.
+- Installable as an app (PWA). New entries made offline wait on the phone and are sent later; an entry sent twice is saved once.
+- German or English, one currency per instance.
 
-## Installation & Setup ⚙️
+## Stack
 
-### Prerequisites
+Go with one dependency (`github.com/mattn/go-sqlite3`), and a plain-JavaScript interface on vendored [auril.js](https://github.com/nogo/auril) with no build step. The server embeds and serves the interface. See `docs/` for the goal, decisions and the server–browser contract.
 
-- 🖥️ Bun (>=1.0) installed
+## Development
 
-### Steps
+Needs [mise](https://mise.jdx.dev) and a C compiler (cgo).
 
-1. Clone the repository:
-
-```bash
-git clone https://github.com/nogo/budget.git
-cd budget
+```sh
+mise install
+mise run check          # vet, gofmt, tidy, tests
+mise run test:browser   # interface checks in Chrome (needs agent-browser)
+mise run dev            # serve ./data with a development login, no OIDC
 ```
 
-2. Copy the environment configuration file:
+`mise run dev` expects `data/access.json` and a ledger file; create an empty one with `go run ./cmd/budget new data/household.sqlite`.
 
-```bash
-cp .env.example .env
+## Ledgers and access
+
+```sh
+budget new household.sqlite                 # empty ledger
+budget import old-budget.sqlite household.sqlite  # from a database of the old 2.x app
 ```
 
-3. Install dependencies:
+`access.json` in the data directory:
 
-```bash
-bun install
+```json
+{
+  "ledgers": [{ "id": "household", "name": "Haushalt", "file": "household.sqlite" }],
+  "accounts": { "<OIDC sub>": ["household"] }
+}
 ```
 
-4. Start the development server:
+The server rereads it when it changes.
 
-```bash
-bun run dev
+## Docker
+
+```sh
+cp .env.example .env   # fill in base URL, session secret, OIDC client
+docker compose up -d --build
 ```
 
-## Docker Usage 🐳
+Ledger files and `access.json` live in the `/data` volume. Back up a ledger while the server runs with `sqlite3 household.sqlite ".backup copy.sqlite"`; a plain copy can miss recent writes in WAL mode.
 
-### Build the images
+## License
 
-```bash
-docker compose build
-```
-
-### Run database migrations (one-time, before first launch)
-
-```bash
-docker compose run --rm budget-migrate
-```
-
-### Start the application
-
-```bash
-docker compose up budget-app
-```
-
-The app will be available at [http://localhost:3000](http://localhost:3000).
-
-## Progressive Web App Features 📱
-
-### Installation
-- Install the app on your device through your browser
-- Works offline once installed
-- Automatic background updates when connected
-
-### App Version & Updates
-- Version number displayed in the navigation bar
-- Automatic update notifications when new versions are available  
-- One-click update installation with user confirmation
-- Seamless updates without losing your data
-
-### Offline Support
-- Caches essential app resources for offline use
-- API requests cached for 5 minutes for better performance
-- Fonts and static assets cached for optimal loading
-
-## Glossary 📚
-
-| **Term**        | **Definition**                                                            |
-| --------------- | ------------------------------------------------------------------------- |
-| **Expense**     | An amount spent on goods or services.                                     |
-| **Income**      | Money received from sources such as work, investments, or selling assets. |
-| **Transaction** | An action to add or remove an item from a collection.                     |
-| **Category**    | A label used to organize transactions.                                    |
+MIT

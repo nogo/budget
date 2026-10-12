@@ -1,33 +1,21 @@
+# Settings come from .env; see docs/api.md (Configuration). At least
+# BUDGET_SESSION_SECRET, BUDGET_BASE_URL and OIDC_ISSUER, OIDC_CLIENT_ID,
+# OIDC_CLIENT_SECRET. Ledger files and access.json live in the volume.
 services:
-  budget-app:
-    env_file:
-      - .env
+  budget:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: runner
       args:
-        VITE_LOCALE: ${VITE_LOCALE:-de-DE}
-        VITE_CURRENCY: ${VITE_CURRENCY:-EUR}
-        VITE_BETTER_AUTH_URL: ${VITE_BETTER_AUTH_URL}
-        VITE_AUTH_ALLOW_REGISTRATION: ${VITE_AUTH_ALLOW_REGISTRATION}
-        VITE_AUTH_DEFAULT_USER: ${VITE_AUTH_DEFAULT_USER}
-        VITE_AUTH_DEFAULT_EMAIL: ${VITE_AUTH_DEFAULT_EMAIL}
-        VITE_AUTH_DEFAULT_PASSWORD: ${VITE_AUTH_DEFAULT_PASSWORD}
-    volumes:
-      - budget-data:/data
-
-  budget-migrate:
+        VERSION: ${BUDGET_VERSION:-dev}
     env_file:
       - .env
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: migrate
+    environment:
+      BUDGET_DATA: /data
+    ports:
+      - "4000:4000"
     volumes:
       - budget-data:/data
-    profiles:
-      - migrate
+    restart: unless-stopped
 
 volumes:
   budget-data:

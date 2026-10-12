@@ -1,0 +1,71 @@
+[tools]
+go = "1.27.2"
+
+[env]
+BINARY = "bin/budget"
+GO_DIRS = "cmd internal web"
+CGO_ENABLED = "1"
+
+[tasks.build]
+description = "Build the binary"
+sources = ["**/*.go", "go.mod", "web/**", "mise.toml"]
+outputs = ["bin/budget"]
+run = 'go build -ldflags "-X main.version=$(git describe --tags --always --dirty 2>/dev/null || echo dev)" -o "$BINARY" ./cmd/budget'
+
+[tasks.dev]
+description = "Run the server on data/ with the development login (no OIDC)"
+run = 'BUDGET_DEV_ACCOUNT="${BUDGET_DEV_ACCOUNT:-dev}" BUDGET_SESSION_SECRET="${BUDGET_SESSION_SECRET:-dev-secret-dev-secret-dev-secret-dev}" go run ./cmd/budget serve'
+
+[tasks.clean]
+description = "Remove build artifacts"
+run = "rm -rf bin/"
+
+[tasks.test]
+description = "Run tests with race detector (no cache)"
+run = "go test -race -count=1 ./..."
+
+[tasks.vet]
+description = "Run go vet"
+run = "go vet ./..."
+
+[tasks.fmt]
+description = "Apply gofmt formatting"
+run = "gofmt -w $GO_DIRS"
+
+[tasks."fmt:check"]
+description = "Fail if any .go files are unformatted"
+run = """
+UNFORMATTED=$(gofmt -l $GO_DIRS)
+if [ -n "$UNFORMATTED" ]; then
+    echo "FAIL: unformatted files:"
+    echo "$UNFORMATTED"
+    exit 1
+fi
+"""
+
+[tasks.tidy]
+description = "Check go.mod and go.sum are tidy"
+run = """
+BEFORE=$(cat go.mod go.sum 2>/dev/null | sha256sum)
+go mod tidy
+if [ "$BEFORE" != "$(cat go.mod go.sum 2>/dev/null | sha256sum)" ]; then
+    echo "FAIL: go.mod/go.sum changed by tidy"
+    exit 1
+fi
+"""
+
+[tasks.check]
+description = "Full local verification: vet, fmt, tidy, test"
+depends = ["vet", "fmt:check", "tidy", "test"]
+run = 'echo "All checks passed."'
+
+[tasks."test:browser"]
+description = "Drive the UI in Chrome on a fixture ledger, every browser-*.sh check (needs agent-browser)"
+run = """
+failed=0
+for f in internal/server/testdata/browser-*.sh; do
+    echo "== $f"
+    "$f" || failed=1
+done
+exit $failed
+"""
