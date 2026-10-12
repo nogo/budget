@@ -404,3 +404,9 @@ func TestNoSessionTellsLanguage(t *testing.T) {
 		t.Fatalf("401 body: %s", w.Body.String())
 	}
 }
+
+func TestHealthzNeedsNoSession(t *testing.T) {
+	ts := newTestServer(t, "de")
+	w := ts.do("", "GET", "/healthz", "")
+	wantStatus(t, w, http.StatusOK)
+}

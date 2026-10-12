@@ -62,7 +62,7 @@ cp .env.example .env   # fill in base URL, session secret, OIDC client
 docker compose up -d --build
 ```
 
-Ledger files and `access.json` live in the `/data` volume. Back up a ledger while the server runs with `sqlite3 household.sqlite ".backup copy.sqlite"`; a plain copy can miss recent writes in WAL mode.
+Ledger files and `access.json` live in the `/data` volume; the container runs as user 1000. Back up while the server runs with `docker compose exec budget budget backup /data/backup`; a plain file copy can miss recent writes in WAL mode.
 
 ## License
 

@@ -225,3 +225,16 @@ func constraint(err error) sqlite3.ErrNoExtended {
 	}
 	return 0
 }
+
+// Backup writes a consistent copy of the ledger to target, which must not
+// exist. It is safe while the server writes: SQLite copies one snapshot. A
+// plain file copy is not, because WAL mode keeps recent writes in -wal.
+func (l *Ledger) Backup(ctx context.Context, target string) error {
+	if _, err := os.Stat(target); err == nil {
+		return fmt.Errorf("ledger: backup target %s exists", target)
+	}
+	if _, err := l.read.ExecContext(ctx, "VACUUM INTO ?", target); err != nil {
+		return fmt.Errorf("ledger: backup %s: %w", l.path, err)
+	}
+	return nil
+}

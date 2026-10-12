@@ -1,6 +1,6 @@
-# Settings come from .env; see docs/api.md (Configuration). At least
-# BUDGET_SESSION_SECRET, BUDGET_BASE_URL and OIDC_ISSUER, OIDC_CLIENT_ID,
-# OIDC_CLIENT_SECRET. Ledger files and access.json live in the volume.
+# Settings come from .env; see docs/api.md (Configuration) and .env.example.
+# Ledger files and access.json live in the budget-data volume. herald routes
+# Caddy to the exposed port; add `ports: ["4000:4000"]` to reach it locally.
 services:
   budget:
     build:
@@ -8,13 +8,19 @@ services:
       args:
         VERSION: ${BUDGET_VERSION:-dev}
     env_file:
-      - .env
-    environment:
-      BUDGET_DATA: /data
-    ports:
-      - "4000:4000"
+      - path: .env
+        required: false
+    expose:
+      - "4000"
     volumes:
       - budget-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:noexec,nosuid,size=64m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     restart: unless-stopped
 
 volumes:

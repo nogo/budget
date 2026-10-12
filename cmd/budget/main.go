@@ -3,6 +3,8 @@
 //	budget serve                      run the server (configuration from the environment)
 //	budget import <old.sqlite> <new>  turn an old app database into a ledger file
 //	budget new <new.sqlite>           create an empty ledger file
+//	budget backup <dir>               copy every ledger and the access file into dir
+//	budget health                     exit 0 when the local server answers
 package main
 
 import (
@@ -11,6 +13,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -33,6 +36,8 @@ const usage = `usage:
   budget serve                         run the server
   budget import <old.sqlite> <new.sqlite>  import an old app database
   budget new <new.sqlite>              create an empty ledger file
+  budget backup <dir>                  copy every ledger and the access file into dir
+  budget health                        exit 0 when the local server answers
 `
 
 func main() {
@@ -62,6 +67,10 @@ func run(ctx context.Context, args []string, getenv func(string) string, stdout,
 		if err == nil {
 			fmt.Fprintf(stdout, "created %s\n", rest[0])
 		}
+	case cmd == "backup" && len(rest) == 1:
+		err = backup(ctx, getenv, rest[0], stdout)
+	case cmd == "health" && len(rest) == 0:
+		err = health(ctx, getenv)
 	default:
 		fmt.Fprint(stderr, usage)
 		return 2
@@ -173,4 +182,74 @@ func serve(ctx context.Context, getenv func(string) string, logOut io.Writer) er
 		err = nil
 	}
 	return errors.Join(err, srv.Close())
+}
+
+// backup copies every ledger named in the access file, and the access file
+// itself, into dir. It runs beside a live server: each ledger is copied from
+// one SQLite snapshot.
+func backup(ctx context.Context, getenv func(string) string, dir string, stdout io.Writer) error {
+	data := getenv("BUDGET_DATA")
+	if data == "" {
+		data = "./data"
+	}
+	accessPath := getenv("BUDGET_ACCESS")
+	if accessPath == "" {
+		accessPath = filepath.Join(data, "access.json")
+	}
+	list, err := access.Open(accessPath, data)
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		return err
+	}
+	raw, err := os.ReadFile(accessPath)
+	if err != nil {
+		return err
+	}
+	if err := os.WriteFile(filepath.Join(dir, "access.json"), raw, 0o600); err != nil {
+		return err
+	}
+	for _, lg := range list.All() {
+		l, err := ledger.Open(lg.File)
+		if err != nil {
+			return err
+		}
+		target := filepath.Join(dir, filepath.Base(lg.File))
+		err = l.Backup(ctx, target)
+		l.Close()
+		if err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "backed up %s to %s\n", lg.ID, target)
+	}
+	return nil
+}
+
+// health asks the server on this machine for /healthz. The container image
+// has no shell or curl, so its health check runs this.
+func health(ctx context.Context, getenv func(string) string) error {
+	addr := getenv("BUDGET_ADDR")
+	if addr == "" {
+		addr = ":4000"
+	}
+	_, port, err := net.SplitHostPort(addr)
+	if err != nil {
+		return err
+	}
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "http://127.0.0.1:"+port+"/healthz", nil)
+	if err != nil {
+		return err
+	}
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	res.Body.Close()
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("health: %s", res.Status)
+	}
+	return nil
 }

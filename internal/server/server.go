@@ -58,6 +58,11 @@ func New(cfg Config, accounts Accounts, acc Access, log *slog.Logger) *Server {
 // are mounted by the auth package.
 func (s *Server) Register(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/session", s.session)
+	// healthz answers without a session, for the container health check.
+	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.Write([]byte("ok\n"))
+	})
 
 	const p = "/api/ledgers/{ledger}"
 	mux.HandleFunc("GET "+p+"/transactions", s.withLedger(s.listTransactions))

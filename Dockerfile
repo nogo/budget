@@ -11,14 +11,16 @@ RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache
     CGO_ENABLED=1 go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o /out/budget ./cmd/budget
 RUN mkdir -p /out/data
 
-# Run: distroless with glibc and CA certificates, as the nonroot user.
+# Run: distroless with glibc and CA certificates. User 1000 is the owner of
+# the data directory the old app (oven/bun, user bun) left on the server.
 FROM gcr.io/distroless/base-debian12
 COPY --from=build /out/budget /usr/local/bin/budget
-COPY --from=build --chown=65532:65532 /out/data /data
-USER 65532:65532
+COPY --from=build --chown=1000:1000 /out/data /data
+USER 1000:1000
 ENV BUDGET_DATA=/data \
     BUDGET_ADDR=:4000
 VOLUME ["/data"]
 EXPOSE 4000
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 CMD ["/usr/local/bin/budget", "health"]
 ENTRYPOINT ["/usr/local/bin/budget"]
 CMD ["serve"]

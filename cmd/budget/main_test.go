@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -83,5 +84,35 @@ func TestUsage(t *testing.T) {
 		if code := run(context.Background(), args, env(nil), &out, &errOut); code != 2 || !strings.Contains(errOut.String(), "usage") {
 			t.Errorf("%v: exit %d", args, code)
 		}
+	}
+}
+
+func TestBackupCopiesEveryLedgerAndTheAccessFile(t *testing.T) {
+	data := t.TempDir()
+	for _, f := range []string{"a.sqlite", "b.sqlite"} {
+		if code := run(context.Background(), []string{"new", filepath.Join(data, f)}, env(nil), &bytes.Buffer{}, &bytes.Buffer{}); code != 0 {
+			t.Fatalf("new %s: %d", f, code)
+		}
+	}
+	accessJSON := `{"ledgers":[{"id":"a","file":"a.sqlite"},{"id":"b","file":"b.sqlite"}],"accounts":{}}`
+	if err := os.WriteFile(filepath.Join(data, "access.json"), []byte(accessJSON), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	dir := filepath.Join(t.TempDir(), "backup")
+	var out, errOut bytes.Buffer
+	if code := run(context.Background(), []string{"backup", dir}, env(map[string]string{"BUDGET_DATA": data}), &out, &errOut); code != 0 {
+		t.Fatalf("backup: %d %s", code, errOut.String())
+	}
+	for _, f := range []string{"a.sqlite", "b.sqlite", "access.json"} {
+		if _, err := os.Stat(filepath.Join(dir, f)); err != nil {
+			t.Errorf("missing %s: %v", f, err)
+		}
+	}
+}
+
+func TestHealthFailsWithoutServer(t *testing.T) {
+	var out, errOut bytes.Buffer
+	if code := run(context.Background(), []string{"health"}, env(map[string]string{"BUDGET_ADDR": "127.0.0.1:1"}), &out, &errOut); code != 1 {
+		t.Fatalf("health without server: %d", code)
 	}
 }

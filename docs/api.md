@@ -90,8 +90,12 @@ Every connection sets `journal_mode=WAL`, `foreign_keys=ON` and `busy_timeout=50
 - `budget serve` — run the server.
 - `budget import <old.sqlite> <new.sqlite>` — read an old app database (read-only) and write a clean ledger file. Refuses an existing target. Converts each date to midnight UTC of its Europe/Berlin day. Afterwards it compares per day, per type: count and sum of amounts, old against new, and fails on any difference. Prints counts.
 - `budget new <new.sqlite>` — create an empty ledger file.
+- `budget backup <dir>` — copy every ledger in the access file, and the access file, into `dir`. Safe beside a running server: each ledger is copied from one SQLite snapshot (`VACUUM INTO`).
+- `budget health` — exit 0 when the server on this machine answers `GET /healthz`; the container health check.
 
 ## HTTP
+
+`GET /healthz` answers `ok` without a session.
 
 Everything under `/api/` answers JSON and needs a session. Without a session: `401`. A ledger the account may not open: `403`. Writes must send `Content-Type: application/json`; otherwise `415`. Errors are `{"error": "message", "field": "amount"}`; `field` only when one input is at fault. Messages are in the instance language.
 
