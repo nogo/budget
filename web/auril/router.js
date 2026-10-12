@@ -14,7 +14,7 @@ const navigationImpl = /** @type {any} */ (globalThis).navigation;
 /**
  * Client-side router built on the Navigation API and URLPattern (':param' and
  * '*' syntax). One `navigate` listener intercepts same-origin navigations —
- * link clicks, back/forward, and go(). Intercepted route changes are wrapped in
+ * link clicks, back/forward, and go(); a reload is left to the browser. Intercepted route changes are wrapped in
  * a View Transition when supported, unless constructed with
  * `{ viewTransitions: false }`; the initial resolve in start() is not.
  */
@@ -59,7 +59,10 @@ export class Router {
       // `formData` is non-null for POST submissions only — GET form submissions
       // are ordinary same-origin navigations and stay routed (the handler reads
       // the query off the URL it is given).
+      // A reload stays the browser's: intercepted, location.reload() after a
+      // service-worker update would re-run the route on the old code.
       if (!event.canIntercept || event.hashChange || event.downloadRequest !== null || event.formData) return;
+      if (event.navigationType === 'reload') return;
       const apply = this.#match(new URL(event.destination.url));
       if (!apply) return; // no route, no notFound — let the browser navigate
       event.intercept({ handler: () => this.#transition(apply) });
