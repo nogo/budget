@@ -1,7 +1,11 @@
 // The outbox: every new transaction waits in IndexedDB ({key, ledger, body})
-// until the server answered it. It leaves on 2xx, or on 4xx (the form shows
-// why); on a network error, a 401 or a 5xx it stays and is sent again on
-// start, on the "online" event and after each answered request.
+// until the server answered it. It leaves on 2xx. On a network error, a 401
+// or a 5xx it stays and is sent again on start, on the "online" event and
+// after each answered request. On any other 4xx the form that is submitting
+// it shows why and keeps the values, so it leaves; an entry nobody is
+// submitting right now (sent later, after offline) stays, marked refused
+// with the server's reason, until someone fixes or discards it. Nothing
+// entered disappears without the family seeing it.
 import { store } from './state.js';
 import * as api from './api.js';
 
@@ -27,12 +31,20 @@ const all = () => run('readonly', (s) => s.getAll());
 export const hooks = { sent: () => {} };
 
 // refresh copies the outbox into the store, so lists and the top bar show
-// what waits.
+// what waits and what was refused.
 export async function refresh() {
-  store.set({ waiting: await all() });
+  const entries = await all();
+  store.set({ waiting: entries.filter((e) => !e.refused), refused: entries.filter((e) => e.refused) });
+}
+
+// discard removes a refused entry for good.
+export async function discard(key) {
+  await run('readwrite', (s) => s.delete(key));
+  await refresh();
 }
 
 const outcomes = new Map(); // key -> { transaction } or { error }, for submit()
+const submitting = new Set(); // keys a submit() call waits for
 let running = null;
 let again = false;
 
@@ -58,12 +70,18 @@ export function flush() {
 async function sendAll() {
   let sent = 0;
   for (const entry of await all()) {
+    if (entry.refused) continue;
     try {
       const saved = await api.createTransaction(entry.ledger, entry.body);
       outcomes.set(entry.key, { transaction: saved });
       sent++;
     } catch (err) {
       if (!(err instanceof api.ApiError) || err.status === 401 || err.status >= 500) break;
+      if (!submitting.has(entry.key)) {
+        const refused = { status: err.status, message: err.message, field: err.field };
+        await run('readwrite', (s) => s.put({ ...entry, refused }));
+        continue;
+      }
       outcomes.set(entry.key, { error: err });
     }
     await run('readwrite', (s) => s.delete(entry.key));
@@ -74,9 +92,14 @@ async function sendAll() {
 // submit puts a new transaction into the outbox and sends it. It answers
 // { transaction } when saved, { error } when refused, {} when it waits.
 export async function submit(ledger, body) {
-  await run('readwrite', (s) => s.put({ key: body.key, ledger, body }));
-  await refresh();
-  await flush();
+  submitting.add(body.key);
+  try {
+    await run('readwrite', (s) => s.put({ key: body.key, ledger, body }));
+    await refresh();
+    await flush();
+  } finally {
+    submitting.delete(body.key);
+  }
   const outcome = outcomes.get(body.key) ?? {};
   outcomes.delete(body.key);
   return outcome;

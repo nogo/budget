@@ -1,6 +1,7 @@
 // The brown top bar: home link with the version, the ledger switch when the
 // account has several, the offline state with the number of waiting
-// entries, and the links to categories, templates, review and logout.
+// entries, a link to the month of this ledger's refused entries, and the
+// links to categories, templates, review and logout.
 import { AurilElement, html } from '../auril/index.js';
 import { store, ledgerName } from './state.js';
 import { t } from './i18n.js';
@@ -18,6 +19,7 @@ class TopBar extends AurilElement {
     if (!s.session) return '';
     const ledgers = s.session.ledgers ?? [];
     const waiting = s.waiting.length;
+    const refused = s.refused.filter((e) => e.ledger === s.ledger);
     const link = (href, name, label) => html`<a class="bar-link" href="${href}">${icon(name)}<span class="bar-label">${label}</span></a>`;
     return html`<nav class="topbar" aria-label="Budget">
       <div class="bar-start">
@@ -28,6 +30,7 @@ class TopBar extends AurilElement {
       <div class="bar-status" role="status">
         ${!s.online && html`<span class="offline">${icon('cloudOff')}${t('offline')}</span>`}
         ${waiting > 0 && html`<span class="waiting-count">${icon('clock')}${t('waitingCount', waiting)}</span>`}
+        ${refused.length > 0 && html`<a class="refused-count" href="/${refused[0].body.date.slice(0, 7)}">${icon('alert')}${t('refusedCount', refused.length)}</a>`}
       </div>
       <div class="bar-end">
         ${link('/categories', 'tag', t('categories'))}

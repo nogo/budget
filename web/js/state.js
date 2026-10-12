@@ -10,6 +10,8 @@ export const store = new Store({
   route: { name: 'month', ym: '' }, // the screen: name plus ym, id, q, year, month, categories as the path gives them
   online: typeof navigator === 'undefined' ? true : navigator.onLine,
   waiting: [], // outbox entries not sent yet, every ledger: { key, ledger, body }
+  refused: [], // outbox entries the server refused: { key, ledger, body, refused: { status, message, field } }
+  retry: null, // key of a refused entry to load into the form for a fix
   categories: null, // of the chosen ledger, by id; null until loaded
   templates: null, // of the chosen ledger, by day then id
   transactions: null, // { key, items, error } for the month list or search the route shows

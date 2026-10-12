@@ -2,8 +2,9 @@
 # Offline: a new entry waits in the outbox, the list marks it waiting, the
 # top bar says offline and counts it; when the connection returns it is
 # sent once. The form keeps working offline from the kept categories and
-# templates. An entry the server refuses leaves the outbox; the same key
-# sent twice saves once.
+# templates. An entry the server refuses while the form submits it leaves
+# the outbox (browser-refused.sh covers a refusal later); the same key sent
+# twice saves once.
 export BUDGET_FIXTURE_ACCOUNT=john
 source "$(dirname "$0")/lib-browser.sh"
 status="document.querySelector('.bar-status').innerText"

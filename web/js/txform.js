@@ -10,7 +10,7 @@ import { money } from './format.js';
 import { amountOf, evaluate, notAmount } from './calc.js';
 import { dateIn, dayOf } from './calendar.js';
 import * as api from './api.js';
-import { submit } from './outbox.js';
+import { submit, discard } from './outbox.js';
 import { loadTemplates, loadTransactions } from './data.js';
 import { go, withQuery } from './nav.js';
 import { Arm } from './arm.js';
@@ -36,6 +36,7 @@ class TransactionForm extends AurilElement {
   #errors = {}; // field -> message; "" is the whole form
   #saving = false;
   #templateSaved = false;
+  #replaces = null; // key of the refused entry this draft fixes; it goes once the fix is saved or waits
   #arm = new Arm(() => this.update());
 
   onConnect() {
@@ -83,6 +84,14 @@ class TransactionForm extends AurilElement {
       else this.#draft = { amount: '0', categoryId: cats[0]?.id, note: '', date: dateIn(ym), type: 'expense' };
       this.#for = `new ${ym}`;
       this.#errors = {};
+    }
+    const retry = !id && s.retry && s.refused.find((e) => e.key === s.retry);
+    if (retry) {
+      const b = retry.body;
+      this.#draft = { amount: String(b.amount), categoryId: b.categoryId, note: b.note, date: b.date, type: b.type };
+      this.#replaces = retry.key;
+      this.#errors = retry.refused.field ? { [retry.refused.field]: retry.refused.message } : { '': retry.refused.message };
+      queueMicrotask(() => store.set({ retry: null }));
     }
     if (!cats.some((c) => c.id === this.#draft.categoryId) && cats.length > 0 && !id) this.#draft.categoryId = cats[0].id;
     return true;
@@ -138,6 +147,8 @@ class TransactionForm extends AurilElement {
         if (outcome.error) {
           this.#fail(outcome.error);
         } else {
+          if (this.#replaces) discard(this.#replaces);
+          this.#replaces = null;
           const cats = store.state.categories ?? [];
           this.#draft = { amount: '0', categoryId: cats[0]?.id, note: '', date: dateIn(route.ym), type: 'expense' };
           if (outcome.transaction) loadTransactions();
